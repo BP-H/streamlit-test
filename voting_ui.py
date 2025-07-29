@@ -30,8 +30,10 @@ def render_proposals_tab() -> None:
         return
     if st.button("Refresh Proposals"):
         try:
-            res = _run_async(dispatch_route("list_proposals", {}))
+            with st.spinner("Working on it..."):
+                res = _run_async(dispatch_route("list_proposals", {}))
             st.session_state["proposals_cache"] = res.get("proposals", [])
+            st.toast("Success!")
         except Exception as exc:
             alert(f"Failed to load proposals: {exc}", "error")
 
@@ -65,8 +67,10 @@ def render_proposals_tab() -> None:
             "voting_deadline": voting_deadline.isoformat(),
         }
         try:
-            res = _run_async(dispatch_route("create_proposal", payload))
+            with st.spinner("Working on it..."):
+                res = _run_async(dispatch_route("create_proposal", payload))
             alert(f"Proposal {res.get('proposal_id')} created", "info")
+            st.toast("Success!")
         except Exception as exc:
             alert(f"Create failed: {exc}", "error")
 
@@ -90,8 +94,10 @@ def render_proposals_tab() -> None:
             "vote": vote_choice,
         }
         try:
-            res = _run_async(dispatch_route("vote_proposal", payload))
+            with st.spinner("Working on it..."):
+                res = _run_async(dispatch_route("vote_proposal", payload))
             alert(f"Vote recorded id {res.get('vote_id')}", "info")
+            st.toast("Success!")
         except Exception as exc:
             alert(f"Vote failed: {exc}", "error")
 
@@ -106,8 +112,10 @@ def render_governance_tab() -> None:
         return
     if st.button("Refresh Votes"):
         try:
-            res = _run_async(dispatch_route("load_votes", {}))
+            with st.spinner("Working on it..."):
+                res = _run_async(dispatch_route("load_votes", {}))
             st.session_state["votes_cache"] = res.get("votes", [])
+            st.toast("Success!")
         except Exception as exc:
             alert(f"Failed to load votes: {exc}", "error")
 
@@ -128,8 +136,10 @@ def render_governance_tab() -> None:
         else:
             payload = {"species": species, **extra}
             try:
-                _run_async(dispatch_route("record_vote", payload))
+                with st.spinner("Working on it..."):
+                    _run_async(dispatch_route("record_vote", payload))
                 alert("Vote recorded", "info")
+                st.toast("Success!")
             except Exception as exc:
                 alert(f"Record failed: {exc}", "error")
 
@@ -144,8 +154,10 @@ def render_agent_ops_tab() -> None:
         return
     if st.button("Reload Agent List"):
         try:
-            res = _run_async(dispatch_route("list_agents", {}))
+            with st.spinner("Working on it..."):
+                res = _run_async(dispatch_route("list_agents", {}))
             st.session_state["agent_list"] = res.get("agents", [])
+            st.toast("Success!")
         except Exception as exc:
             alert(f"Load failed: {exc}", "error")
 
@@ -168,15 +180,19 @@ def render_agent_ops_tab() -> None:
             "api_key": api_key,
         }
         try:
-            res = _run_async(dispatch_route("launch_agents", payload))
+            with st.spinner("Working on it..."):
+                res = _run_async(dispatch_route("launch_agents", payload))
             st.json(res)
+            st.toast("Success!")
         except Exception as exc:
             alert(f"Launch failed: {exc}", "error")
 
     if st.button("Step Agents"):
         try:
-            res = _run_async(dispatch_route("step_agents", {}))
+            with st.spinner("Working on it..."):
+                res = _run_async(dispatch_route("step_agents", {}))
             st.json(res)
+            st.toast("Success!")
         except Exception as exc:
             alert(f"Step failed: {exc}", "error")
 
@@ -197,8 +213,10 @@ def render_logs_tab() -> None:
             alert(f"Invalid JSON: {exc}", "error")
         else:
             try:
-                res = _run_async(dispatch_route("explain_audit", {"trace": trace}))
+                with st.spinner("Working on it..."):
+                    res = _run_async(dispatch_route("explain_audit", {"trace": trace}))
                 st.text_area("Explanation", value=res, height=150)
+                st.toast("Success!")
             except Exception as exc:
                 alert(f"Explain failed: {exc}", "error")
 

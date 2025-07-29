@@ -28,7 +28,9 @@ def render_social_tab() -> None:
     username = st.text_input("Username")
     if st.button("Follow/Unfollow") and username:
         try:
-            result = _run_async(dispatch_route("follow_user", {"username": username}))
+            with st.spinner("Working on it..."):
+                result = _run_async(dispatch_route("follow_user", {"username": username}))
             st.json(result)
+            st.toast("Success!")
         except Exception as exc:  # pragma: no cover - UI feedback
             alert(f"Operation failed: {exc}", "error")
