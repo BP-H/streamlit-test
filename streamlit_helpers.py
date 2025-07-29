@@ -70,11 +70,22 @@ def inject_global_styles() -> None:
     st.markdown(
         """
         <style>
+        body, .stApp {
+            background-color: #F3F4F6;
+        }
         .custom-container {
             padding: 1rem;
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 1rem;
+        }
+        .card {
+            background-color: #FFFFFF;
+            padding: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
         }
         .stButton>button {border-radius:6px;}
