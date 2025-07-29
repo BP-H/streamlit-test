@@ -42,3 +42,4 @@ kaleido
 websockets
 plotly
 pyvis
+st-aggrid

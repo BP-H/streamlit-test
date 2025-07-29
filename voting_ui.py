@@ -2,6 +2,7 @@ import asyncio
 import json
 import streamlit as st
 from streamlit_helpers import alert
+from st_aggrid import AgGrid
 
 try:
     from frontend_bridge import dispatch_route
@@ -46,7 +47,7 @@ def render_proposals_tab() -> None:
             }
             for p in proposals
         ]
-        st.table(simple)
+        AgGrid(simple)
 
     with st.form("create_proposal_form"):
         st.write("Create Proposal")
@@ -113,7 +114,7 @@ def render_governance_tab() -> None:
 
     votes = st.session_state.get("votes_cache", [])
     if votes:
-        st.table(votes)
+        AgGrid(votes)
 
     with st.form("record_vote_form"):
         st.write("Record Vote")
