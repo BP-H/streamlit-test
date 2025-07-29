@@ -5,4 +5,5 @@ __all__ = [
     "social",
     "voting",
     "agents",
+    "quests",
 ]
