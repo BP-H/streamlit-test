@@ -205,6 +205,20 @@ def render_logs_tab() -> None:
 
 def render_voting_tab() -> None:
     """High level tab combining proposal and vote management."""
+    st.markdown(
+        """
+        <style>
+        .subtab-container {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
     sub1, sub2, sub3, sub4 = st.tabs([
         "Proposal Hub",
         "Governance",
@@ -212,10 +226,22 @@ def render_voting_tab() -> None:
         "Logs",
     ])
     with sub1:
-        render_proposals_tab()
+        with st.container():
+            st.markdown("<div class='subtab-container'>", unsafe_allow_html=True)
+            render_proposals_tab()
+            st.markdown("</div>", unsafe_allow_html=True)
     with sub2:
-        render_governance_tab()
+        with st.container():
+            st.markdown("<div class='subtab-container'>", unsafe_allow_html=True)
+            render_governance_tab()
+            st.markdown("</div>", unsafe_allow_html=True)
     with sub3:
-        render_agent_ops_tab()
+        with st.container():
+            st.markdown("<div class='subtab-container'>", unsafe_allow_html=True)
+            render_agent_ops_tab()
+            st.markdown("</div>", unsafe_allow_html=True)
     with sub4:
-        render_logs_tab()
+        with st.container():
+            st.markdown("<div class='subtab-container'>", unsafe_allow_html=True)
+            render_logs_tab()
+            st.markdown("</div>", unsafe_allow_html=True)
