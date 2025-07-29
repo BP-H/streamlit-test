@@ -89,6 +89,19 @@ def inject_global_styles() -> None:
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
         }
+        .app-container {
+            max-width: 1200px;
+            margin: auto;
+        }
+        input, textarea, select {
+            border-radius: 8px !important;
+        }
+        .button-primary {
+            background-color: #1DA1F2 !important;
+            color: #fff !important;
+            border-radius: 999px !important;
+            border: none !important;
+        }
         .stButton>button {border-radius:6px;}
         </style>
         """,

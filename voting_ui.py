@@ -21,6 +21,10 @@ BOX_CSS = """
     border: 1px solid #ddd;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+.ag-header {
+    background-color: #2962FF !important;
+    color: #fff !important;
+}
 </style>
 """
 
@@ -44,61 +48,74 @@ def render_proposals_tab() -> None:
             "warning",
         )
         return
-    with st.container():
-        st.markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
-        if st.button("Refresh Proposals"):
-            with st.spinner("Working on it..."):
-                try:
-                    res = _run_async(dispatch_route("list_proposals", {}))
-                    st.session_state["proposals_cache"] = res.get("proposals", [])
-                    st.toast("Success!")
-                except Exception as exc:
-                    alert(f"Failed to load proposals: {exc}", "error")
 
-    proposals = st.session_state.get("proposals_cache", [])
-    if proposals:
-        simple = [
-            {
-                "id": p.get("id"),
-                "title": p.get("title"),
-                "status": p.get("status"),
-                "deadline": p.get("voting_deadline"),
-            }
-            for p in proposals
-        ]
-        df = pd.DataFrame(simple)
-        gb = GridOptionsBuilder.from_dataframe(df)
-        gb.configure_default_column(filter=True, sortable=True, resizable=True)
-        AgGrid(df, gridOptions=gb.build(), theme="streamlit", fit_columns_on_grid_load=True)
+    st.markdown(BOX_CSS + "<div class='app-container'>", unsafe_allow_html=True)
+    left_col, right_col = st.columns([1, 1])
 
-    with st.container():
+    with left_col:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
         with st.form("create_proposal_form"):
-            st.write("Create Proposal")
+            st.markdown("#### Create Proposal")
             title = st.text_input("Title")
             description = st.text_area("Description")
             author_id = st.number_input("Author ID", value=1, step=1)
             group_id = st.text_input("Group ID")
             voting_deadline = st.date_input("Voting Deadline")
-            submitted = st.form_submit_button("Create")
-    if submitted:
-        payload = {
-            "title": title,
-            "description": description,
-            "author_id": int(author_id),
-            "group_id": group_id or None,
-            "voting_deadline": voting_deadline.isoformat(),
-        }
-        with st.spinner("Working on it..."):
-            try:
-                res = _run_async(dispatch_route("create_proposal", payload))
-                alert(f"Proposal {res.get('proposal_id')} created", "info")
-                st.toast("Success!")
-            except Exception as exc:
-                alert(f"Create failed: {exc}", "error")
+            submitted = st.form_submit_button("Create", type="primary")
+        if submitted:
+            if not title or not description:
+                st.toast("Title and description required", icon="❌")
+            else:
+                payload = {
+                    "title": title,
+                    "description": description,
+                    "author_id": int(author_id),
+                    "group_id": group_id or None,
+                    "voting_deadline": voting_deadline.isoformat(),
+                }
+                with st.spinner("Working on it..."):
+                    try:
+                        res = _run_async(dispatch_route("create_proposal", payload))
+                        st.toast(f"Created proposal {res.get('proposal_id')}", icon="✅")
+                    except Exception as exc:
+                        st.toast(f"Create failed: {exc}", icon="❌")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    with st.container():
+    with right_col:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        if st.button("Refresh Proposals"):
+            with st.spinner("Working on it..."):
+                try:
+                    res = _run_async(dispatch_route("list_proposals", {}))
+                    st.session_state["proposals_cache"] = res.get("proposals", [])
+                    st.toast("Refreshed", icon="✅")
+                except Exception as exc:
+                    st.toast(f"Failed to load proposals: {exc}", icon="❌")
+
+        proposals = st.session_state.get("proposals_cache", [])
+        if proposals:
+            simple = [
+                {
+                    "id": p.get("id"),
+                    "title": p.get("title"),
+                    "status": p.get("status"),
+                    "deadline": p.get("voting_deadline"),
+                }
+                for p in proposals
+            ]
+            df = pd.DataFrame(simple)
+            gb = GridOptionsBuilder.from_dataframe(df)
+            gb.configure_default_column(filter=True, sortable=True, resizable=True)
+            AgGrid(
+                df,
+                gridOptions=gb.build(),
+                theme="streamlit",
+                fit_columns_on_grid_load=True,
+                height=400,
+            )
+
         with st.form("vote_proposal_form"):
-            st.write("Vote on Proposal")
+            st.markdown("#### Vote on Proposal")
             ids = [p.get("id") for p in proposals]
             prop_id = (
                 st.selectbox("Proposal", ids)
@@ -110,20 +127,23 @@ def render_proposals_tab() -> None:
             )
             vote_choice = st.selectbox("Vote", ["yes", "no", "abstain"])
             vote_sub = st.form_submit_button("Submit Vote")
-    if vote_sub:
-        payload = {
-            "proposal_id": prop_id,
-            "harmonizer_id": int(harmonizer_id),
-            "vote": vote_choice,
-        }
-        with st.spinner("Working on it..."):
-            try:
-                res = _run_async(dispatch_route("vote_proposal", payload))
-                alert(f"Vote recorded id {res.get('vote_id')}", "info")
-                st.toast("Success!")
-            except Exception as exc:
-                alert(f"Vote failed: {exc}", "error")
+        if vote_sub:
+            if not prop_id:
+                st.toast("Select a proposal", icon="❌")
+            else:
+                payload = {
+                    "proposal_id": prop_id,
+                    "harmonizer_id": int(harmonizer_id),
+                    "vote": vote_choice,
+                }
+                with st.spinner("Working on it..."):
+                    try:
+                        res = _run_async(dispatch_route("vote_proposal", payload))
+                        st.toast(f"Vote recorded id {res.get('vote_id')}", icon="✅")
+                    except Exception as exc:
+                        st.toast(f"Vote failed: {exc}", icon="❌")
         st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 def render_governance_tab() -> None:
