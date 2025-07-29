@@ -82,10 +82,23 @@ def centered_container(max_width: str = "900px") -> "st.delta_generator.DeltaGen
     return st.container()
 
 
+def apply_modern_style() -> None:
+    """Inject base CSS for a cleaner, modern look."""
+    css = """
+        <style>
+        .hero {font-size:1.25rem;margin-bottom:1.5rem;font-weight:600;}
+        .feature-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1.5rem;}
+        .feature {background:#f7f7f7;border-radius:8px;padding:1rem;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,0.05);}
+        </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
+
+
 __all__ = [
     "alert",
     "header",
     "apply_theme",
     "theme_selector",
     "centered_container",
+    "apply_modern_style",
 ]

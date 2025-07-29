@@ -5,6 +5,7 @@
 
 from pathlib import Path
 import streamlit as st
+from streamlit_helpers import header, apply_modern_style
 
 
 def summarize_text(text: str, max_len: int = 150) -> str:
@@ -50,8 +51,28 @@ def load_rfc_entries(rfc_dir: Path):
 
 def render_main_ui() -> None:
     """Render a minimal placeholder for the Streamlit dashboard."""
+    apply_modern_style()
     st.title("superNova_2177")
     st.write("UI initialization complete.")
+
+
+def render_landing_page() -> None:
+    """Simple landing page with quick links."""
+    apply_modern_style()
+    header("Welcome to superNova_2177", layout="wide")
+    st.markdown(
+        "<p class='hero'>A scientific social metaverse for collaborative creativity.</p>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='feature-grid'>"
+        "<div class='feature'>🚀 Validation Analysis</div>"
+        "<div class='feature'>👥 Social Graph</div>"
+        "<div class='feature'>📊 Governance & Voting</div>"
+        "<div class='feature'>🤖 Agent Playground</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 __all__ = [
@@ -59,4 +80,5 @@ __all__ = [
     "parse_summary",
     "load_rfc_entries",
     "render_main_ui",
+    "render_landing_page",
 ]

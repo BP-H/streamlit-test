@@ -47,9 +47,11 @@ PAGES_DIR = (
 # Toggle verbose output via ``UI_DEBUG_PRINTS``
 UI_DEBUG = os.getenv("UI_DEBUG_PRINTS", "1") != "0"
 
+
 def log(msg: str) -> None:
     if UI_DEBUG:
         print(msg, file=sys.stderr)
+
 
 if UI_DEBUG:
     log("\u23f3 Booting superNova_2177 UI...")
@@ -61,7 +63,13 @@ from streamlit_helpers import (
     theme_selector,
 )
 from api_key_input import render_api_key_ui, render_simulation_stubs
-from ui_utils import load_rfc_entries, parse_summary, summarize_text, render_main_ui
+from ui_utils import (
+    load_rfc_entries,
+    parse_summary,
+    summarize_text,
+    render_main_ui,
+    render_landing_page,
+)
 
 
 def _run_async(coro):
@@ -880,7 +888,9 @@ def render_validation_ui() -> None:
         st.subheader("Agent Output")
         st.json(st.session_state["agent_output"])
 
+
 import streamlit as st
+
 
 def main() -> None:
     """Entry point for the Streamlit UI."""
@@ -892,10 +902,7 @@ def main() -> None:
     # Unified health check using query params or PATH_INFO
     params = st.query_params
     path_info = os.environ.get("PATH_INFO", "").rstrip("/")
-    if (
-        "1" in params.get("healthz", [])
-        or path_info == "/healthz"
-    ):
+    if "1" in params.get("healthz", []) or path_info == "/healthz":
         st.write("ok")
         st.stop()
         return
@@ -927,6 +934,7 @@ def main() -> None:
             st.error(f"Page '{choice}' is missing a main() function.")
     except Exception as exc:
         import traceback
+
         tb = traceback.format_exc()
         st.error(f"❌ Error loading page '{choice}':")
         st.text(tb)
@@ -935,5 +943,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
