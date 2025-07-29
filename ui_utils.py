@@ -5,6 +5,7 @@
 
 from pathlib import Path
 import streamlit as st
+from streamlit_helpers import header, centered_container
 
 
 def summarize_text(text: str, max_len: int = 150) -> str:
@@ -50,8 +51,22 @@ def load_rfc_entries(rfc_dir: Path):
 
 def render_main_ui() -> None:
     """Render a minimal placeholder for the Streamlit dashboard."""
-    st.title("superNova_2177")
-    st.write("UI initialization complete.")
+    header("superNova_2177 Dashboard", layout="wide")
+    with centered_container():
+        st.write("Select a page from the sidebar to begin.")
+
+
+def render_landing_page() -> None:
+    """Render a simple landing page shown when no pages are available."""
+    header("superNova_2177", layout="wide")
+    with centered_container():
+        st.markdown(
+            "<h2 style='text-align:center;'>Welcome to the modern interface.</h2>",
+            unsafe_allow_html=True,
+        )
+        st.write(
+            "Use the navigation sidebar to explore validations, social feeds and voting tools."
+        )
 
 
 __all__ = [
@@ -59,4 +74,5 @@ __all__ = [
     "parse_summary",
     "load_rfc_entries",
     "render_main_ui",
+    "render_landing_page",
 ]

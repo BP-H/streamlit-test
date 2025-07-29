@@ -42,17 +42,27 @@ def header(title: str, *, layout: str = "centered") -> None:
 
 
 def apply_theme(theme: str) -> None:
-    """Apply light or dark theme styles based on ``theme``."""
+    """Apply light, dark or modern theme styles based on ``theme``."""
     if theme == "dark":
         css = """
             <style>
-            body, .stApp { background-color: #1e1e1e; color: #f0f0f0; }
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+            body, .stApp { background-color: #1e1e1e; color: #f0f0f0; font-family: 'Inter', sans-serif; }
+            </style>
+        """
+    elif theme == "modern":
+        css = """
+            <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+            body, .stApp { background-color: #f5f5f5; color: #333333; font-family: 'Inter', sans-serif; }
+            .stButton > button { background-color: #0a66c2; color: #ffffff; border-radius: 6px; }
             </style>
         """
     else:
         css = """
             <style>
-            body, .stApp { background-color: #ffffff; color: #000000; }
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+            body, .stApp { background-color: #ffffff; color: #000000; font-family: 'Inter', sans-serif; }
             </style>
         """
     st.markdown(css, unsafe_allow_html=True)
@@ -62,12 +72,10 @@ def theme_selector(label: str = "Theme") -> str:
     """Render a radio selector for the app theme and return the choice."""
     if "theme" not in st.session_state:
         st.session_state["theme"] = "light"
-    choice = st.radio(
-        label,
-        ["Light", "Dark"],
-        index=(1 if st.session_state["theme"] == "dark" else 0),
-        horizontal=True,
-    )
+    themes = ["Light", "Dark", "Modern"]
+    current = st.session_state["theme"].capitalize()
+    idx = themes.index(current) if current in themes else 0
+    choice = st.radio(label, themes, index=idx, horizontal=True)
     st.session_state["theme"] = choice.lower()
     apply_theme(st.session_state["theme"])
     return st.session_state["theme"]

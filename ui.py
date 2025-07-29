@@ -61,7 +61,13 @@ from streamlit_helpers import (
     theme_selector,
 )
 from api_key_input import render_api_key_ui, render_simulation_stubs
-from ui_utils import load_rfc_entries, parse_summary, summarize_text, render_main_ui
+from ui_utils import (
+    load_rfc_entries,
+    parse_summary,
+    summarize_text,
+    render_main_ui,
+    render_landing_page,
+)
 
 
 def _run_async(coro):
@@ -888,6 +894,10 @@ def main() -> None:
     from importlib import import_module
 
     st.set_page_config(page_title="superNova_2177", layout="wide")
+
+    if "theme" not in st.session_state:
+        st.session_state["theme"] = "modern"
+    apply_theme(st.session_state["theme"])
 
     # Unified health check using query params or PATH_INFO
     params = st.query_params
