@@ -29,11 +29,14 @@ def render_proposals_tab() -> None:
         )
         return
     if st.button("Refresh Proposals"):
-        try:
-            res = _run_async(dispatch_route("list_proposals", {}))
-            st.session_state["proposals_cache"] = res.get("proposals", [])
-        except Exception as exc:
-            alert(f"Failed to load proposals: {exc}", "error")
+        with st.spinner("Working on it..."):
+            try:
+                res = _run_async(dispatch_route("list_proposals", {}))
+                st.session_state["proposals_cache"] = res.get("proposals", [])
+            except Exception as exc:
+                alert(f"Failed to load proposals: {exc}", "error")
+            else:
+                st.toast("Success!")
 
     proposals = st.session_state.get("proposals_cache", [])
     if proposals:
@@ -64,11 +67,14 @@ def render_proposals_tab() -> None:
             "group_id": group_id or None,
             "voting_deadline": voting_deadline.isoformat(),
         }
-        try:
-            res = _run_async(dispatch_route("create_proposal", payload))
-            alert(f"Proposal {res.get('proposal_id')} created", "info")
-        except Exception as exc:
-            alert(f"Create failed: {exc}", "error")
+        with st.spinner("Working on it..."):
+            try:
+                res = _run_async(dispatch_route("create_proposal", payload))
+                alert(f"Proposal {res.get('proposal_id')} created", "info")
+            except Exception as exc:
+                alert(f"Create failed: {exc}", "error")
+            else:
+                st.toast("Success!")
 
     with st.form("vote_proposal_form"):
         st.write("Vote on Proposal")
@@ -89,11 +95,14 @@ def render_proposals_tab() -> None:
             "harmonizer_id": int(harmonizer_id),
             "vote": vote_choice,
         }
-        try:
-            res = _run_async(dispatch_route("vote_proposal", payload))
-            alert(f"Vote recorded id {res.get('vote_id')}", "info")
-        except Exception as exc:
-            alert(f"Vote failed: {exc}", "error")
+        with st.spinner("Working on it..."):
+            try:
+                res = _run_async(dispatch_route("vote_proposal", payload))
+                alert(f"Vote recorded id {res.get('vote_id')}", "info")
+            except Exception as exc:
+                alert(f"Vote failed: {exc}", "error")
+            else:
+                st.toast("Success!")
 
 
 def render_governance_tab() -> None:
@@ -105,11 +114,14 @@ def render_governance_tab() -> None:
         )
         return
     if st.button("Refresh Votes"):
-        try:
-            res = _run_async(dispatch_route("load_votes", {}))
-            st.session_state["votes_cache"] = res.get("votes", [])
-        except Exception as exc:
-            alert(f"Failed to load votes: {exc}", "error")
+        with st.spinner("Working on it..."):
+            try:
+                res = _run_async(dispatch_route("load_votes", {}))
+                st.session_state["votes_cache"] = res.get("votes", [])
+            except Exception as exc:
+                alert(f"Failed to load votes: {exc}", "error")
+            else:
+                st.toast("Success!")
 
     votes = st.session_state.get("votes_cache", [])
     if votes:
@@ -127,11 +139,14 @@ def render_governance_tab() -> None:
             alert(f"Invalid JSON: {exc}", "error")
         else:
             payload = {"species": species, **extra}
-            try:
-                _run_async(dispatch_route("record_vote", payload))
-                alert("Vote recorded", "info")
-            except Exception as exc:
-                alert(f"Record failed: {exc}", "error")
+            with st.spinner("Working on it..."):
+                try:
+                    _run_async(dispatch_route("record_vote", payload))
+                    alert("Vote recorded", "info")
+                except Exception as exc:
+                    alert(f"Record failed: {exc}", "error")
+                else:
+                    st.toast("Success!")
 
 
 def render_agent_ops_tab() -> None:
