@@ -12,7 +12,13 @@ from utils.api import TOKEN
 from utils.styles import get_theme
 from utils.layout import page_container, navigation_bar
 from utils.api import TOKEN, OFFLINE_MODE
-from frontend_bridge import ROUTES, dispatch_route
+try:  # pragma: no cover - handle optional dependency during tests
+    from frontend_bridge import ROUTES, dispatch_route
+except Exception:  # pragma: no cover - missing heavy deps
+    ROUTES = {}
+
+    async def dispatch_route(*_args, **_kwargs):
+        return {}
 
 # Minimal example payloads for some routes
 SAMPLE_PAYLOADS = {

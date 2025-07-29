@@ -13,7 +13,16 @@ from __future__ import annotations
 import random
 from typing import Any, Dict, List
 
-from external_services.llm_client import LLMClient
+from pathlib import Path
+import sys
+
+# Ensure repository root is on sys.path for optional packages
+_ROOT = Path(__file__).resolve().parents[2]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from external_services.llm_client import LLMClient, get_speculative_futures
+from external_services.video_client import generate_video_preview
 from external_services.vision_client import VisionClient
 
 # Satirical disclaimer appended to all speculative output
@@ -54,8 +63,7 @@ async def generate_speculative_payload(description: str) -> List[Dict[str, str]]
     results: List[Dict[str, str]] = []
     vision = VisionClient()
     for text in texts:
-        # Mocking or replacing video preview call if removed
-        video_url = f"https://example.com/fake_video_for_{text[:10]}"
+        video_url = await generate_video_preview(text)
         vision_notes = (await vision.analyze_timeline(video_url)).get("events", [])
         results.append(
             {
