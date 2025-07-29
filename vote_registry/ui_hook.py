@@ -16,7 +16,10 @@ ui_hook_manager = HookManager()
 
 
 async def record_vote_ui(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Record a vote from the UI and emit an event."""
+    """Record a vote from the UI and emit an event.
+
+    ``payload`` may include ``token_amount`` to weight the vote.
+    """
     _record_vote(payload)
     await ui_hook_manager.trigger("vote_recorded", payload)
     return {"recorded": True}

@@ -206,6 +206,7 @@ def _weighted_average_consensus(
         weight *= _time_decay_factor(
             vote.get("timestamp"), current_time, Config.VOTE_DECAY_HALF_LIFE_DAYS
         )
+        weight *= float(vote.get("token_amount", 1))
 
         weighted_sum += score * weight
         total_weight += weight
@@ -247,8 +248,9 @@ def _majority_rule_consensus(
             vote.get("timestamp"), current_time, Config.VOTE_DECAY_HALF_LIFE_DAYS
         )
         weight *= decay
+        weight *= float(vote.get("token_amount", 1))
 
-        decisions.extend([decision] * max(1, int(weight * 10)))  # Weight by reputation
+        decisions.extend([decision] * max(1, int(weight * 10)))
         total_weight += weight
 
     if not decisions:
@@ -361,7 +363,10 @@ def _reputation_weighted_consensus(
         decay = _time_decay_factor(
             vote.get("timestamp"), current_time, Config.VOTE_DECAY_HALF_LIFE_DAYS
         )
-        combined_weight = (reputation * 0.7 + temporal * 0.3) * confidence * decay
+        token_wt = float(vote.get("token_amount", 1))
+        combined_weight = (
+            (reputation * 0.7 + temporal * 0.3) * confidence * decay * token_wt
+        )
 
         weighted_scores.append(score * combined_weight)
         decision_weights[decision] += combined_weight
@@ -414,6 +419,7 @@ def _ranked_choice_consensus(
         weight *= _time_decay_factor(
             vote.get("timestamp"), current_time, Config.VOTE_DECAY_HALF_LIFE_DAYS
         )
+        weight *= float(vote.get("token_amount", 1))
         n = len(ranking)
         for i, choice in enumerate(ranking):
             points = n - i
@@ -455,6 +461,7 @@ def _quadratic_voting_consensus(
         weight *= _time_decay_factor(
             vote.get("timestamp"), current_time, Config.VOTE_DECAY_HALF_LIFE_DAYS
         )
+        weight *= float(vote.get("token_amount", 1))
         decision_weights[decision] += weight
         total_weight += weight
 

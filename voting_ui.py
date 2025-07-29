@@ -109,12 +109,16 @@ def render_proposals_tab() -> None:
                 "Harmonizer ID", value=1, step=1, key="harmonizer_id_vote"
             )
             vote_choice = st.selectbox("Vote", ["yes", "no", "abstain"])
+            token_amount = st.number_input(
+                "Token Amount", value=1.0, step=1.0, key="token_amount_vote"
+            )
             vote_sub = st.form_submit_button("Submit Vote")
     if vote_sub:
         payload = {
             "proposal_id": prop_id,
             "harmonizer_id": int(harmonizer_id),
             "vote": vote_choice,
+            "token_amount": float(token_amount),
         }
         with st.spinner("Working on it..."):
             try:
@@ -156,6 +160,9 @@ def render_governance_tab() -> None:
         with st.form("record_vote_form"):
             st.write("Record Vote")
             species = st.selectbox("Species", ["human", "ai", "company"])
+            token_amount_rec = st.number_input(
+                "Token Amount", value=1.0, step=1.0, key="token_amount_record"
+            )
             extra_json = st.text_input("Extra Fields (JSON)", value="{}")
             submit = st.form_submit_button("Record")
     if submit:
@@ -164,7 +171,7 @@ def render_governance_tab() -> None:
         except Exception as exc:
             alert(f"Invalid JSON: {exc}", "error")
         else:
-            payload = {"species": species, **extra}
+            payload = {"species": species, "token_amount": float(token_amount_rec), **extra}
             with st.spinner("Working on it..."):
                 try:
                     _run_async(dispatch_route("record_vote", payload))

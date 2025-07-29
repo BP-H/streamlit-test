@@ -14,6 +14,7 @@ This repository hosts `superNova_2177.py` — an experimental protocol merging c
 
 ⚠️ This is *not* a financial product, cryptocurrency, or tradable asset. All metrics (e.g., Harmony Score, Resonance, Entropy) are symbolic — for modeling, visualization, and creative gameplay only. See legal/disclaimer sections in `superNova_2177.py`, lines 60–88.
 Symbolic tokens and listings introduced in the gameplay modules have **no real-world monetary value**. They exist purely as resonance artifacts used for cooperative storytelling.
+For details on how token amounts influence voting, see [docs/symbolic_voting.md](docs/symbolic_voting.md).
 
 The repository includes a *patch monitor* that scans new contributions for these
 required disclaimers. If added files or lines don't contain the phrases

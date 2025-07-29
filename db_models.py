@@ -371,6 +371,7 @@ class ProposalVote(Base):
     )
     harmonizer_id = Column(Integer, ForeignKey("harmonizers.id"), nullable=False)
     vote = Column(String, nullable=False)
+    token_amount = Column(Float, default=1.0)
     proposal = relationship("Proposal", back_populates="votes")
 
 

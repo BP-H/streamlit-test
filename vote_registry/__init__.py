@@ -50,6 +50,8 @@ def record_vote(vote: Dict[str, Any]) -> None:
             f"Invalid species '{species}'. Must be one of {sorted(SPECIES)}"
         )
 
+    token_amount = float(vote.get("token_amount", 1))
+    vote["token_amount"] = token_amount
     # TODO: persist vote data including species to tri_species_vote_registry.json
     _VOTES.append(vote)
 
