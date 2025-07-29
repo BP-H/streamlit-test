@@ -1,5 +1,6 @@
 import os
 import streamlit as st  # ensure Streamlit is imported early
+from streamlit_option_menu import option_menu
 
 # STRICTLY A SOCIAL MEDIA PLATFORM
 # Intellectual Property & Artistic Inspiration
@@ -916,7 +917,22 @@ def main() -> None:
         return
 
     render_main_ui()
-    choice = st.sidebar.selectbox("Page", page_files)
+
+    icon_map = {
+        "agents": "robot",
+        "social": "people",
+        "validation": "check-circle",
+        "voting": "check-square",
+    }
+
+    with st.sidebar:
+        choice = option_menu(
+            "Navigation",
+            page_files,
+            icons=[icon_map.get(p, "file") for p in page_files],
+            menu_icon="list",
+            default_index=0,
+        )
 
     try:
         module = import_module(f"transcendental_resonance_frontend.pages.{choice}")
