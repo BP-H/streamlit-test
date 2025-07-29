@@ -125,18 +125,18 @@ def inject_global_styles() -> None:
 
 
 def theme_selector(label: str = "Theme") -> str:
-    """Render a radio selector for the app theme and return the choice."""
+    """Render a theme selector and return the chosen theme."""
     if "theme" not in st.session_state:
-        st.session_state["theme"] = "light"
+        st.session_state["theme"] = "dark"
+
     options = ["Light", "Dark", "Codex"]
     current = st.session_state["theme"].capitalize()
     idx = options.index(current) if current in options else 0
-    choice = st.radio(
-        label,
-        options,
-        index=idx,
-        horizontal=True,
-    )
+
+    cols = st.columns([4, 1])
+    with cols[0]:
+        choice = st.selectbox(label, options, index=idx)
+
     st.session_state["theme"] = choice.lower()
     apply_theme(st.session_state["theme"])
     return st.session_state["theme"]
