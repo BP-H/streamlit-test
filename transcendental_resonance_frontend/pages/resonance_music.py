@@ -10,6 +10,7 @@ import base64
 import os
 from typing import Any
 
+
 import requests
 import streamlit as st
 from streamlit_helpers import alert, centered_container
@@ -20,6 +21,33 @@ except Exception:  # pragma: no cover - optional dependency
     dispatch_route = None  # type: ignore
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+OFFLINE_MSG = (
+    "Backend service unreachable. Please ensure the backend server is running at "
+    f"{BACKEND_URL}."
+)
+
+
+def backend_online(timeout: float = 2.0) -> bool:
+    """Return True if the backend responds to /status."""
+    try:
+        requests.get(f"{BACKEND_URL}/status", timeout=timeout).raise_for_status()
+        return True
+    except Exception:
+        return False
+
+
+def backend_status_indicator() -> None:
+    """Display a small online/offline indicator."""
+    online = backend_online()
+    color = "green" if online else "red"
+    text = "Online" if online else "Offline"
+    st.markdown(
+        f"<div style='display:flex;align-items:center;gap:0.25em;'>"
+        f"<span style='color:{color};font-size:1.2em;'>\u25CF</span>"
+        f"<span style='font-size:0.9em;'>Backend {text}</span>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 def _run_async(coro):
@@ -37,6 +65,7 @@ def main() -> None:
     """Render music generation and summary widgets."""
 
     st.subheader("Resonance Music")
+    backend_status_indicator()
     centered_container()
 
     profile = st.selectbox(
@@ -51,8 +80,9 @@ def main() -> None:
                 result = _run_async(
                     dispatch_route("generate_midi", {"profile": profile})
                 )
-            except Exception as exc:  # pragma: no cover - feedback
-                alert(f"Generation failed: {exc}", "error")
+            except Exception:  # pragma: no cover - feedback
+                st.toast("Backend unreachable", icon="\u26A0")
+                alert(OFFLINE_MSG, "error")
             else:
                 midi_b64 = (
                     result.get("midi_base64") if isinstance(result, dict) else None
@@ -70,5 +100,6 @@ def main() -> None:
             data = resp.json()
             st.json(data.get("metrics", {}))
             st.write(f"MIDI bytes: {data.get('midi_bytes', 0)}")
-        except Exception as exc:  # pragma: no cover - best effort
-            alert(f"Failed to load summary: {exc}", "error")
+        except Exception:  # pragma: no cover - best effort
+            st.toast("Backend unreachable", icon="\u26A0")
+            alert(OFFLINE_MSG, "error")
