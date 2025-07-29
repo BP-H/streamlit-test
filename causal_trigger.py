@@ -7,7 +7,13 @@ import json
 from db_models import LogEntry, HypothesisRecord
 from causal_graph import InfluenceGraph
 from audit_explainer import trace_causal_chain
-from governance_reviewer import evaluate_governance_risks, apply_governance_actions
+# Import from the governance package. The governance utilities live in
+# `governance/governance_reviewer.py`, so we include the package prefix
+# to ensure the module can be resolved when the app runs.
+from governance.governance_reviewer import (
+    evaluate_governance_risks,
+    apply_governance_actions,
+)
 
 logger = logging.getLogger("superNova_2177.trigger")
 logger.propagate = False
