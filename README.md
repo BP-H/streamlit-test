@@ -382,6 +382,15 @@ ancestor/descendant traces update as you submit events.
 
 Use the **Resonance Music** page to generate simple MIDI snippets and view the metrics returned by the `/resonance-summary` endpoint.
 
+The music player talks to the backend API on `http://localhost:8000`. Make sure
+the server is running in another terminal before using the page:
+
+```bash
+uvicorn superNova_2177:app --reload --port 8000
+# or simply
+python superNova_2177.py
+```
+
 ### Troubleshooting the UI
 
 - **Missing dependencies**: If the interface fails with `ModuleNotFoundError`, run
