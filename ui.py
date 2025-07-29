@@ -635,28 +635,31 @@ def render_validation_ui() -> None:
             with dev_tabs[2]:
                 hid = st.text_input("Hypothesis ID", key="audit_id")
                 if st.button("Run Audit") and hid:
-                    if dispatch_route and SessionLocal:
-                        with SessionLocal() as db:
-                            try:
-                                result = _run_async(
-                                    dispatch_route(
-                                        "trigger_full_audit",
-                                        {"hypothesis_id": hid},
-                                        db=db,
+                    with st.spinner("Working on it..."):
+                        if dispatch_route and SessionLocal:
+                            with SessionLocal() as db:
+                                try:
+                                    result = _run_async(
+                                        dispatch_route(
+                                            "trigger_full_audit",
+                                            {"hypothesis_id": hid},
+                                            db=db,
+                                        )
                                     )
-                                )
-                                st.json(result)
-                            except Exception as exc:
-                                st.error(f"Audit failed: {exc}")
-                    elif run_full_audit and SessionLocal:
-                        with SessionLocal() as db:
-                            try:
-                                result = run_full_audit(hid, db)
-                                st.json(result)
-                            except Exception as exc:
-                                st.error(f"Audit failed: {exc}")
-                    else:
-                        st.info("Audit functionality unavailable")
+                                    st.json(result)
+                                    st.toast("Success!")
+                                except Exception as exc:
+                                    st.error(f"Audit failed: {exc}")
+                        elif run_full_audit and SessionLocal:
+                            with SessionLocal() as db:
+                                try:
+                                    result = run_full_audit(hid, db)
+                                    st.json(result)
+                                    st.toast("Success!")
+                                except Exception as exc:
+                                    st.error(f"Audit failed: {exc}")
+                        else:
+                            st.info("Audit functionality unavailable")
 
             with dev_tabs[3]:
                 log_path = Path("logchain_main.log")
@@ -676,15 +679,16 @@ def render_validation_ui() -> None:
                     "Event JSON", value="{}", height=150, key="inject_event"
                 )
                 if st.button("Process Event"):
-                    if agent:
-                        try:
-                            event = json.loads(event_json or "{}")
-                            agent.process_event(event)
-                            st.success("Event processed")
-                        except Exception as exc:
-                            st.error(f"Event failed: {exc}")
-                    else:
-                        st.info("Agent unavailable")
+                    with st.spinner("Working on it..."):
+                        if agent:
+                            try:
+                                event = json.loads(event_json or "{}")
+                                agent.process_event(event)
+                                st.toast("Success!")
+                            except Exception as exc:
+                                st.error(f"Event failed: {exc}")
+                        else:
+                            st.info("Agent unavailable")
 
             with dev_tabs[5]:
                 st.write("Available agents:", list(AGENT_REGISTRY.keys()))
@@ -716,20 +720,22 @@ def render_validation_ui() -> None:
                     key="flow_json",
                 )
                 if st.button("Run Flow"):
-                    try:
-                        steps = json.loads(flow_txt or "[]")
-                        results = []
-                        for step in steps:
-                            a_name = step.get("agent")
-                            agent_cls = AGENT_REGISTRY.get(a_name, {}).get("class")
-                            evt = step.get("event", {})
-                            if agent_cls:
-                                backend_fn = get_backend("dummy")
-                                a = agent_cls(llm_backend=backend_fn)
-                                results.append(a.process_event(evt))
-                        st.json(results)
-                    except Exception as exc:
-                        st.error(f"Flow execution failed: {exc}")
+                    with st.spinner("Working on it..."):
+                        try:
+                            steps = json.loads(flow_txt or "[]")
+                            results = []
+                            for step in steps:
+                                a_name = step.get("agent")
+                                agent_cls = AGENT_REGISTRY.get(a_name, {}).get("class")
+                                evt = step.get("event", {})
+                                if agent_cls:
+                                    backend_fn = get_backend("dummy")
+                                    a = agent_cls(llm_backend=backend_fn)
+                                    results.append(a.process_event(evt))
+                            st.json(results)
+                            st.toast("Success!")
+                        except Exception as exc:
+                            st.error(f"Flow execution failed: {exc}")
 
     if run_clicked or rerun_clicked:
         if run_clicked:
@@ -802,24 +808,25 @@ def render_validation_ui() -> None:
             if agent_cls is None:
                 alert("Unknown agent selected", "error")
             else:
-                try:
-                    if agent_choice == "CI_PRProtectorAgent":
-                        talker = backend_fn or (lambda p: p)
-                        agent = agent_cls(talker, llm_backend=backend_fn)
-                    elif agent_choice == "MetaValidatorAgent":
-                        agent = agent_cls({}, llm_backend=backend_fn)
-                    elif agent_choice == "GuardianInterceptorAgent":
-                        agent = agent_cls(llm_backend=backend_fn)
-                    else:
-                        agent = agent_cls(llm_backend=backend_fn)
-                    result = agent.process_event(
-                        {"event": event_type, "payload": payload}
-                    )
-                    st.session_state["agent_output"] = result
-                    st.success("Agent executed")
-                except Exception as exc:
-                    st.session_state["agent_output"] = {"error": str(exc)}
-                    alert(f"Agent error: {exc}", "error")
+                with st.spinner("Working on it..."):
+                    try:
+                        if agent_choice == "CI_PRProtectorAgent":
+                            talker = backend_fn or (lambda p: p)
+                            agent = agent_cls(talker, llm_backend=backend_fn)
+                        elif agent_choice == "MetaValidatorAgent":
+                            agent = agent_cls({}, llm_backend=backend_fn)
+                        elif agent_choice == "GuardianInterceptorAgent":
+                            agent = agent_cls(llm_backend=backend_fn)
+                        else:
+                            agent = agent_cls(llm_backend=backend_fn)
+                        result = agent.process_event(
+                            {"event": event_type, "payload": payload}
+                        )
+                        st.session_state["agent_output"] = result
+                        st.toast("Success!")
+                    except Exception as exc:
+                        st.session_state["agent_output"] = {"error": str(exc)}
+                        alert(f"Agent error: {exc}", "error")
 
     if st.session_state.get("agent_output") is not None:
         st.subheader("Agent Output")
