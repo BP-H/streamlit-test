@@ -50,11 +50,46 @@ def render_proposals_tab() -> None:
 
     with st.form("create_proposal_form"):
         st.write("Create Proposal")
-        title = st.text_input("Title")
-        description = st.text_area("Description")
-        author_id = st.number_input("Author ID", value=1, step=1)
-        group_id = st.text_input("Group ID")
-        voting_deadline = st.date_input("Voting Deadline")
+        lc, rc = st.columns([1, 3])
+        with lc:
+            st.write("Title")
+        with rc:
+            title = st.text_input("Title", label_visibility="collapsed")
+
+        lc, rc = st.columns([1, 3])
+        with lc:
+            st.write("Description")
+        with rc:
+            description = st.text_area(
+                "Description",
+                label_visibility="collapsed",
+            )
+
+        lc, rc = st.columns([1, 3])
+        with lc:
+            st.write("Author ID")
+        with rc:
+            author_id = st.number_input(
+                "Author ID",
+                value=1,
+                step=1,
+                label_visibility="collapsed",
+            )
+
+        lc, rc = st.columns([1, 3])
+        with lc:
+            st.write("Group ID")
+        with rc:
+            group_id = st.text_input("Group ID", label_visibility="collapsed")
+
+        lc, rc = st.columns([1, 3])
+        with lc:
+            st.write("Voting Deadline")
+        with rc:
+            voting_deadline = st.date_input(
+                "Voting Deadline", label_visibility="collapsed"
+            )
+
         submitted = st.form_submit_button("Create")
     if submitted:
         payload = {
@@ -73,15 +108,48 @@ def render_proposals_tab() -> None:
     with st.form("vote_proposal_form"):
         st.write("Vote on Proposal")
         ids = [p.get("id") for p in proposals]
-        prop_id = (
-            st.selectbox("Proposal", ids)
-            if ids
-            else st.number_input("Proposal ID", value=1, step=1)
-        )
-        harmonizer_id = st.number_input(
-            "Harmonizer ID", value=1, step=1, key="harmonizer_id_vote"
-        )
-        vote_choice = st.selectbox("Vote", ["yes", "no", "abstain"])
+
+        lc, rc = st.columns([1, 3])
+        with lc:
+            st.write("Proposal")
+        with rc:
+            prop_id = (
+                st.selectbox(
+                    "Proposal",
+                    ids,
+                    label_visibility="collapsed",
+                )
+                if ids
+                else st.number_input(
+                    "Proposal ID",
+                    value=1,
+                    step=1,
+                    label_visibility="collapsed",
+                )
+            )
+
+        lc, rc = st.columns([1, 3])
+        with lc:
+            st.write("Harmonizer ID")
+        with rc:
+            harmonizer_id = st.number_input(
+                "Harmonizer ID",
+                value=1,
+                step=1,
+                key="harmonizer_id_vote",
+                label_visibility="collapsed",
+            )
+
+        lc, rc = st.columns([1, 3])
+        with lc:
+            st.write("Vote")
+        with rc:
+            vote_choice = st.selectbox(
+                "Vote",
+                ["yes", "no", "abstain"],
+                label_visibility="collapsed",
+            )
+
         vote_sub = st.form_submit_button("Submit Vote")
     if vote_sub:
         payload = {
@@ -117,8 +185,27 @@ def render_governance_tab() -> None:
 
     with st.form("record_vote_form"):
         st.write("Record Vote")
-        species = st.selectbox("Species", ["human", "ai", "company"])
-        extra_json = st.text_input("Extra Fields (JSON)", value="{}")
+
+        lc, rc = st.columns([1, 3])
+        with lc:
+            st.write("Species")
+        with rc:
+            species = st.selectbox(
+                "Species",
+                ["human", "ai", "company"],
+                label_visibility="collapsed",
+            )
+
+        lc, rc = st.columns([1, 3])
+        with lc:
+            st.write("Extra Fields (JSON)")
+        with rc:
+            extra_json = st.text_input(
+                "Extra Fields (JSON)",
+                value="{}",
+                label_visibility="collapsed",
+            )
+
         submit = st.form_submit_button("Record")
     if submit:
         try:
@@ -205,12 +292,14 @@ def render_logs_tab() -> None:
 
 def render_voting_tab() -> None:
     """High level tab combining proposal and vote management."""
-    sub1, sub2, sub3, sub4 = st.tabs([
-        "Proposal Hub",
-        "Governance",
-        "Agent Ops",
-        "Logs",
-    ])
+    sub1, sub2, sub3, sub4 = st.tabs(
+        [
+            "Proposal Hub",
+            "Governance",
+            "Agent Ops",
+            "Logs",
+        ]
+    )
     with sub1:
         render_proposals_tab()
     with sub2:
