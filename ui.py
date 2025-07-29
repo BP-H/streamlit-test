@@ -64,6 +64,35 @@ from api_key_input import render_api_key_ui, render_simulation_stubs
 from ui_utils import load_rfc_entries, parse_summary, summarize_text, render_main_ui
 
 
+def inject_global_styles() -> None:
+    """Inject modern fonts and layout styles."""
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        html, body, .stApp {font-family: 'Inter', sans-serif;}
+        .top-nav {background:#ffffff;border-bottom:1px solid #eee;padding:0.5rem 1rem;display:flex;gap:1rem;}
+        .top-nav a {text-decoration:none;color:#0366d6;font-weight:600;}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_landing_page() -> None:
+    """Display a simple welcoming hero section."""
+    centered_container()
+    st.markdown(
+        """
+        <div class="hero" style="text-align:center;padding:4rem 0;">
+            <h1 style="font-size:3rem;margin-bottom:0.5rem;">Welcome to superNova_2177</h1>
+            <p style="font-size:1.25rem;color:#666;">Explore validators, governance and more.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def _run_async(coro):
     """Execute ``coro`` regardless of event loop state."""
     try:
@@ -880,14 +909,12 @@ def render_validation_ui() -> None:
         st.subheader("Agent Output")
         st.json(st.session_state["agent_output"])
 
-import streamlit as st
-
 def main() -> None:
     """Entry point for the Streamlit UI."""
-    import streamlit as st
     from importlib import import_module
 
     st.set_page_config(page_title="superNova_2177", layout="wide")
+    inject_global_styles()
 
     # Unified health check using query params or PATH_INFO
     params = st.query_params
@@ -916,22 +943,28 @@ def main() -> None:
         return
 
     render_main_ui()
-    choice = st.sidebar.selectbox("Page", page_files)
-
-    try:
-        module = import_module(f"transcendental_resonance_frontend.pages.{choice}")
-        page_main = getattr(module, "main", None)
-        if callable(page_main):
-            page_main()
-        else:
-            st.error(f"Page '{choice}' is missing a main() function.")
-    except Exception as exc:
-        import traceback
-        tb = traceback.format_exc()
-        st.error(f"❌ Error loading page '{choice}':")
-        st.text(tb)
-        print(tb, file=sys.stderr)
-
+    display_names = [p.replace("_", " ").title() for p in page_files]
+    tabs = st.tabs(display_names)
+    modules = {}
+    for page in page_files:
+        try:
+            modules[page] = import_module(
+                f"transcendental_resonance_frontend.pages.{page}"
+            )
+        except Exception as exc:
+            modules[page] = exc
+    for tab, page in zip(tabs, page_files):
+        module = modules.get(page)
+        with tab:
+            if isinstance(module, Exception):
+                st.error(f"Failed to load page '{page}': {module}")
+                continue
+            page_main = getattr(module, "main", None)
+            if callable(page_main):
+                page_main()
+            else:
+                st.error(f"Page '{page}' is missing a main() function.")
+    
 
 if __name__ == "__main__":
     main()

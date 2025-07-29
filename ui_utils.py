@@ -49,9 +49,17 @@ def load_rfc_entries(rfc_dir: Path):
 
 
 def render_main_ui() -> None:
-    """Render a minimal placeholder for the Streamlit dashboard."""
-    st.title("superNova_2177")
-    st.write("UI initialization complete.")
+    """Render a simple modern header for the dashboard."""
+    st.markdown(
+        """
+        <div style="background:linear-gradient(90deg,#6e45e2,#88d3ce);"
+        "padding:2rem;border-radius:8px;margin-bottom:1rem;text-align:center">
+            <h1 style="color:#fff;margin-bottom:0;">superNova_2177</h1>
+            <p style="color:#eee;margin-top:0;">Experimental coordination dashboard</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 __all__ = [
