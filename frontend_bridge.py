@@ -17,6 +17,8 @@ from typing import Any, Awaitable, Callable, Dict, Union
 import logging
 import inspect
 
+from config import Config
+
 
 # background task support
 class BackgroundTask:
@@ -91,7 +93,7 @@ from protocols.core.job_queue_agent import JobQueueAgent
 queue_agent = JobQueueAgent()
 
 
-async def dispatch_route(
+async def _dispatch_route(
     name: str, payload: Dict[str, Any], **kwargs: Any
 ) -> Dict[str, Any]:
     """Dispatch ``payload`` to the registered handler."""
@@ -217,51 +219,60 @@ register_route_once(
 )
 
 
-# Prediction-related routes
-import prediction.ui_hook  # noqa: F401 - route registration
-import prediction_manager.ui_hook  # noqa: F401 - route registration
-import vote_registry.ui_hook  # noqa: F401 - route registration
-import optimization.ui_hook  # noqa: F401 - route registration
-import causal_graph.ui_hook  # noqa: F401 - route registration
-import social.ui_hook  # noqa: F401 - route registration
-import social.follow_ui_hook  # noqa: F401 - route registration
-import quantum_sim.ui_hook  # noqa: F401 - route registration
-import virtual_diary.ui_hook  # noqa: F401 - route registration
-import proposals.ui_hook  # noqa: F401 - route registration
+if Config.ENABLE_GOVERNANCE_ROUTES:
+    # Prediction-related routes
+    import prediction.ui_hook  # noqa: F401 - route registration
+    import prediction_manager.ui_hook  # noqa: F401 - route registration
+    import vote_registry.ui_hook  # noqa: F401 - route registration
+    import optimization.ui_hook  # noqa: F401 - route registration
+    import causal_graph.ui_hook  # noqa: F401 - route registration
+    import social.ui_hook  # noqa: F401 - route registration
+    import social.follow_ui_hook  # noqa: F401 - route registration
+    import quantum_sim.ui_hook  # noqa: F401 - route registration
+    import virtual_diary.ui_hook  # noqa: F401 - route registration
+    import proposals.ui_hook  # noqa: F401 - route registration
 
+    # Protocol agent management routes
+    from protocols.api_bridge import (
+        launch_agents_api,
+        list_agents_api,
+        step_agents_api,
+    )
 
-# Protocol agent management routes
-from protocols.api_bridge import launch_agents_api, list_agents_api, step_agents_api
+if Config.ENABLE_GOVERNANCE_ROUTES:
+    register_route_once(
+        "list_agents",
+        list_agents_api,
+        "List available protocol agents",
+        "protocols",
+    )
+    register_route_once(
+        "launch_agents",
+        launch_agents_api,
+        "Launch protocol agents",
+        "protocols",
+    )
+    register_route_once(
+        "step_agents",
+        step_agents_api,
+        "Advance running protocol agents",
+        "protocols",
+    )
 
-register_route_once(
-    "list_agents",
-    list_agents_api,
-    "List available protocol agents",
-    "protocols",
-)
-register_route_once(
-    "launch_agents",
-    launch_agents_api,
-    "Launch protocol agents",
-    "protocols",
-)
-register_route_once(
-    "step_agents",
-    step_agents_api,
-    "Advance running protocol agents",
-    "protocols",
-)
+    # Advanced operations
 
+    # Import additional UI hooks for side effects (route registration)
+    import network.ui_hook  # noqa: F401,E402 - registers network analysis routes
+    import validators.ui_hook  # noqa: F401,E402 - registers validator reputation routes
+    import audit.ui_hook  # noqa: F401,E402 - exposes audit utilities
+    import audit.explainer_ui_hook  # noqa: F401,E402 - audit explanation utilities
+    import introspection.ui_hook  # noqa: F401,E402 - registers introspection routes
+    import protocols.ui_hook  # noqa: F401,E402 - registers cross-universe bridge routes
+    import temporal.ui_hook  # noqa: F401,E402 - temporal consistency routes
+    import protocols.agents.guardian_ui_hook  # noqa: F401,E402 - guardian agent routes
+    import protocols.agents.harmony_ui_hook  # noqa: F401,E402 - harmony synth route
 
-# Advanced operations
-
-# Import additional UI hooks for side effects (route registration)
-import network.ui_hook  # noqa: F401,E402 - registers network analysis routes
-import validators.ui_hook  # noqa: F401,E402 - registers validator reputation routes
-import audit.ui_hook  # noqa: F401,E402 - exposes audit utilities
-import audit.explainer_ui_hook  # noqa: F401,E402 - audit explanation utilities
-import introspection.ui_hook  # noqa: F401,E402 - registers introspection routes
-import protocols.ui_hook  # noqa: F401,E402 - registers cross-universe bridge routes
-import temporal.ui_hook  # noqa: F401,E402 - temporal consistency routes
-import protocols.agents.guardian_ui_hook  # noqa: F401,E402 - guardian agent routes
-import protocols.agents.harmony_ui_hook  # noqa: F401,E402 - harmony synth route
+if Config.ENABLE_GOVERNANCE_ROUTES:
+    dispatch_route = _dispatch_route
+else:  # pragma: no cover - optional routes
+    dispatch_route = None  # type: ignore

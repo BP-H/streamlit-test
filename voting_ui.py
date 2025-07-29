@@ -7,6 +7,7 @@ import streamlit as st
 import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder
 from streamlit_helpers import alert, inject_global_styles
+from config import Config
 
 try:
     from frontend_bridge import dispatch_route
@@ -27,7 +28,7 @@ def _run_async(coro):
 
 def render_proposals_tab() -> None:
     """Display proposal creation, listing and voting controls."""
-    if dispatch_route is None:
+    if not Config.ENABLE_GOVERNANCE_ROUTES:
         alert(
             "Governance routes not enabled—enable them in config.",
             "warning",
@@ -115,7 +116,7 @@ def render_proposals_tab() -> None:
 
 def render_governance_tab() -> None:
     """Display generic vote registry operations."""
-    if dispatch_route is None:
+    if not Config.ENABLE_GOVERNANCE_ROUTES:
         alert(
             "Governance routes not enabled—enable them in config.",
             "warning",
@@ -162,7 +163,7 @@ def render_governance_tab() -> None:
 
 def render_agent_ops_tab() -> None:
     """Expose protocol agent management routes."""
-    if dispatch_route is None:
+    if not Config.ENABLE_GOVERNANCE_ROUTES:
         alert(
             "Governance routes not enabled—enable them in config.",
             "warning",
@@ -217,7 +218,7 @@ def render_agent_ops_tab() -> None:
 
 def render_logs_tab() -> None:
     """Provide simple audit trace explanation."""
-    if dispatch_route is None:
+    if not Config.ENABLE_GOVERNANCE_ROUTES:
         alert(
             "Governance routes not enabled—enable them in config.",
             "warning",

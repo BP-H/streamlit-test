@@ -87,6 +87,8 @@ class Config:
     # Added for optional quantum tunneling simulations
     QUANTUM_TUNNELING_ENABLED: bool = True
     FUZZY_ANALOG_COMPUTATION_ENABLED: bool = False
+    # Toggle governance proposal and voting routes
+    ENABLE_GOVERNANCE_ROUTES: bool = False
 
     # FUSED: Added fields from v01_grok15.py Config
     GENESIS_BONUS_DECAY_YEARS: int = 4
