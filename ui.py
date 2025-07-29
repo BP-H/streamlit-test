@@ -13,6 +13,7 @@ import logging
 import math
 import sys
 import traceback
+from components.modern_ui import load_css
 
 # Default port controlled by start.sh via STREAMLIT_PORT; old setting kept
 # for reference but disabled.
@@ -61,7 +62,7 @@ from streamlit_helpers import (
 )
 
 # Accent color used for button styling
-ACCENT_COLOR = "#4f8bf9"
+ACCENT_COLOR = "#00D2FF"
 from api_key_input import render_api_key_ui, render_simulation_stubs
 from ui_utils import load_rfc_entries, parse_summary, summarize_text, render_main_ui
 
@@ -857,6 +858,9 @@ def main() -> None:
     from importlib import import_module
 
     st.set_page_config(page_title="superNova_2177", layout="wide")
+
+    # Load custom CSS for modern styling
+    load_css()
 
     # Inject global button styles
     st.markdown(

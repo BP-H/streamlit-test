@@ -1,0 +1,10 @@
+/* STRICTLY A SOCIAL MEDIA PLATFORM */
+/* Intellectual Property & Artistic Inspiration */
+/* Legal & Ethical Safeguards */
+
+.card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 12px;
+    backdrop-filter: blur(4px);
+}

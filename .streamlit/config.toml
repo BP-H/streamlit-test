@@ -2,10 +2,10 @@
 # Intellectual Property & Artistic Inspiration
 # Legal & Ethical Safeguards
 [theme]
-# Custom professional palette for the Streamlit app
 base = "dark"
-primaryColor = "#0A84FF"
-backgroundColor = "#1e1e1e"
-secondaryBackgroundColor = "#1e1e1e"
-textColor = "#f0f0f0"
-font = "Iosevka"
+primaryColor = "#00D2FF"
+backgroundColor = "#0a0a0a"
+secondaryBackgroundColor = "#1a1a1a"
+textColor = "#ffffff"
+font = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+
