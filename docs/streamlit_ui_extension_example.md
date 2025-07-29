@@ -13,8 +13,7 @@ with centered_container():
     st.write("Hello World")
 ```
 
-Running this example will render a page with the standard header, a theme switcher
-radio button and a centered content area.
+Running this example will render a page with the standard header, a theme switcher drop-down and a centered content area.
 
 The Streamlit app also supports a lightweight health check for CI or uptime
 monitors. Visiting `/?healthz=1` responds with `ok` and stops execution. This

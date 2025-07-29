@@ -9,7 +9,7 @@ It is available through `streamlit_helpers.theme_selector()` and sets the
 ```python
 from streamlit_helpers import theme_selector
 
-# Add a radio selector to switch themes
+# Add a drop-down selector to switch themes
 theme_selector("Theme")
 ```
 
