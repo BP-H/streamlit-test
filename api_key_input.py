@@ -1,3 +1,6 @@
+# STRICTLY A SOCIAL MEDIA PLATFORM
+# Intellectual Property & Artistic Inspiration
+# Legal & Ethical Safeguards
 """Reusable helpers for API key input in the Streamlit UI."""
 
 from __future__ import annotations
