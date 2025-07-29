@@ -24,6 +24,45 @@ BOX_CSS = """
 </style>
 """
 
+PROPOSAL_CSS = """
+<style>
+.app-container {
+    padding: 1rem;
+}
+.card {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+.button-primary {
+    background-color: #1DA1F2;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+}
+.button-primary:hover {
+    background-color: #0d8aee;
+    color: #fff;
+}
+input, textarea, select {
+    border-radius: 8px !important;
+    padding: 0.5rem !important;
+}
+.ag-theme-streamlit .ag-header {
+    background-color: #1DA1F2;
+    color: #fff;
+    font-weight: bold;
+}
+.ag-theme-streamlit {
+    max-height: 400px;
+    overflow: auto;
+}
+</style>
+"""
+
 
 def _run_async(coro):
     try:
@@ -44,9 +83,25 @@ def render_proposals_tab() -> None:
             "warning",
         )
         return
-    with st.container():
-        st.markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
-        if st.button("Refresh Proposals"):
+
+    st.markdown(PROPOSAL_CSS + "<div class='app-container'>", unsafe_allow_html=True)
+    left_col, right_col = st.columns([1, 1])
+
+    with left_col:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        with st.form("create_proposal_form"):
+            st.write("Create Proposal")
+            title = st.text_input("Title")
+            description = st.text_area("Description")
+            author_id = st.number_input("Author ID", value=1, step=1)
+            group_id = st.text_input("Group ID")
+            voting_deadline = st.date_input("Voting Deadline")
+            submitted = st.form_submit_button("Create", type="primary")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with right_col:
+        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        if st.button("Refresh Proposals", type="primary"):
             with st.spinner("Working on it..."):
                 try:
                     res = _run_async(dispatch_route("list_proposals", {}))
@@ -55,31 +110,45 @@ def render_proposals_tab() -> None:
                 except Exception as exc:
                     alert(f"Failed to load proposals: {exc}", "error")
 
-    proposals = st.session_state.get("proposals_cache", [])
-    if proposals:
-        simple = [
-            {
-                "id": p.get("id"),
-                "title": p.get("title"),
-                "status": p.get("status"),
-                "deadline": p.get("voting_deadline"),
-            }
-            for p in proposals
-        ]
-        df = pd.DataFrame(simple)
-        gb = GridOptionsBuilder.from_dataframe(df)
-        gb.configure_default_column(filter=True, sortable=True, resizable=True)
-        AgGrid(df, gridOptions=gb.build(), theme="streamlit", fit_columns_on_grid_load=True)
+        proposals = st.session_state.get("proposals_cache", [])
+        if proposals:
+            simple = [
+                {
+                    "id": p.get("id"),
+                    "title": p.get("title"),
+                    "status": p.get("status"),
+                    "deadline": p.get("voting_deadline"),
+                }
+                for p in proposals
+            ]
+            df = pd.DataFrame(simple)
+            gb = GridOptionsBuilder.from_dataframe(df)
+            gb.configure_default_column(filter=True, sortable=True, resizable=True)
+            AgGrid(
+                df,
+                gridOptions=gb.build(),
+                theme="streamlit",
+                fit_columns_on_grid_load=True,
+                height=400,
+            )
 
-    with st.container():
-        with st.form("create_proposal_form"):
-            st.write("Create Proposal")
-            title = st.text_input("Title")
-            description = st.text_area("Description")
-            author_id = st.number_input("Author ID", value=1, step=1)
-            group_id = st.text_input("Group ID")
-            voting_deadline = st.date_input("Voting Deadline")
-            submitted = st.form_submit_button("Create")
+        with st.form("vote_proposal_form"):
+            st.write("Vote on Proposal")
+            ids = [p.get("id") for p in proposals]
+            prop_id = (
+                st.selectbox("Proposal", ids)
+                if ids
+                else st.number_input("Proposal ID", value=1, step=1)
+            )
+            harmonizer_id = st.number_input(
+                "Harmonizer ID", value=1, step=1, key="harmonizer_id_vote"
+            )
+            vote_choice = st.selectbox("Vote", ["yes", "no", "abstain"])
+            vote_sub = st.form_submit_button("Submit Vote", type="primary")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
     if submitted:
         payload = {
             "title": title,
@@ -96,20 +165,6 @@ def render_proposals_tab() -> None:
             except Exception as exc:
                 alert(f"Create failed: {exc}", "error")
 
-    with st.container():
-        with st.form("vote_proposal_form"):
-            st.write("Vote on Proposal")
-            ids = [p.get("id") for p in proposals]
-            prop_id = (
-                st.selectbox("Proposal", ids)
-                if ids
-                else st.number_input("Proposal ID", value=1, step=1)
-            )
-            harmonizer_id = st.number_input(
-                "Harmonizer ID", value=1, step=1, key="harmonizer_id_vote"
-            )
-            vote_choice = st.selectbox("Vote", ["yes", "no", "abstain"])
-            vote_sub = st.form_submit_button("Submit Vote")
     if vote_sub:
         payload = {
             "proposal_id": prop_id,
@@ -123,7 +178,6 @@ def render_proposals_tab() -> None:
                 st.toast("Success!")
             except Exception as exc:
                 alert(f"Vote failed: {exc}", "error")
-        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def render_governance_tab() -> None:
