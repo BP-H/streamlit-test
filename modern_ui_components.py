@@ -9,11 +9,13 @@ import streamlit as st
 from typing import Optional, Dict
 from uuid import uuid4
 from streamlit_helpers import safe_container
+from pathlib import Path
 
 from modern_ui import inject_modern_styles
 
 try:
     from streamlit_option_menu import option_menu
+
     USE_OPTION_MENU = True
 except Exception:  # pragma: no cover - optional dependency
     option_menu = None  # type: ignore
@@ -105,7 +107,6 @@ SIDEBAR_STYLES = """
 """
 
 
-
 def render_modern_layout() -> None:
     """Apply global styles and base glassmorphism containers."""
     inject_modern_styles()
@@ -159,7 +160,19 @@ def render_modern_sidebar(
     if container is None:
         container = st.sidebar
 
-    opts = list(pages.keys())
+    # Validate that page paths exist if they look like file paths
+    valid_pages: Dict[str, str] = {}
+    for label, path in pages.items():
+        if ("/" in path or path.endswith(".py")) and not Path(path).exists():
+            st.warning(f"Page not found: {path}")
+            continue
+        valid_pages[label] = path
+
+    if not valid_pages:
+        st.error("No valid pages available")
+        return ""
+
+    opts = list(valid_pages.keys())
     icon_map = icons or {}
 
     # Default session state for selected page
@@ -187,7 +200,9 @@ def render_modern_sidebar(
                     icons=[icon_map.get(o, "dot") for o in opts],
                     orientation="horizontal" if horizontal else "vertical",
                     key=widget_key,
-                    default_index=opts.index(st.session_state.get(session_key, opts[0])),
+                    default_index=opts.index(
+                        st.session_state.get(session_key, opts[0])
+                    ),
                 )
             elif horizontal:
                 # Render as horizontal buttons
@@ -206,7 +221,9 @@ def render_modern_sidebar(
                     index=opts.index(st.session_state.get(session_key, opts[0])),
                 )
                 choice = opts[
-                    [f"{icon_map.get(o, '')} {o}".strip() for o in opts].index(choice_disp)
+                    [f"{icon_map.get(o, '')} {o}".strip() for o in opts].index(
+                        choice_disp
+                    )
                 ]
 
         except Exception:

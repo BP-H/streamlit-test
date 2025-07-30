@@ -57,11 +57,8 @@ def render_sidebar_nav(*args, **kwargs):
     return _base_render_sidebar_nav(*args, **kwargs)
 
 
-
 # Backwards compatibility alias
 render_modern_sidebar = render_sidebar_nav
-
-
 
 
 # Utility path handling
@@ -509,7 +506,6 @@ def render_sidebar() -> str:
         choice = render_sidebar_nav(PAGES, icons=NAV_ICONS, session_key="active_page")
 
     return choice
-
 
 
 def load_css() -> None:
@@ -1263,7 +1259,10 @@ def main() -> None:
         )
         # Map labels to Streamlit URL paths, not file system paths, for
         # ``st.sidebar.page_link`` compatibility
-        page_paths = {label: f"/{mod}" for label, mod in PAGES.items()}
+        page_paths = {
+            label: os.path.relpath(PAGES_DIR / f"{mod}.py", start=Path.cwd())
+            for label, mod in PAGES.items()
+        }
 
         # Determine page from query params and sidebar selection
         try:
@@ -1288,18 +1287,14 @@ def main() -> None:
             session_key="active_page",
         )
 
-
         # Default to Validation page if nothing selected
         if not choice:
             choice = "Validation"
-
 
         try:
             st.query_params["page"] = choice
         except AttributeError:
             st.experimental_set_query_params(page=choice)
-
-
 
         # Page layout: left for tools, center for content
         left_col, center_col, _ = st.columns([1, 3, 1])
@@ -1427,8 +1422,6 @@ def main() -> None:
 
             render_stats_section()
             st.markdown(f"**Runs:** {st.session_state.get('run_count', 0)}")
-
-
 
     except Exception as exc:
         logger.critical("Unhandled error in main: %s", exc, exc_info=True)
