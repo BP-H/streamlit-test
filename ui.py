@@ -1,9 +1,9 @@
-import os
-import streamlit as st  # ensure Streamlit is imported early
-
 # STRICTLY A SOCIAL MEDIA PLATFORM
 # Intellectual Property & Artistic Inspiration
 # Legal & Ethical Safeguards
+
+import os
+import streamlit as st  # ensure Streamlit is imported early
 
 import asyncio
 import difflib
@@ -382,6 +382,9 @@ def run_analysis(validations, *, layout: str = "force"):
     with st.spinner("Running analysis..."):
         result = analyze_validation_integrity(validations)
 
+    stats = {"runs": len(validations), "proposals": result.get("num_proposals", "N/A")}
+    render_stats_section(stats)
+
     st.subheader("Validations")
     for entry in validations:
         render_validation_card(entry)
@@ -606,7 +609,6 @@ def render_validation_ui(
             return
 
         # Render content directly
-        st.title("🚀 superNova_2177 Validation Analyzer")
         
         # Demo mode toggle
         col1, col2 = st.columns([3, 1])
@@ -616,16 +618,8 @@ def render_validation_ui(
         if demo_mode:
             st.info("🎮 Running in Demo Mode - Using sample data for testing")
             
-            # Sample stats
-            col1, col2, col3, col4 = st.columns(4)
-            with col1:
-                st.metric("Runs", "0", delta="0")
-            with col2:
-                st.metric("Proposals", "12", delta="+2")
-            with col3:
-                st.metric("Success Rate", "94.2%", delta="+1.2%")
-            with col4:
-                st.metric("Accuracy", "98.5%", delta="+0.3%")
+            stats = {"runs": 0, "proposals": 12}
+            render_stats_section(stats)
             
             # Sample validation form
             st.subheader("📋 Validation Input")
@@ -670,6 +664,9 @@ def main() -> None:
             initial_sidebar_state="expanded"
         )
 
+        main_area = render_modern_layout()
+        _ = render_modern_sidebar({"Validation": "validation"})
+
         # Load CSS safely
         try:
             from components.modern_ui import load_css
@@ -693,18 +690,18 @@ def main() -> None:
                 "errors": []
             })
 
-        # Theme selection (unique key)
-        theme_selector("Theme", key_suffix="main")
+        with main_area:
+            theme_selector("Theme", key_suffix="main")
+            render_modern_header("🚀 superNova_2177 Validation Analyzer")
 
-        # Render main UI with error recovery
-        try:
-            render_validation_ui()
-        except Exception as e:
-            st.error(f"UI Rendering Error: {str(e)}")
-            st.code(f"Error details: {repr(e)}")
-            if st.button("🔄 Reset Application", key="reset_main_ui"):
-                st.session_state.clear()
-                st.rerun()
+            try:
+                render_validation_ui()
+            except Exception as e:
+                st.error(f"UI Rendering Error: {str(e)}")
+                st.code(f"Error details: {repr(e)}")
+                if st.button("🔄 Reset Application", key="reset_main_ui"):
+                    st.session_state.clear()
+                    st.rerun()
 
     except Exception as e:
         st.error(f"Critical Application Error: {str(e)}")

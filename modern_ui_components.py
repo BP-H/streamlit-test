@@ -10,13 +10,13 @@ import streamlit as st
 from streamlit_helpers import inject_global_styles
 
 
-def render_modern_layout() -> None:
-    """Apply global styles and base glassmorphism containers."""
+def render_modern_layout(max_width: str = "900px") -> "st.delta_generator.DeltaGenerator":
+    """Apply global styles and return a centered container without Streamlit padding."""
     inject_global_styles()
     st.markdown(
-        """
+        f"""
         <style>
-        .glass-card {
+        .glass-card {{
             background: rgba(255,255,255,0.3);
             border-radius: 16px;
             border: 1px solid rgba(255,255,255,0.4);
@@ -25,29 +25,50 @@ def render_modern_layout() -> None:
             padding: 1rem;
             margin-bottom: 1rem;
             transition: transform 0.2s ease-in-out;
-        }
-        .glass-card:hover { transform: translateY(-2px); }
+        }}
+        .glass-card:hover {{ transform: translateY(-2px); }}
+        .main .block-container {{
+            padding-top: 0;
+            padding-bottom: 0;
+            padding-left: 0;
+            padding-right: 0;
+            max-width: {max_width};
+            margin: auto;
+        }}
         </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    return st.container()
+
+
+def render_modern_header(title: str) -> None:
+    """Display a premium gradient header with subtle blur."""
+    st.markdown(
+        f"""
+        <div class='glass-card' style="text-align:center;background:linear-gradient(90deg,rgba(255,255,255,0.4),rgba(255,255,255,0.1));backdrop-filter:blur(6px);padding:1rem 1.5rem;">
+            <h2 style='margin:0'>{title}</h2>
+        </div>
         """,
         unsafe_allow_html=True,
     )
 
 
-def render_modern_header(title: str) -> None:
-    """Display a translucent header."""
-    st.markdown(
-        f"<div class='glass-card' style='text-align:center'>"
-        f"<h2 style='margin:0'>{title}</h2>"
-        "</div>",
-        unsafe_allow_html=True,
-    )
-
-
 def render_modern_sidebar(pages: dict[str, str]) -> str:
-    """Render a sidebar navigation menu and return the selected option."""
+    """Render a sidebar with vertical navigation and return the selected label."""
     with st.sidebar:
-        st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-        choice = st.radio("Navigate", list(pages.keys()))
+        st.markdown(
+            """
+            <style>
+            .modern-nav {display:flex;flex-direction:column;gap:0.5rem;}
+            .modern-nav label {padding:0.25rem 0.5rem;border-radius:6px;transition:background 0.2s;}
+            .modern-nav label:hover {background:rgba(0,0,0,0.05);}
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.markdown("<div class='glass-card modern-nav'>", unsafe_allow_html=True)
+        choice = st.radio("Navigate", list(pages.keys()), label_visibility="collapsed")
         st.markdown("</div>", unsafe_allow_html=True)
     return choice
 

@@ -102,11 +102,11 @@ def inject_global_styles() -> None:
     st.markdown(
         """
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Poppins:wght@400;600&display=swap');
         body, .stApp {
             background-color: var(--background, #F0F2F6);
             color: var(--text-color, #333333);
-            font-family: var(--font-family, 'Inter', sans-serif);
+            font-family: var(--font-family, 'Poppins', sans-serif);
         }
         .custom-container {
             padding: 1rem;
@@ -136,13 +136,20 @@ def inject_global_styles() -> None:
             border-radius: 6px;
             background: linear-gradient(90deg, var(--primary-color, #0A84FF), #2F70FF);
             color: var(--text-color, #FFFFFF);
-            transition: filter 0.2s ease-in-out;
+            transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
             padding: 0.4rem 1rem;
             font-weight: 600;
             border: none;
         }
         .stButton>button:hover {
+            transform: scale(1.02);
             filter: brightness(1.1);
+        }
+        a {
+            transition: color 0.2s ease-in-out;
+        }
+        a:hover {
+            color: var(--primary-color, #0A84FF);
         }
         </style>
         """,
