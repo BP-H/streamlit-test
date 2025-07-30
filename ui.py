@@ -75,6 +75,9 @@ PAGES = {
     "Profile": "profile",
 }
 
+# Default emojis for the navigation menu
+NAV_ICONS = ["✅", "📊", "🤖", "🎵", "💬", "👥", "👤"]
+
 
 # Toggle verbose output via ``UI_DEBUG_PRINTS``
 UI_DEBUG = os.getenv("UI_DEBUG_PRINTS", "1") != "0"
@@ -940,19 +943,7 @@ def render_validation_ui(
             label: os.path.relpath(PAGES_DIR / f"{mod}.py", start=Path.cwd())
             for label, mod in PAGES.items()
         }
-        ui_layout.render_navbar(
-            page_paths,
-            icons=[
-
-                "✅",
-                "📊",
-                "🤖",
-                "🎵",
-                "💬",
-                "👥",
-                "👤",
-            ],
-        )
+        ui_layout.render_navbar(page_paths, icons=NAV_ICONS)
 
         # Page layout
         left_col, center_col, right_col = main_container.columns([1, 3, 1])
@@ -1239,18 +1230,7 @@ def main() -> None:
             label: os.path.relpath(PAGES_DIR / f"{mod}.py", start=Path.cwd())
             for label, mod in PAGES.items()
         }
-        choice = ui_layout.render_navbar(
-            page_paths,
-            icons=[
-                "✅",
-                "📊",
-                "🤖",
-                "🎵",
-                "💬",
-                "👥",
-                "👤",
-            ],
-        )
+        choice = ui_layout.render_navbar(page_paths, icons=NAV_ICONS)
         
         left_col, center_col, right_col = st.columns([1, 3, 1])
         
