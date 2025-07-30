@@ -12,22 +12,13 @@ except Exception:  # pragma: no cover - optional dependency
     AgGrid = None  # type: ignore
     GridOptionsBuilder = None  # type: ignore
 from streamlit_helpers import alert, inject_global_styles
+from modern_ui_components import TAB_BOX_CSS
 
 try:
     from frontend_bridge import dispatch_route
 except Exception:  # pragma: no cover - optional dependency
     dispatch_route = None  # type: ignore
 
-BOX_CSS = """
-<style>
-.tab-box {
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-</style>
-"""
 
 
 def _sanitize_markdown(text: str) -> str:
@@ -35,11 +26,6 @@ def _sanitize_markdown(text: str) -> str:
     if isinstance(text, bytes):
         return text.decode("utf-8", "ignore")
     return text.encode("utf-8", "ignore").decode("utf-8", "ignore")
-
-
-def safe_markdown(text: str, **kwargs) -> None:
-    """Render markdown after sanitizing the input text."""
-    st.markdown(_sanitize_markdown(text), **kwargs)
 
 
 def _run_async(coro):
@@ -86,7 +72,7 @@ def render_proposals_tab(main_container=None) -> None:
             return
 
         safe_markdown(
-            BOX_CSS
+            TAB_BOX_CSS
             + """
             <style>
         .app-container { padding: 1rem; }
@@ -252,7 +238,7 @@ def render_governance_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+            safe_markdown(TAB_BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
             if st.button("Refresh Votes"):
                 with st.spinner("Working on it..."):
                     try:
@@ -317,7 +303,7 @@ def render_agent_ops_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+            safe_markdown(TAB_BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
             if st.button("Reload Agent List"):
                 with st.spinner("Working on it..."):
                     try:
@@ -385,7 +371,7 @@ def render_logs_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+            safe_markdown(TAB_BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
             trace_text = st.text_area("Audit Trace JSON", value="{}", height=200)
             if st.button("Explain Trace"):
                 try:

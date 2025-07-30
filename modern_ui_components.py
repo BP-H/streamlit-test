@@ -11,6 +11,21 @@ from typing import Optional
 
 from modern_ui import inject_modern_styles
 
+TAB_BOX_CSS = """
+<style>
+.tab-box {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s ease;
+}
+.tab-box:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+"""
+
 
 def render_modern_layout() -> None:
     """Apply global styles and base glassmorphism containers."""
@@ -102,4 +117,5 @@ __all__ = [
     "render_modern_sidebar",
     "render_validation_card",
     "render_stats_section",
+    "TAB_BOX_CSS",
 ]
