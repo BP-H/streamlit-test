@@ -1202,11 +1202,6 @@ def main() -> None:
             return
 
         try:
-            inject_modern_styles()
-        except Exception as exc:
-            logger.warning("CSS load failed: %s", exc)
-        
-        try:
             apply_theme(st.session_state["theme"])
         except Exception as exc:
             st.warning(f"Theme load failed: {exc}")
