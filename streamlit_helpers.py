@@ -14,6 +14,8 @@ from typing import Literal
 
 import streamlit as st
 from modern_ui import inject_modern_styles
+from contextlib import nullcontext
+from typing import Any, ContextManager
 
 
 def alert(
@@ -160,11 +162,23 @@ def centered_container(max_width: str = "900px") -> "st.delta_generator.DeltaGen
     return st.container()
 
 
+def safe_container(container: Any) -> ContextManager:
+    """Return ``container`` as a context manager or ``nullcontext`` fallback."""
+    try:
+        candidate = container() if callable(container) else container
+        if hasattr(candidate, "__enter__"):
+            return candidate
+    except Exception:
+        pass
+    return nullcontext()
+
+
 __all__ = [
     "alert",
     "header",
     "apply_theme",
     "theme_selector",
     "centered_container",
+    "safe_container",
     "inject_global_styles",
 ]

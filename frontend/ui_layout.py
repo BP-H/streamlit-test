@@ -33,8 +33,6 @@ def main_container() -> st.delta_generator.DeltaGenerator:
     """Return a container for the main content area."""
     return st.container()
 
-    return st.container()
-
 
 def sidebar_container() -> st.delta_generator.DeltaGenerator:
     """Return the sidebar container."""
