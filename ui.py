@@ -498,15 +498,28 @@ def render_sidebar() -> str:
 
     # Navigation
     icon_map = dict(zip(PAGES.keys(), NAV_ICONS))
+    page_paths = {}
+    for label, mod in PAGES.items():
+        fp = (
+            Path(__file__).resolve().parent
+            / "transcendental_resonance_frontend"
+            / "pages"
+            / f"{mod}.py"
+        )
+        if fp.exists():
+            page_paths[label] = str(fp.relative_to(Path.cwd()))
+        else:
+            logger.warning("Missing page file for %s: %s", label, fp)
+
     if "render_modern_sidebar" in globals():
         choice = render_modern_sidebar(
-            PAGES,
+            page_paths,
             container=st.sidebar,
             icons=icon_map,
             session_key="active_page",
         )
     else:
-        choice = render_sidebar_nav(PAGES, icons=NAV_ICONS, session_key="active_page")
+        choice = render_sidebar_nav(page_paths, icons=NAV_ICONS, session_key="active_page")
 
     return choice
 
@@ -1261,9 +1274,14 @@ def main() -> None:
             / "transcendental_resonance_frontend"
             / "pages"
         )
-        # Map labels to Streamlit URL paths, not file system paths, for
-        # ``st.sidebar.page_link`` compatibility
-        page_paths = {label: f"/{mod}" for label, mod in PAGES.items()}
+        # Build page path mapping and log any missing files
+        page_paths = {}
+        for label, mod in PAGES.items():
+            file_path = PAGES_DIR / f"{mod}.py"
+            if file_path.exists():
+                page_paths[label] = str(file_path.relative_to(Path.cwd()))
+            else:
+                logger.warning("Missing page file for %s: %s", label, file_path)
 
         # Determine page from query params and sidebar selection
         try:

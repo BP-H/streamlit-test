@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import streamlit as st
 from typing import Optional, Dict
+from pathlib import Path
 from uuid import uuid4
 from streamlit_helpers import safe_container
 
@@ -159,7 +160,19 @@ def render_modern_sidebar(
     if container is None:
         container = st.sidebar
 
-    opts = list(pages.keys())
+    # Filter out invalid page targets when a mapping of label -> path is provided
+    page_targets = pages
+    if isinstance(pages, dict):
+        valid_pages = {}
+        for label, target in pages.items():
+            path = target.lstrip("/")
+            if target.startswith("/") or Path(path).is_file():
+                valid_pages[label] = target
+            else:
+                st.sidebar.warning(f"Page not found: {label} ({target})")
+        if valid_pages:
+            page_targets = valid_pages
+    opts = list(page_targets.keys())
     icon_map = icons or {}
 
     # Default session state for selected page
