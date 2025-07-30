@@ -7,6 +7,7 @@ Example:
 
 import os
 import streamlit as st  # ensure Streamlit is imported early
+from types import SimpleNamespace
 
 # STRICTLY A SOCIAL MEDIA PLATFORM
 # Intellectual Property & Artistic Inspiration
@@ -476,6 +477,13 @@ def render_modern_profile_page() -> None:
 def render_sidebar() -> str:
     """Render the left sidebar with navigation and quick actions."""
     user = safe_get_user()
+    if user is None:
+        users = st.session_state.setdefault("users", [])
+        if users:
+            user = users[0]
+        else:
+            user = SimpleNamespace(username="Guest", profile_pic="https://via.placeholder.com/64")
+            users.append(user)
     avatar = getattr(user, "profile_pic", "https://via.placeholder.com/64")
     username = getattr(user, "username", "Guest")
 
@@ -981,6 +989,13 @@ def render_developer_tools() -> None:
         if "cosmic_nexus" in globals() and "Harmonizer" in globals():
             try:
                 user = safe_get_user()
+                if user is None:
+                    users = st.session_state.setdefault("users", [])
+                    if users:
+                        user = users[0]
+                    else:
+                        user = SimpleNamespace(username="Guest", profile_pic="https://via.placeholder.com/64")
+                        users.append(user)
                 if user and st.button("Fork with Mock Config"):
                     try:
                         fork_id = cosmic_nexus.fork_universe(
@@ -1061,17 +1076,21 @@ def render_developer_tools() -> None:
                     st.toast("Audit functionality unavailable", icon="⚠️")
 
             # Agent logs
+            logs = st.session_state.setdefault("logs", [])
             log_path = Path("logchain_main.log")
             if not log_path.exists():
                 log_path = Path("remix_logchain.log")
             if log_path.exists():
                 try:
                     lines = log_path.read_text().splitlines()[-100:]
-                    st.text("\n".join(lines))
+                    logs.extend(lines)
                 except Exception as exc:
                     st.error(f"Log read failed: {exc}")
             else:
+                logs.append("No log file found")
                 st.toast("No log file found")
+            if logs:
+                st.text("\n".join(logs[-100:]))
 
             # Inject event
             with st.expander("Inject Event", expanded=False):
