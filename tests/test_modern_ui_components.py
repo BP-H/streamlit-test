@@ -28,7 +28,9 @@ def test_render_modern_sidebar_default_container(monkeypatch):
         radio=dummy_radio,
         sidebar=types.SimpleNamespace(markdown=lambda *a, **k: None, radio=dummy_radio),
         session_state={},
+        error=lambda *a, **k: None,
     )
+    monkeypatch.setattr(mui.Path, "exists", lambda self: True)
     monkeypatch.setattr(mui, "USE_OPTION_MENU", False)
     monkeypatch.setattr(mui, "st", dummy_st)
     pages = {"A": "a", "B": "b"}
@@ -58,7 +60,9 @@ def test_render_modern_sidebar_state_changes(monkeypatch):
         radio=dummy_radio,
         sidebar=types.SimpleNamespace(markdown=lambda *a, **k: None, radio=dummy_radio),
         session_state=session,
+        error=lambda *a, **k: None,
     )
+    monkeypatch.setattr(mui.Path, "exists", lambda self: True)
 
     monkeypatch.setattr(mui, "st", dummy_st)
     pages = {"A": "a", "B": "b"}
@@ -76,4 +80,38 @@ def test_render_modern_sidebar_state_changes(monkeypatch):
     mui.render_modern_sidebar(pages)
     assert session["sidebar_nav"] == "B"
     assert session.calls == 1
+
+
+def test_render_modern_sidebar_filters_missing(tmp_path, monkeypatch):
+    monkeypatch.setattr(mui, "USE_OPTION_MENU", False)
+
+    valid = tmp_path / "a.py"
+    valid.write_text("pass")
+
+    warnings = []
+
+    def dummy_radio(label, options, key=None, index=0):
+        return options[index]
+
+    def warn(msg, icon=None):
+        warnings.append(msg)
+
+    dummy_st = types.SimpleNamespace(
+        markdown=lambda *a, **k: None,
+        radio=dummy_radio,
+        sidebar=types.SimpleNamespace(markdown=lambda *a, **k: None, radio=dummy_radio),
+        session_state={},
+        warning=warn,
+    )
+
+    monkeypatch.setattr(mui, "st", dummy_st)
+
+    pages = {
+        "A": str(valid.with_suffix("")),
+        "B": str(tmp_path / "missing"),
+    }
+
+    choice = mui.render_modern_sidebar(pages)
+    assert choice == "A"
+    assert warnings and "B" in warnings[0]
 
