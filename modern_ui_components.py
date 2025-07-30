@@ -48,12 +48,19 @@ def render_modern_sidebar(
     pages: dict[str, str],
     container: Optional[st.delta_generator.DeltaGenerator] = None,
 ) -> str:
-    """Render a navigation menu within ``container`` and return the selection."""
+    """Render a collapsible sidebar and return the selected page key."""
     if container is None:
         container = st
-    with container:
-        st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-        choice = st.radio("Navigate", list(pages.keys()))
+
+    with st.sidebar:
+        st.markdown(
+            "<div style='background:#2d2d2d;border:1px solid #3a3a3a;"
+            "padding:1rem;border-radius:8px'>",
+            unsafe_allow_html=True,
+        )
+        with st.expander("Navigation", expanded=True):
+            with container:
+                choice = st.radio("Navigate", list(pages.keys()))
         st.markdown("</div>", unsafe_allow_html=True)
     return choice
 
