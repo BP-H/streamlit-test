@@ -102,6 +102,27 @@ NAV_ICONS = ["✅", "📊", "🤖", "🎵", "💬", "👥", "👤"]
 UI_DEBUG = os.getenv("UI_DEBUG_PRINTS", "1") != "0"
 
 
+def validate_pages(
+    pages: dict[str, str] = PAGES, pages_dir: Path = PAGES_DIR
+) -> tuple[dict[str, str], list[str]]:
+    """Return existing page paths and list missing pages."""
+
+    page_paths: dict[str, str] = {}
+    missing: list[str] = []
+
+    for label, mod in pages.items():
+        file_path = pages_dir / f"{mod}.py"
+        if file_path.exists():
+            web_path = "/" + os.path.relpath(file_path, start=Path.cwd()).replace(
+                os.sep, "/"
+            )
+            page_paths[label] = web_path
+        else:
+            missing.append(label)
+
+    return page_paths, missing
+
+
 def log(msg: str) -> None:
     if UI_DEBUG:
         print(msg, file=sys.stderr)
@@ -1249,35 +1270,10 @@ def main() -> None:
         )
 
         # Setup: Pages and Icons
-        PAGES = {
-            "Validation": "validation",
-            "Voting": "voting",
-            "Agents": "agents",
-            "Resonance Music": "resonance_music",
-            "Chat": "chat",
-            "Social": "social",
-            "Profile": "profile",
-        }
-        PAGES_DIR = (
-            Path(__file__).resolve().parent
-            / "transcendental_resonance_frontend"
-            / "pages"
-        )
-
-        page_paths: dict[str, str] = {}
-        missing_pages: list[str] = []
-        for label, mod in PAGES.items():
-            file_path = PAGES_DIR / f"{mod}.py"
-            if file_path.exists():
-                web_path = "/" + os.path.relpath(file_path, start=Path.cwd()).replace(
-                    os.sep, "/"
-                )
-                page_paths[label] = web_path
-            else:
-                missing_pages.append(label)
+        page_paths, missing_pages = validate_pages(PAGES)
 
         if missing_pages:
-            st.warning("Missing pages: " + ", ".join(missing_pages))
+            st.info("Unavailable pages hidden: " + ", ".join(missing_pages))
 
         # Determine page from query params and sidebar selection
         try:
