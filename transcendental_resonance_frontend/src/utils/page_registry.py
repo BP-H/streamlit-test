@@ -31,8 +31,23 @@ def ensure_pages(pages: dict[str, str], pages_dir: Path) -> None:
     """
     pages_dir.mkdir(parents=True, exist_ok=True)
 
+    # Detect case-insensitive duplicates that may cause issues on some
+    # filesystems (e.g. "Foo.py" vs "foo.py").
+    existing_files: dict[str, Path] = {}
+    for path in pages_dir.glob("*.py"):
+        lower = path.name.lower()
+        if lower in existing_files:
+            logger.warning(
+                "Duplicate page modules detected: %s and %s",
+                existing_files[lower].name,
+                path.name,
+            )
+        else:
+            existing_files[lower] = path
+
     for slug in pages.values():
-        file_path = pages_dir / f"{slug}.py"
+        slug_lower = slug.lower()
+        file_path = pages_dir / f"{slug_lower}.py"
         if not file_path.exists():
             file_path.write_text(
                 f"# {STRICTLY_SOCIAL_MEDIA}\n"
