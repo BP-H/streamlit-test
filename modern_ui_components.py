@@ -68,16 +68,23 @@ def render_modern_sidebar(
     container_ctx = safe_container(container)
     with container_ctx:
         st.markdown("<div class='glass-card sidebar-nav'>", unsafe_allow_html=True)
+        icon_list = icons or ["" for _ in opts]
         if USE_OPTION_MENU and option_menu is not None:
             choice = option_menu(
                 menu_title=None,
                 options=opts,
-                icons=icons or ["dot"] * len(opts),
+                icons=icon_list or ["dot"] * len(opts),
                 orientation="vertical",
                 key=f"sidebar_{id(pages)}",
             )
         else:
-            choice = st.radio("Navigate", opts, key=f"sidebar_{id(pages)}")
+            icon_map = dict(zip(opts, icon_list))
+            choice = st.radio(
+                "Navigate",
+                opts,
+                format_func=lambda label: f"{icon_map.get(label, '')} {label}",
+                key=f"sidebar_{id(pages)}",
+            )
         st.markdown("</div>", unsafe_allow_html=True)
     return choice
 

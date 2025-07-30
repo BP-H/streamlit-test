@@ -11,6 +11,7 @@ def inject_modern_styles() -> None:
     st.markdown(
         """
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         :root {
             --bg-start: #020817; /* Deeper contrast, modern base tone */
             --bg-end: #0d1b2a;   /* Soft blend into dark blue */
@@ -21,10 +22,9 @@ def inject_modern_styles() -> None:
         body, .stApp {
             background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
             color: var(--text-color);
-            font-family: 'Inter', 'Roboto', 'Urbanist', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
-        }
         .main .block-container {
             padding-top: 2rem;
             padding-left: 3rem;
@@ -32,8 +32,9 @@ def inject_modern_styles() -> None:
             max-width: 1200px;
         }
         [data-testid="stSidebar"] {
-            background: linear-gradient(180deg, rgba(3,6,23,0.95), rgba(10,20,40,0.95));
+            background: linear-gradient(180deg, rgba(3,6,23,0.6), rgba(10,20,40,0.6));
             border-right: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
         }
         [data-testid="stSidebar"] .stButton>button {
             width: 100%;
@@ -56,16 +57,17 @@ def inject_modern_styles() -> None:
         .card {
             padding: 1rem;
             border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            backdrop-filter: blur(12px);
 
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            background: rgba(255,255,255,0.05);
             transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
         .card:hover,
         .custom-container:hover {
-            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.4);
             transform: translateY(-3px);
 
         }
@@ -89,23 +91,21 @@ def inject_modern_styles() -> None:
         }
         .stButton > button {
             background: linear-gradient(90deg, var(--neon-accent), #00ffff) !important;
-
             border: none !important;
             border-radius: 10px !important;
             color: #00111e !important;
             font-weight: 600 !important;
             padding: 0.75rem 2rem !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.4) !important;
-
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.5) !important;
             font-size: 0.95rem !important;
             height: auto !important;
+            outline: none !important;
         }
         .stButton > button:hover {
             transform: translateY(-1px) !important;
-            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.6) !important;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.75) !important;
             background: linear-gradient(90deg, #00ffff, var(--neon-accent)) !important;
-
             filter: brightness(1.05);
         }
 
