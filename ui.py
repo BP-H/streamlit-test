@@ -142,6 +142,9 @@ PAGES = {
     "Profile": "profile",
 }
 
+# Ensure placeholder modules exist and warn about case collisions
+ensure_pages(PAGES, PAGES_DIR)
+
 # Case-insensitive lookup for labels
 _PAGE_LABELS = {label.lower(): label for label in PAGES}
 
@@ -1292,7 +1295,6 @@ def render_developer_tools() -> None:
 
 def main() -> None:
     """Entry point with comprehensive error handling and modern UI."""
-    ensure_pages(PAGES, PAGES_DIR)
     # Initialize database BEFORE anything else
     try:
         db_ready = ensure_database_exists()
