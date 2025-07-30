@@ -45,8 +45,6 @@ async def video_chat_page() -> None:
 
         async def join_call() -> None:
             try:
-        async def join_call() -> None:
-            try:
                 ws_task = listen_ws(handle_event)
                 await ws_task
             except Exception:  # pragma: no cover - network issues
