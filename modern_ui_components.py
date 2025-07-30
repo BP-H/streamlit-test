@@ -7,10 +7,13 @@ from __future__ import annotations
 
 import streamlit as st
 from typing import Optional, Dict
+from pathlib import Path
 from uuid import uuid4
 from streamlit_helpers import safe_container
 
 from modern_ui import inject_modern_styles
+
+PAGES_DIR = Path(__file__).resolve().parent / "transcendental_resonance_frontend" / "pages"
 
 try:
     from streamlit_option_menu import option_menu
@@ -143,6 +146,14 @@ def render_modern_header(title: str) -> None:
     )
 
 
+def _page_exists(page_key: str) -> bool:
+    """Return True if the page module or file exists."""
+    key = page_key.lstrip("/")
+    if key.endswith(".py"):
+        return (Path.cwd() / key).is_file() or Path(key).is_file()
+    return (PAGES_DIR / f"{key}.py").is_file()
+
+
 def render_modern_sidebar(
     pages: Dict[str, str],
     container: Optional[st.delta_generator.DeltaGenerator] = None,
@@ -159,6 +170,15 @@ def render_modern_sidebar(
     if container is None:
         container = st.sidebar
 
+    valid_pages = {label: path for label, path in pages.items() if _page_exists(path)}
+    missing = [label for label in pages if label not in valid_pages]
+    if missing:
+        st.warning("Missing page files: " + ", ".join(missing))
+    if not valid_pages:
+        st.error("No valid pages configured")
+        return ""
+
+    pages = valid_pages
     opts = list(pages.keys())
     icon_map = icons or {}
 
