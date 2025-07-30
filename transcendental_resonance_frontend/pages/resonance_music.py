@@ -171,57 +171,36 @@ def render_resonance_music_page(main_container=None, backend_ok: Optional[bool] 
             with st.spinner("Fetching summary..."):
                 try:
                     data = _run_async(get_resonance_summary(choice))
+                    if not data:
+                        alert("No summary data returned for this profile.", "warning")
+                        return
 
-                    if data:
-                        metrics = data.get("metrics", {})
-                        midi_bytes_count = data.get("midi_bytes", 0)
+                    metrics = data.get("metrics", {})
+                    midi_bytes_count = data.get("midi_bytes", 0)
 
-                        st.subheader("Metrics")
-                        if metrics:
-                            st.table({
-                                "metric": list(metrics.keys()),
-                                "value": list(metrics.values())
-                            })
-                        else:
-                            st.toast("No metrics available for this profile.")
-
-                        st.write(f"Associated MIDI bytes (count/size): {midi_bytes_count}")
-
-                        summary_midi_b64 = data.get("midi_base64")
-                        if summary_midi_b64:
-                            summary_midi_bytes = base64.b64decode(summary_midi_b64)
-                            st.audio(summary_midi_bytes, format="audio/midi", key="summary_audio_player")
-                            st.toast("Playing associated MIDI from summary.")
-
-                        st.toast("Summary loaded!")
-                except Exception as exc:
-                    alert(f"Summary fetch failed: {exc}", "error")
-
-                        else:
+                    st.subheader("Metrics")
+                    if metrics:
+                        st.table({
+                            "metric": list(metrics.keys()),
+                            "value": list(metrics.values())
+                        })
+                    else:
                         st.toast("No metrics available for this profile.")
 
                     st.write(f"Associated MIDI bytes (count/size): {midi_bytes_count}")
 
-                    # If the summary also returns MIDI bytes (e.g., for preview), play it
                     summary_midi_b64 = data.get("midi_base64")
                     if summary_midi_b64:
                         summary_midi_bytes = base64.b64decode(summary_midi_b64)
-                        st.audio(
-                            summary_midi_bytes,
-                            format="audio/midi",
-                            key="summary_audio_player",
-                        )
+                        st.audio(summary_midi_bytes, format="audio/midi", key="summary_audio_player")
                         st.toast("Playing associated MIDI from summary.")
 
                     st.toast("Summary loaded!")
-                else:
-                    alert("No summary data returned for this profile.", "warning")
-
-            except Exception as exc:
-                alert(
-                    f"Failed to load summary: {exc}. Ensure backend is running and 'resonance-summary' route is available.",
-                    "error",
-                )
+                except Exception as exc:
+                    alert(
+                        f"Failed to load summary: {exc}. Ensure backend is running and 'resonance-summary' route is available.",
+                        "error",
+                    )
 
 
 def render() -> None:
