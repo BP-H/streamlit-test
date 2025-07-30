@@ -141,8 +141,8 @@ from modern_ui import (
     render_stats_section,
 )
 
-# Apply global styles immediately
-inject_modern_styles()
+# Global style injection is now handled inside ``main`` to avoid raw CSS
+# appearing before Streamlit initializes the page layout.
 try:
     from frontend.ui_layout import overlay_badge, render_title_bar
 except ImportError:  # optional dependency fallback
@@ -320,7 +320,7 @@ def inject_dark_theme() -> None:
 
 
 def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) -> None:
-    """Load a page via ``st.switch_page`` or fall back to importing the module with graceful handling."""
+    """Import and execute a page module with graceful fallback handling."""
     if module_paths is None:
         module = PAGES.get(choice)
         if not module:
@@ -345,30 +345,8 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
 
     # Track the last exception for reporting
     last_exc: Exception | None = None
-    attempted_paths = set()  # Track attempted paths to avoid infinite loops
 
-    # First try switching pages using Streamlit's multipage support
     for module_path in module_paths:
-        if module_path in attempted_paths:
-            continue
-        attempted_paths.add(module_path)
-        page_file = PAGES_DIR / (module_path.replace(".", "/") + ".py")
-        if page_file.exists():
-            rel_path = os.path.relpath(page_file, start=Path.cwd())
-            try:
-                st.switch_page(rel_path)
-                return
-            except StreamlitAPIException as exc:
-                st.toast(f"Switch failed for {choice}: {exc}", icon="⚠️")
-                continue
-            except Exception as exc:  # Unexpected failure
-                logging.error(
-                    "switch_page failed for %s: %s", rel_path, exc, exc_info=True
-                )
-                last_exc = exc
-                continue
-
-        # Fallback: import the module directly and call ``render`` or ``main``
         try:
             page_mod = importlib.import_module(module_path)
             for method_name in ("render", "main"):
@@ -376,6 +354,7 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
                     getattr(page_mod, method_name)()
                     return
         except ImportError:
+            # Try next candidate
             continue
         except Exception as exc:  # Unexpected failure
             last_exc = exc
@@ -1282,6 +1261,7 @@ def main() -> None:
             icons=["✅", "📊", "🤖", "🎵", "💬", "👥", "👤"],
         )
 
+        # ``forced_page`` from the query string takes priority when valid
         if forced_page:
             choice = forced_page
 
@@ -1351,7 +1331,8 @@ def main() -> None:
 
         # Center content area — dynamic page loading
         with center_col:
-            if choice:
+            # When a page is selected render it; otherwise show the fallback
+            if choice is not None:
                 page_key = PAGES.get(choice, choice)
                 module_paths = [
                     f"transcendental_resonance_frontend.pages.{page_key}",
@@ -1363,8 +1344,9 @@ def main() -> None:
                     st.toast(f"Page not found: {choice}", icon="⚠️")
                     _render_fallback(choice)
             else:
-                st.toast("Select a page above to continue.")  # modern, non-blocking feedback
-                _render_fallback("Validation")  # Default fallback page as a preview
+                # No selection - show the default fallback page
+                st.toast("Select a page above to continue.")
+                _render_fallback("Validation")
 
                 # Run agent logic if triggered
                 if run_agent_clicked and "AGENT_REGISTRY" in globals():
