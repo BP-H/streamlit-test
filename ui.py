@@ -104,10 +104,6 @@ except Exception as import_err:  # pragma: no cover - fallback if absolute impor
             return None
 
         def get_pages_dir() -> Path:
-            return Path(__file__).resolve().parents[2] / "pages"
-
-
-        def get_pages_dir() -> Path:
             return (
                 Path(__file__).resolve().parent
                 / "transcendental_resonance_frontend"
@@ -142,6 +138,9 @@ PAGES = {
     "Profile": "profile",
 }
 
+ensure_pages(PAGES, PAGES_DIR)
+warn_case_conflicts(PAGES_DIR)
+
 # Case-insensitive lookup for labels
 _PAGE_LABELS = {label.lower(): label for label in PAGES}
 
@@ -157,6 +156,17 @@ NAV_ICONS = ["✅", "📊", "🤖", "🎵", "💬", "👥", "👤"]
 
 # Toggle verbose output via ``UI_DEBUG_PRINTS``
 UI_DEBUG = os.getenv("UI_DEBUG_PRINTS", "1") != "0"
+
+
+def warn_case_conflicts(directory: Path) -> None:
+    """Warn if files differ only by case for case-insensitive filesystems."""
+    names: dict[str, str] = {}
+    for file in directory.glob("*.py"):
+        lname = file.name.lower()
+        if lname in names and names[lname] != file.name:
+            logger.warning("Case conflict: %s vs %s", file.name, names[lname])
+        else:
+            names[lname] = file.name
 
 # Tracks slugs of fallback pages rendered in this session.
 _fallback_rendered: set[str] = set()
@@ -1292,7 +1302,6 @@ def render_developer_tools() -> None:
 
 def main() -> None:
     """Entry point with comprehensive error handling and modern UI."""
-    ensure_pages(PAGES, PAGES_DIR)
     # Initialize database BEFORE anything else
     try:
         db_ready = ensure_database_exists()
