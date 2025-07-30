@@ -1,4 +1,7 @@
 import inspect
+import pytest
+pytest.importorskip("nicegui")
+
 from pages.groups_page import groups_page
 
 def test_groups_page_is_async():

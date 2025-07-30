@@ -1,4 +1,7 @@
 import inspect
+import pytest
+pytest.importorskip("nicegui")
+
 from pages.vibenodes_page import vibenodes_page
 
 def test_vibenodes_page_is_async():

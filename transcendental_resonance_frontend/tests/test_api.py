@@ -1,4 +1,7 @@
 import inspect
+import pytest
+pytest.importorskip("nicegui")
+
 import importlib
 import types
 import utils.api as api_mod

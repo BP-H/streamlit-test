@@ -1,4 +1,7 @@
 import inspect
+import pytest
+pytest.importorskip("nicegui")
+
 from pages.music_page import music_page
 
 
