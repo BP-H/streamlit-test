@@ -1230,15 +1230,7 @@ def main() -> None:
             unsafe_allow_html=True,
         )
         
-        PAGES = {
-            "Validation": "validation",
-            "Voting": "voting",
-            "Agents": "agents",
-            "Resonance Music": "resonance_music",
-            "Social": "social",
-        }
-        
-        PAGES_DIR = Path(__file__).resolve().parent / "transcendental_resonance_frontend" / "pages"
+        # Build page paths using globally defined constants
         page_paths = {label: str(PAGES_DIR / f"{mod}.py") for label, mod in PAGES.items()}
         choice = ui_layout.render_navbar(
             page_paths,
