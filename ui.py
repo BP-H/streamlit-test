@@ -1010,6 +1010,23 @@ def boot_diagnostic_ui():
     run_analysis([], layout="force")
 
 
+def render_dev_controls() -> None:
+    """Display developer utilities in the sidebar."""
+    show = st.sidebar.checkbox("Dev Controls")
+    if not show:
+        return
+
+    if st.sidebar.button("Clear Session"):
+        st.session_state.clear()
+        st.rerun()
+
+    if st.sidebar.button("Print Session Keys"):
+        print(list(st.session_state.keys()))
+
+    if st.sidebar.button("Raise Test Exception"):
+        raise RuntimeError("Test exception")
+
+
 def render_validation_ui(
     sidebar: Optional[st.delta_generator.DeltaGenerator] = None,
     main_container: Optional[st.delta_generator.DeltaGenerator] = None,
@@ -1098,6 +1115,9 @@ def main() -> None:
             """,
             unsafe_allow_html=True,
         )
+
+        # Optional development controls
+        render_dev_controls()
 
         # Define pages
         pages = {
