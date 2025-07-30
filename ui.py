@@ -41,6 +41,7 @@ from frontend.ui_layout import (
     render_navbar,
     render_title_bar,
     show_preview_badge,
+    show_offline_notice,
 )
 
 # Utility path handling
@@ -448,7 +449,7 @@ def _render_fallback(choice: str) -> None:
     fallback_fn = fallback_pages.get(choice)
     if fallback_fn:
         if OFFLINE_MODE:
-            st.info("Backend unavailable - offline mode active.")
+            show_offline_notice()
         show_preview_badge("🚧 Preview Mode")
         fallback_fn()
     else:
