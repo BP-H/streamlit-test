@@ -30,6 +30,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 from typing import Optional
 from frontend import ui_layout
+from utils.page_registry import ensure_pages
 
 
 try:
@@ -121,8 +122,6 @@ NAV_ICONS = ["✅", "📊", "🤖", "🎵", "💬", "👥", "👤"]
 # Toggle verbose output via ``UI_DEBUG_PRINTS``
 UI_DEBUG = os.getenv("UI_DEBUG_PRINTS", "1") != "0"
 
-# Tracks which fallback pages have been rendered in this session.
-_fallback_rendered: set[str] = set()
 
 
 def log(msg: str) -> None:
@@ -351,8 +350,6 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
 
         if not module:
             st.error(f"Unknown page: {choice}")
-            if "_render_fallback" in globals():
-                _render_fallback(choice)
             return
 
         module_paths = [
@@ -367,8 +364,6 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
     )
     if not PAGES_DIR.exists():
         st.error(f"Pages directory not found: {PAGES_DIR}")
-        if "_render_fallback" in globals():
-            _render_fallback(choice)
         return
 
     # Track the last exception for reporting
@@ -391,7 +386,6 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
                 rel_path = f"pages/{page_file.stem}"  # ✅ no .py extension for st.switch_page
                 try:
                     st.switch_page(rel_path)
-                    _fallback_rendered.clear()
                     return
                 except StreamlitAPIException as exc:
                     st.toast(f"Switch failed for {choice}: {exc}", icon="⚠️")
@@ -412,7 +406,6 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
             for method_name in ("render", "main"):
                 if hasattr(page_mod, method_name):
                     getattr(page_mod, method_name)()
-                    _fallback_rendered.clear()
                     return
         except ImportError:
             continue
@@ -421,93 +414,14 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
             logging.error("Error executing %s: %s", module_path, exc, exc_info=True)
             break
 
-    st.toast("Unable to load page. Showing preview.", icon="⚠️")
+    st.toast("Unable to load page.", icon="⚠️")
     if choice == "Validation":
         st.error("Validation page failed to load")
-    if "_render_fallback" in globals():
-        _render_fallback(choice)
     if last_exc:
         with st.expander("Show error details"):
             st.exception(last_exc)
 
 
-def _render_fallback(choice: str) -> None:
-    """Render built-in fallback if module is missing or errors out."""
-    # Prevent rendering the same fallback repeatedly.
-    if choice in _fallback_rendered:
-        return
-    _fallback_rendered.add(choice)
-    try:
-        from transcendental_resonance_frontend.src.utils.api import OFFLINE_MODE
-    except Exception:
-        OFFLINE_MODE = False
-
-    # Normalize and derive slug/module name
-    normalized = normalize_choice(choice)
-    slug = PAGES.get(normalized, str(normalized)).lower()
-
-    # Candidate paths to try loading from
-    page_candidates = [
-        ROOT_DIR / "pages" / f"{slug}.py",
-        ROOT_DIR / "transcendental_resonance_frontend" / "pages" / f"{slug}.py",
-        Path.cwd() / "pages" / f"{slug}.py",
-    ]
-
-    loaded = False
-    for page_file in page_candidates:
-        if not page_file.exists():
-            continue
-        logger.debug("Attempting to load %s from %s", slug, page_file)
-        try:
-            spec = importlib.util.spec_from_file_location(f"_page_{slug}", page_file)
-            if not spec or not spec.loader:
-                continue
-            mod = importlib.util.module_from_spec(spec)
-            sys.modules[spec.name] = mod
-            spec.loader.exec_module(mod)
-            for fn in ("render", "main"):
-                if hasattr(mod, fn):
-                    try:
-                        getattr(mod, fn)()
-                        loaded = True
-                        break
-                    except Exception as exc:
-                        logger.error("Error running %s.%s: %s", slug, fn, exc, exc_info=True)
-            if loaded:
-                break
-        except Exception as exc:
-            logger.error("Error loading page candidate %s: %s", page_file, exc, exc_info=True)
-
-    if loaded:
-        return
-
-
-    # Prevent duplicate fallback rendering in session
-    if st.session_state.get("_fallback_rendered") == slug:
-        logger.debug("Duplicate fallback suppressed for %s", slug)
-        return
-    st.session_state["_fallback_rendered"] = slug
-
-    # Map to fallback UI stubs
-    fallback_pages = {
-        "validation": render_modern_validation_page,
-        "voting": render_modern_voting_page,
-        "agents": render_modern_agents_page,
-        "resonance music": render_modern_music_page,
-        "chat": render_modern_chat_page,
-        "social": render_modern_social_page,
-        "profile": render_modern_profile_page,
-    }
-    fallback_fn = fallback_pages.get(slug)
-    if fallback_fn:
-        logger.debug("Rendering fallback for %s", slug)
-        if OFFLINE_MODE:
-            st.toast("Offline mode: using mock services", icon="⚠️")
-        show_preview_badge("🚧 Preview Mode")
-        fallback_fn()
-
-    else:
-        st.toast(f"No fallback available for page: {choice}", icon="⚠️")
 
 def render_modern_validation_page():
     render_title_bar("✅", "Validation Console")
@@ -1365,6 +1279,7 @@ def main() -> None:
             / "transcendental_resonance_frontend"
             / "pages"
         )
+        ensure_pages(PAGES, ROOT_DIR / "pages")
 
         page_paths: dict[str, str] = {}
         missing_pages: list[str] = []
@@ -1495,10 +1410,8 @@ def main() -> None:
                     load_page_with_fallback(display_choice, module_paths)
                 except Exception:
                     st.toast(f"Page not found: {display_choice}", icon="⚠️")
-                    _render_fallback(display_choice)
             else:
                 st.toast("Select a page above to continue.")
-                _render_fallback("Validation")
 
 
 
@@ -1542,7 +1455,6 @@ def main() -> None:
                         else:
                             st.warning("No agents available")
                         st.session_state["agent_output"] = None
-                        _render_fallback("Agents")
                     except Exception as exc:
                         st.session_state["agent_output"] = {"error": str(exc)}
                         alert(f"Agent error: {exc}", "error")

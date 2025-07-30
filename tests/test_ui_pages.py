@@ -23,74 +23,6 @@ import modern_ui_components as mui
 import ui
 
 
-def test_unknown_page_triggers_fallback(monkeypatch):
-    monkeypatch.setenv("UI_DEBUG_PRINTS", "0")
-    importlib.reload(ui)
-
-    fallback_called = {}
-    monkeypatch.setattr(ui, "_render_fallback", lambda choice: fallback_called.setdefault("choice", choice))
-    monkeypatch.setattr(ui, "load_page_with_fallback", lambda choice, paths: ui._render_fallback(choice))
-    monkeypatch.setattr(ui, "get_st_secrets", lambda: {})
-    monkeypatch.setattr(mui, "render_modern_sidebar", lambda *a, **k: "Ghost")
-    monkeypatch.setattr(ui, "render_modern_sidebar", lambda *a, **k: "Ghost")
-
-    class Dummy(contextlib.AbstractContextManager):
-        def __enter__(self):
-            return self
-        def __exit__(self, *exc):
-            return False
-        def container(self):
-            return Dummy()
-        def expander(self, *a, **k):
-            return Dummy()
-        def tabs(self, labels):
-            tab_calls.append(labels)
-            return [Dummy() for _ in labels]
-
-    tab_calls = []
-    monkeypatch.setattr(st, "set_page_config", lambda *a, **k: None)
-    monkeypatch.setattr(st, "expander", lambda *a, **k: Dummy())
-    monkeypatch.setattr(st, "container", lambda: Dummy())
-    monkeypatch.setattr(st, "columns", lambda *a, **k: [Dummy(), Dummy(), Dummy()])
-    monkeypatch.setattr(st, "tabs", lambda labels: tab_calls.append(labels) or [Dummy() for _ in labels])
-    for fn in [
-        "markdown",
-        "info",
-        "error",
-        "warning",
-        "write",
-        "button",
-        "file_uploader",
-        "text_input",
-        "text_area",
-        "divider",
-        "progress",
-        "json",
-        "subheader",
-        "radio",
-        "toggle",
-    ]:
-        monkeypatch.setattr(st, fn, lambda *a, **k: None)
-
-    monkeypatch.setattr(st, "session_state", {})
-    monkeypatch.setattr(st, "query_params", {})
-
-    for helper in [
-        "apply_theme",
-        "inject_modern_styles",
-        "render_status_icon",
-        "render_simulation_stubs",
-        "render_stats_section",
-    ]:
-        monkeypatch.setattr(ui, helper, lambda *a, **k: None)
-
-    monkeypatch.setattr(ui, "render_api_key_ui", lambda *a, **k: {"model": "dummy", "api_key": ""})
-
-    ui.main()
-
-    assert fallback_called.get("choice") == "Ghost"
-
-
 def test_main_defaults_to_validation(monkeypatch):
     monkeypatch.setenv("UI_DEBUG_PRINTS", "0")
     importlib.reload(ui)
@@ -170,25 +102,3 @@ def test_main_defaults_to_validation(monkeypatch):
     # Optional, if you also defined `loaded` earlier:
     # assert loaded.get("choice") == "Validation"
 
-
-def test_fallback_rendered_once(monkeypatch):
-    monkeypatch.setenv("UI_DEBUG_PRINTS", "0")
-    importlib.reload(ui)
-
-    # No-op patches for Streamlit usage within _render_fallback
-    monkeypatch.setattr(st, "toast", lambda *a, **k: None)
-    monkeypatch.setattr(ui, "show_preview_badge", lambda *a, **k: None)
-
-    called = {"count": 0}
-    monkeypatch.setattr(
-        ui,
-        "render_modern_validation_page",
-        lambda: called.__setitem__("count", called["count"] + 1),
-    )
-
-    ui._fallback_rendered.clear()
-    ui._render_fallback("Validation")
-    ui._render_fallback("Validation")
-
-    assert called["count"] == 1
-    assert "Validation" in ui._fallback_rendered
