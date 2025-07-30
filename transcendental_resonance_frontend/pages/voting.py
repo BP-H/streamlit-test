@@ -12,7 +12,10 @@ def main(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    with main_container:
+    if hasattr(main_container, "__enter__"):
+        with main_container:
+            render_voting_tab(main_container=main_container)
+    else:
         render_voting_tab(main_container=main_container)
 
 

@@ -29,6 +29,12 @@ BOX_CSS = """
 """
 
 
+def _safe_markdown(text: str, **kwargs) -> None:
+    """Render markdown after stripping non UTF-8 characters."""
+    clean = str(text).encode("utf-8", "ignore").decode("utf-8")
+    st.markdown(clean, **kwargs)
+
+
 def _run_async(coro):
     try:
         loop = asyncio.get_running_loop()
@@ -45,7 +51,15 @@ def render_proposals_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    with main_container:
+    container_ctx = main_container if hasattr(main_container, "__enter__") else None
+    if container_ctx:
+        with container_ctx:
+            _render_proposals_content(main_container)
+    else:
+        _render_proposals_content(main_container)
+
+
+def _render_proposals_content(main_container):
         if AgGrid is None or GridOptionsBuilder is None:
             alert(
                 "st_aggrid is not installed – proposal features unavailable.",
@@ -59,7 +73,7 @@ def render_proposals_tab(main_container=None) -> None:
             )
             return
 
-        st.markdown(
+        _safe_markdown(
             BOX_CSS
             + """
         <style>
@@ -103,7 +117,7 @@ def render_proposals_tab(main_container=None) -> None:
         col1, col2 = st.columns([1, 1])
 
         with col1:
-            st.markdown("<div class='card'>", unsafe_allow_html=True)
+            _safe_markdown("<div class='card'>", unsafe_allow_html=True)
             with st.form("create_proposal_form"):
                 st.write("Create Proposal")
                 title = st.text_input("Title")
@@ -111,14 +125,14 @@ def render_proposals_tab(main_container=None) -> None:
                 author_id = st.number_input("Author ID", value=1, step=1)
                 group_id = st.text_input("Group ID")
                 voting_deadline = st.date_input("Voting Deadline")
-                st.markdown("<div class='button-primary'>", unsafe_allow_html=True)
+                _safe_markdown("<div class='button-primary'>", unsafe_allow_html=True)
                 submitted = st.form_submit_button("Create")
-                st.markdown("</div>", unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
+                _safe_markdown("</div>", unsafe_allow_html=True)
+            _safe_markdown("</div>", unsafe_allow_html=True)
 
         with col2:
-            st.markdown("<div class='card'>", unsafe_allow_html=True)
-            st.markdown("<div class='button-primary'>", unsafe_allow_html=True)
+            _safe_markdown("<div class='card'>", unsafe_allow_html=True)
+            _safe_markdown("<div class='button-primary'>", unsafe_allow_html=True)
             if st.button("Refresh Proposals", key="refresh_proposals"):
                 with st.spinner("Working on it..."):
                     try:
@@ -127,7 +141,7 @@ def render_proposals_tab(main_container=None) -> None:
                         st.toast("Success!")
                     except Exception as exc:
                         alert(f"Failed to load proposals: {exc}", "error")
-            st.markdown("</div>", unsafe_allow_html=True)
+            _safe_markdown("</div>", unsafe_allow_html=True)
 
         proposals = st.session_state.get("proposals_cache", [])
         if proposals:
@@ -143,14 +157,14 @@ def render_proposals_tab(main_container=None) -> None:
             df = pd.DataFrame(simple)
             gb = GridOptionsBuilder.from_dataframe(df)
             gb.configure_default_column(filter=True, sortable=True, resizable=True)
-            st.markdown("<div class='ag-grid-container'>", unsafe_allow_html=True)
+            _safe_markdown("<div class='ag-grid-container'>", unsafe_allow_html=True)
             AgGrid(
                 df,
                 gridOptions=gb.build(),
                 theme="streamlit",
                 fit_columns_on_grid_load=True,
             )
-            st.markdown("</div>", unsafe_allow_html=True)
+            _safe_markdown("</div>", unsafe_allow_html=True)
 
         with st.form("vote_proposal_form"):
             st.write("Vote on Proposal")
@@ -165,7 +179,7 @@ def render_proposals_tab(main_container=None) -> None:
             )
             vote_choice = st.selectbox("Vote", ["yes", "no", "abstain"])
             vote_sub = st.form_submit_button("Submit Vote")
-        st.markdown("</div>", unsafe_allow_html=True)
+        _safe_markdown("</div>", unsafe_allow_html=True)
 
         if submitted:
             payload = {
@@ -197,7 +211,7 @@ def render_proposals_tab(main_container=None) -> None:
                 except Exception as exc:
                     alert(f"Vote failed: {exc}", "error")
 
-        st.markdown("</div>", unsafe_allow_html=True)
+        _safe_markdown("</div>", unsafe_allow_html=True)
 
 
 def render_governance_tab(main_container=None) -> None:
@@ -205,7 +219,15 @@ def render_governance_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    with main_container:
+    container_ctx = main_container if hasattr(main_container, "__enter__") else None
+    if container_ctx:
+        with container_ctx:
+            _render_governance_content()
+    else:
+        _render_governance_content()
+
+
+def _render_governance_content():
         if AgGrid is None or GridOptionsBuilder is None:
             alert(
                 "st_aggrid is not installed – governance features unavailable.",
@@ -219,7 +241,7 @@ def render_governance_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            st.markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+            _safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
             if st.button("Refresh Votes"):
                 with st.spinner("Working on it..."):
                     try:
@@ -261,7 +283,7 @@ def render_governance_tab(main_container=None) -> None:
                             st.toast("Success!")
                         except Exception as exc:
                             alert(f"Record failed: {exc}", "error")
-            st.markdown("</div>", unsafe_allow_html=True)
+            _safe_markdown("</div>", unsafe_allow_html=True)
 
 
 def render_agent_ops_tab(main_container=None) -> None:
@@ -269,7 +291,15 @@ def render_agent_ops_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    with main_container:
+    container_ctx = main_container if hasattr(main_container, "__enter__") else None
+    if container_ctx:
+        with container_ctx:
+            _render_agent_ops_content()
+    else:
+        _render_agent_ops_content()
+
+
+def _render_agent_ops_content():
         if dispatch_route is None:
             alert(
                 "Governance routes not enabled—enable them in config.",
@@ -277,7 +307,7 @@ def render_agent_ops_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            st.markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+            _safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
             if st.button("Reload Agent List"):
                 with st.spinner("Working on it..."):
                     try:
@@ -322,7 +352,7 @@ def render_agent_ops_tab(main_container=None) -> None:
                     st.toast("Success!")
                 except Exception as exc:
                     alert(f"Step failed: {exc}", "error")
-            st.markdown("</div>", unsafe_allow_html=True)
+            _safe_markdown("</div>", unsafe_allow_html=True)
 
 
 def render_logs_tab(main_container=None) -> None:
@@ -330,7 +360,15 @@ def render_logs_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    with main_container:
+    container_ctx = main_container if hasattr(main_container, "__enter__") else None
+    if container_ctx:
+        with container_ctx:
+            _render_logs_content()
+    else:
+        _render_logs_content()
+
+
+def _render_logs_content():
         if dispatch_route is None:
             alert(
                 "Governance routes not enabled—enable them in config.",
@@ -338,7 +376,7 @@ def render_logs_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            st.markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+            _safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
             trace_text = st.text_area("Audit Trace JSON", value="{}", height=200)
             if st.button("Explain Trace"):
                 try:
@@ -355,7 +393,7 @@ def render_logs_tab(main_container=None) -> None:
                             st.toast("Success!")
                         except Exception as exc:
                             alert(f"Explain failed: {exc}", "error")
-            st.markdown("</div>", unsafe_allow_html=True)
+            _safe_markdown("</div>", unsafe_allow_html=True)
 
 
 def render_voting_tab(main_container=None) -> None:
@@ -363,17 +401,20 @@ def render_voting_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    with main_container:
-        inject_global_styles()
-        sub1, sub2, sub3, sub4 = st.tabs(
-            [
-                "Proposal Hub",
-                "Governance",
-                "Agent Ops",
-                "Logs",
-            ]
-        )
-        render_proposals_tab(main_container=sub1)
-        render_governance_tab(main_container=sub2)
-        render_agent_ops_tab(main_container=sub3)
-        render_logs_tab(main_container=sub4)
+    container_ctx = main_container if hasattr(main_container, "__enter__") else None
+    if container_ctx:
+        with container_ctx:
+            _render_voting_content()
+    else:
+        _render_voting_content()
+
+
+def _render_voting_content():
+    inject_global_styles()
+    sub1, sub2, sub3, sub4 = st.tabs(
+        ["Proposal Hub", "Governance", "Agent Ops", "Logs"]
+    )
+    render_proposals_tab(main_container=sub1)
+    render_governance_tab(main_container=sub2)
+    render_agent_ops_tab(main_container=sub3)
+    render_logs_tab(main_container=sub4)

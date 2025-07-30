@@ -468,24 +468,25 @@ def render_modern_validation_page():
 
 
 def load_page_with_fallback(choice: str, module_paths: list[str]) -> None:
-    """
-    Attempt to import and run a page module by name, with graceful fallback.
-    Tries each candidate path and checks for `render()` or `main()` method.
-    """
+    """Import and run a page module with graceful fallback."""
     for module_path in module_paths:
         try:
             page_mod = import_module(module_path)
+            page_func = None
             if hasattr(page_mod, "render"):
-                page_mod.render()
-                return
+                page_func = page_mod.render
             elif hasattr(page_mod, "main"):
-                page_mod.main()
+                page_func = page_mod.main
+            if page_func:
+                page_func()
                 return
         except ImportError:
-            continue  # Try next path
+            continue  # try next path
         except Exception as exc:
-            st.error(f"❌ Error loading page `{choice}`: {exc}")
-            break
+            st.error(
+                f"⚠️ {choice} failed to load due to {exc.__class__.__name__}: {exc}"
+            )
+            return
 
     _render_fallback(choice)
 
@@ -1343,7 +1344,11 @@ def main() -> None:
                             "Sub universes:",
                             list(getattr(cosmic_nexus, "sub_universes", {}).keys()),
                         )
-                    if 'agent' in globals() and 'InMemoryStorage' in globals():
+                    if (
+                        'agent' in globals()
+                        and agent is not None
+                        and 'InMemoryStorage' in globals()
+                    ):
                         if isinstance(agent.storage, InMemoryStorage):
                             st.write(
                                 f"Users: {len(agent.storage.users)} / Coins: {len(agent.storage.coins)}"
@@ -1426,7 +1431,7 @@ def main() -> None:
         st.markdown(f"**Runs:** {st.session_state['run_count']}")
 
         with main_container():
-            load_page_with_fallback(choice)
+            load_page_with_fallback(choice, module_paths)
 
     except Exception as exc:
         logger.critical("Unhandled error in main: %s", exc, exc_info=True)
