@@ -1145,10 +1145,12 @@ def main() -> None:
         st.info("Running in fallback mode")
 
     # Respond to lightweight health-check probes
-    params = st.experimental_get_query_params()
+    # st.query_params returns a proxy object in recent Streamlit versions
+    # Cast to ``dict`` for compatibility with tests that monkeypatch it
+    params = dict(st.query_params)
     path_info = os.environ.get("PATH_INFO", "").rstrip("/")
     if (
-        "1" in params.get(HEALTH_CHECK_PARAM, [])
+        params.get(HEALTH_CHECK_PARAM) == "1"
         or path_info == f"/{HEALTH_CHECK_PARAM}"
     ):
         st.write("ok")
@@ -1253,8 +1255,8 @@ def main() -> None:
         }
 
         # Determine page from query params and sidebar selection
-        query = st.experimental_get_query_params()
-        forced_page = query.get("page", [None])[0]
+        query = dict(st.query_params)
+        forced_page = query.get("page")
 
         choice = render_modern_sidebar(
             page_paths,
@@ -1264,7 +1266,10 @@ def main() -> None:
         if forced_page in page_paths:
             choice = forced_page
 
-        st.experimental_set_query_params(page=choice)
+        try:
+            st.query_params["page"] = choice
+        except Exception:
+            pass
 
 
         # Page layout: left for tools, center for content
