@@ -1,3 +1,6 @@
+import pytest
+pytest.importorskip("nicegui")
+
 import inspect
 from utils.features import (
     quick_post_button,

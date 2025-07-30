@@ -1,4 +1,8 @@
+import pytest
+pytest.importorskip("nicegui")
+
 from utils import demo_data
+
 
 
 def test_load_users_non_empty():

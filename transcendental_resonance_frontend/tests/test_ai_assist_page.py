@@ -1,4 +1,7 @@
 import inspect
+import pytest
+pytest.importorskip("nicegui")
+
 from pages.ai_assist_page import ai_assist_page
 
 def test_ai_assist_page_is_async():

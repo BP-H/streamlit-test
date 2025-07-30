@@ -1,4 +1,7 @@
 import inspect
+import pytest
+pytest.importorskip("nicegui")
+
 from pages.profile_page import profile_page
 
 def test_profile_page_is_async():

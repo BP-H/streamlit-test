@@ -1,3 +1,6 @@
+import pytest
+pytest.importorskip("nicegui")
+
 import types
 from utils import styles
 

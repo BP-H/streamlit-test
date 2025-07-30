@@ -1,3 +1,6 @@
+import pytest
+pytest.importorskip("nicegui")
+
 import inspect
 from utils.layout import search_widget, page_container
 

@@ -1,4 +1,7 @@
 import pytest
+import pytest
+pytest.importorskip("nicegui")
+
 import inspect
 
 from utils.api import api_call, connect_ws, listen_ws

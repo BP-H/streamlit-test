@@ -1,5 +1,8 @@
 import types
 import pytest
+pytest.importorskip("nicegui")
+
+import pytest
 
 import pages.network_analysis_page as network_page
 import pages.system_insights_page as system_insights_page

@@ -13,7 +13,7 @@ from __future__ import annotations
 import random
 from typing import Any, Dict, List
 
-from external_services.llm_client import LLMClient
+from external_services.llm_client import LLMClient, get_speculative_futures
 from external_services.vision_client import VisionClient
 
 # Satirical disclaimer appended to all speculative output
