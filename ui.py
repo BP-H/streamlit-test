@@ -26,7 +26,7 @@ import importlib
 from streamlit.errors import StreamlitAPIException
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
-from typing import Optional
+from typing import Optional, Dict
 from frontend import ui_layout
 
 
@@ -103,6 +103,19 @@ NAV_ICONS = ["✅", "📊", "🤖", "🎵", "💬", "👥", "👤"]
 
 # Toggle verbose output via ``UI_DEBUG_PRINTS``
 UI_DEBUG = os.getenv("UI_DEBUG_PRINTS", "1") != "0"
+
+
+def build_page_paths() -> Dict[str, str]:
+    """Return mapping of labels to web-accessible page paths."""
+    paths: Dict[str, str] = {}
+    for label, mod in PAGES.items():
+        file_path = PAGES_DIR / f"{mod}.py"
+        if file_path.exists():
+            rel = "/" + os.path.relpath(file_path, start=Path.cwd())
+            paths[label] = rel
+        else:
+            logger.warning("Missing page module: %s", file_path)
+    return paths
 
 
 def log(msg: str) -> None:
@@ -934,10 +947,7 @@ def render_validation_ui(
         main_container = st
 
     try:
-        page_paths = {
-            label: os.path.relpath(PAGES_DIR / f"{mod}.py", start=Path.cwd())
-            for label, mod in PAGES.items()
-        }
+        page_paths = build_page_paths()
         NAV_ICONS = ["✅", "📊", "🤖", "🎵", "💬", "👥", "👤"]
 
         # ...
@@ -1212,6 +1222,8 @@ def main() -> None:
             "diary": [],
             "analysis_diary": [],
             "run_count": 0,
+            "logs": [],
+            "users": [],
         }
         for k, v in defaults.items():
             st.session_state.setdefault(k, v)
@@ -1263,10 +1275,7 @@ def main() -> None:
         )
         # Map labels to file system paths relative to the working directory so
         # ``st.sidebar.page_link`` can locate the correct page modules.
-        page_paths = {
-            label: os.path.relpath(PAGES_DIR / f"{mod}.py", start=Path.cwd())
-            for label, mod in PAGES.items()
-        }
+        page_paths = build_page_paths()
 
         # Determine page from query params and sidebar selection
         try:

@@ -102,9 +102,9 @@ def _render_sidebar_nav(
     index = [label for label, _ in opts].index(active)
 
     choice = active
+    st.markdown(SIDEBAR_STYLES, unsafe_allow_html=True)
     container = st.sidebar.container()
     with container:
-        st.markdown(SIDEBAR_STYLES, unsafe_allow_html=True)
         st.markdown("<div class='glass-card sidebar-nav'>", unsafe_allow_html=True)
         if hasattr(st.sidebar, "page_link"):
             for (label, path), icon in zip(opts, icon_list):
