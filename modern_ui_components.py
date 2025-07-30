@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import os
 import streamlit as st
 from typing import Optional, Dict
 from pathlib import Path
@@ -17,6 +18,7 @@ from modern_ui import inject_modern_styles
 
 try:
     from streamlit_option_menu import option_menu
+
     USE_OPTION_MENU = True
 except Exception:  # pragma: no cover - optional dependency
     option_menu = None  # type: ignore
@@ -30,6 +32,7 @@ SIDEBAR_STYLES = """
 [data-testid="stSidebar"] {
     background: rgba(20, 25, 40, 0.9);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(6px);
     transition: width 0.3s ease;
 }
 [data-testid="stSidebar"] .stButton>button {
@@ -106,7 +109,6 @@ SIDEBAR_STYLES = """
 }
 </style>
 """
-
 
 
 def render_modern_layout() -> None:
@@ -207,7 +209,7 @@ def render_modern_sidebar(
 
         return ""
 
-    pages = valid_pages    
+    pages = valid_pages
 
     opts = list(pages.keys())
     if not opts:
@@ -245,7 +247,9 @@ def render_modern_sidebar(
                     icons=[icon_map.get(o, "dot") for o in opts],
                     orientation="horizontal" if horizontal else "vertical",
                     key=widget_key,
-                    default_index=opts.index(st.session_state.get(session_key, opts[0])),
+                    default_index=opts.index(
+                        st.session_state.get(session_key, opts[0])
+                    ),
                 )
             elif horizontal:
                 # Render as horizontal buttons
@@ -264,7 +268,9 @@ def render_modern_sidebar(
                     index=opts.index(st.session_state.get(session_key, opts[0])),
                 )
                 choice = opts[
-                    [f"{icon_map.get(o, '')} {o}".strip() for o in opts].index(choice_disp)
+                    [f"{icon_map.get(o, '')} {o}".strip() for o in opts].index(
+                        choice_disp
+                    )
                 ]
 
         except Exception:
@@ -295,17 +301,30 @@ def render_validation_card(entry: dict) -> None:
 
 
 def render_stats_section(stats: dict) -> None:
-    """Show quick statistics in a styled block."""
-    st.markdown(
-        f"""
-        <div class='glass-card'>
-            <h4 style='margin-top:0'>Stats</h4>
-            <div>Runs: {stats.get('runs', 0)}</div>
-            <div>Proposals: {stats.get('proposals', 'N/A')}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """Display statistics in a responsive flex layout."""
+    if os.getenv("DISABLE_STATS_FLEX", "0") == "1":
+        st.markdown(
+            f"<div class='glass-card'>Runs: {stats.get('runs', 0)}</div>",
+            unsafe_allow_html=True,
+        )
+        return
+
+    css = """
+    <style>
+    .stats-container {display:flex;gap:0.5rem;flex-wrap:wrap}
+    .stat-card {flex:1;min-width:120px;padding:0.75rem;border-radius:8px;
+        background: rgba(255,255,255,0.05);backdrop-filter: blur(4px);}
+    .stat-value {font-weight:600;font-size:1.2rem}
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
+    st.markdown("<div class='stats-container'>", unsafe_allow_html=True)
+    for label, value in stats.items():
+        st.markdown(
+            f"<div class='stat-card'><div class='stat-value'>{value}</div><div>{label}</div></div>",
+            unsafe_allow_html=True,
+        )
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 __all__ = [

@@ -47,6 +47,7 @@ except Exception:  # pragma: no cover - optional dependency
     def render_stats_section(*_a, **_k):
         st.info("stats section unavailable")
 
+
 # Prefer modern sidebar render if available
 try:
     from modern_ui_components import render_modern_sidebar as _modern_sidebar_impl
@@ -75,7 +76,7 @@ render_modern_sidebar = render_sidebar_nav
 
 # Utility path handling
 from pathlib import Path
-from utils.page_registry import ensure_pages
+from utils.page_registry import ensure_pages, ROOT_DIR, PAGES_DIR
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -90,9 +91,7 @@ os.environ["STREAMLIT_WATCHER_TYPE"] = "poll"
 # health check endpoint ever changes.
 HEALTH_CHECK_PARAM = "healthz"
 
-# Directory containing Streamlit page modules
-ROOT_DIR = Path(__file__).resolve().parent
-PAGES_DIR = ROOT_DIR / "transcendental_resonance_frontend" / "pages"
+# Directory containing Streamlit page modules comes from utils.page_registry
 
 # Mapping of navigation labels to page module names
 
@@ -113,6 +112,7 @@ _PAGE_LABELS = {label.lower(): label for label in PAGES}
 def normalize_choice(choice: str) -> str:
     """Return the canonical label for ``choice`` ignoring case."""
     return _PAGE_LABELS.get(choice.lower(), choice)
+
 
 # Icons used in the navigation bar. Must be single-character emojis or
 # valid Bootstrap icon codes prefixed with ``"bi bi-"``.
@@ -361,11 +361,7 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
             f"pages.{module}",
         ]
 
-
     # Validate PAGES_DIR existence
-    PAGES_DIR = (
-        Path(__file__).resolve().parent / "transcendental_resonance_frontend" / "pages"
-    )
     if not PAGES_DIR.exists():
         st.error(f"Pages directory not found: {PAGES_DIR}")
         if "_render_fallback" in globals():
@@ -389,7 +385,9 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
 
         for page_file in candidate_files:
             if page_file.exists():
-                rel_path = f"pages/{page_file.stem}"  # ✅ no .py extension for st.switch_page
+                rel_path = (
+                    f"pages/{page_file.stem}"  # ✅ no .py extension for st.switch_page
+                )
                 try:
                     st.switch_page(rel_path)
                     _fallback_rendered.clear()
@@ -405,7 +403,6 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
                     logger.debug("File exists but switch failed: %s", page_file)
                     last_exc = exc
                     break
-
 
         # Fallback: import the module directly and call ``render`` or ``main``
         try:
@@ -473,15 +470,18 @@ def _render_fallback(choice: str) -> None:
                         loaded = True
                         break
                     except Exception as exc:
-                        logger.error("Error running %s.%s: %s", slug, fn, exc, exc_info=True)
+                        logger.error(
+                            "Error running %s.%s: %s", slug, fn, exc, exc_info=True
+                        )
             if loaded:
                 break
         except Exception as exc:
-            logger.error("Error loading page candidate %s: %s", page_file, exc, exc_info=True)
+            logger.error(
+                "Error loading page candidate %s: %s", page_file, exc, exc_info=True
+            )
 
     if loaded:
         return
-
 
     # Prevent duplicate fallback rendering in session
     if st.session_state.get("_fallback_rendered") == slug:
@@ -509,6 +509,7 @@ def _render_fallback(choice: str) -> None:
 
     else:
         st.toast(f"No fallback available for page: {choice}", icon="⚠️")
+
 
 def render_modern_validation_page():
     render_title_bar("✅", "Validation Console")
@@ -599,11 +600,12 @@ def render_sidebar() -> str:
             session_key="active_page",
         )
     else:
-        choice_label = render_sidebar_nav(PAGES, icons=NAV_ICONS, session_key="active_page")
+        choice_label = render_sidebar_nav(
+            PAGES, icons=NAV_ICONS, session_key="active_page"
+        )
 
     # Normalize and convert label to lowercase slug
     return normalize_choice(PAGES.get(choice_label, choice_label))
-
 
 
 def load_css() -> None:
@@ -1028,9 +1030,7 @@ def render_validation_ui(
         main_container = st
 
     try:
-        page_paths = {
-            label: f"/pages/{mod}.py" for label, mod in PAGES.items()
-        }
+        page_paths = {label: f"/pages/{mod}.py" for label, mod in PAGES.items()}
         NAV_ICONS = ["✅", "📊", "🤖", "🎵", "💬", "👥", "👤"]
 
         # ...
@@ -1380,7 +1380,11 @@ def main() -> None:
         if forced_page:
             forced_slug = normalize_choice(forced_page)
             forced_page = next(
-                (label for label, slug in PAGES.items() if normalize_choice(slug) == forced_slug),
+                (
+                    label
+                    for label, slug in PAGES.items()
+                    if normalize_choice(slug) == forced_slug
+                ),
                 None,
             )
 
@@ -1409,7 +1413,6 @@ def main() -> None:
             st.query_params["page"] = display_choice
         except AttributeError:
             st.experimental_set_query_params(page=display_choice)
-
 
         # Page layout: left for tools, center for content
         left_col, center_col, _ = st.columns([1, 3, 1])
@@ -1487,8 +1490,6 @@ def main() -> None:
             else:
                 st.toast("Select a page above to continue.")
                 _render_fallback("Validation")
-
-
 
             # Run agent logic if triggered
             if run_agent_clicked and "AGENT_REGISTRY" in globals():

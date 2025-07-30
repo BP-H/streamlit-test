@@ -26,13 +26,14 @@ from typing import Dict, Iterable, Optional
 from uuid import uuid4
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
+from utils.page_registry import ROOT_DIR, PAGES_DIR
 import os
 import streamlit as st
 from modern_ui_components import SIDEBAR_STYLES
 
 try:
     from streamlit_option_menu import option_menu
+
     USE_OPTION_MENU = True
 except ImportError:
     USE_OPTION_MENU = False
@@ -41,7 +42,6 @@ except ImportError:
 def main_container() -> st.delta_generator.DeltaGenerator:
     """Return a container for the main content area."""
     return st.container()
-
 
 
 def sidebar_container() -> st.delta_generator.DeltaGenerator:
@@ -73,16 +73,21 @@ def _render_sidebar_nav(
     key: Optional[str] = None,
     default: Optional[str] = None,
     session_key: str = "active_page",
+    orientation: str = "vertical",
 ) -> str:
-    """Render a vertical sidebar navigation and return the selected label.
+    """Render a sidebar navigation and return the selected label.
 
     The selected page label is also stored in ``st.session_state`` using
     ``session_key`` so other components can react to the active page.
+    ``orientation`` controls whether the layout is vertical or horizontal.
     """
-    opts = list(page_links.items()) if isinstance(page_links, dict) else [
-        (str(o), str(o)) for o in page_links
-    ]
+    opts = (
+        list(page_links.items())
+        if isinstance(page_links, dict)
+        else [(str(o), str(o)) for o in page_links]
+    )
     icon_list = list(icons or [None] * len(opts))
+    use_icons = os.getenv("UI_ENABLE_ICONS", "0") == "1"
     key = key or uuid4().hex
 
     # filter out paths that don't exist and show an error
@@ -108,27 +113,42 @@ def _render_sidebar_nav(
 
     choice = active
     container = st.sidebar.container()
+    orientation_cls = "horizontal" if orientation == "horizontal" else "vertical"
     with container:
         st.markdown(SIDEBAR_STYLES, unsafe_allow_html=True)
-        st.markdown("<div class='glass-card sidebar-nav'>", unsafe_allow_html=True)
+        st.markdown(
+            f"<div class='glass-card sidebar-nav {orientation_cls}'>",
+            unsafe_allow_html=True,
+        )
         if hasattr(st.sidebar, "page_link"):
             for (label, path), icon in zip(opts, icon_list):
+                display = label if not use_icons else None
                 try:
-                    st.sidebar.page_link(path, label=label, icon=icon, help=label)
+                    st.sidebar.page_link(
+                        path,
+                        label=display or label,
+                        icon=icon if use_icons else None,
+                        help=label,
+                    )
                 except Exception:
                     url = f"?page={label}"
-                    st.sidebar.link_button(label, url=url, icon=icon)
+                    st.sidebar.link_button(
+                        display or label, url=url, icon=icon if use_icons else None
+                    )
         elif USE_OPTION_MENU and option_menu is not None:
             choice = option_menu(
                 menu_title=None,
                 options=[label for label, _ in opts],
-                icons=[icon or "dot" for icon in icon_list],
-                orientation="vertical",
+                icons=[icon or "dot" for icon in icon_list] if use_icons else None,
+                orientation=orientation,
                 key=key,
                 default_index=index,
             )
         else:
-            labels = [f"{icon or ''} {label}".strip() for (label, _), icon in zip(opts, icon_list)]
+            labels = [
+                f"{icon or ''} {label}".strip() if use_icons else label
+                for (label, _), icon in zip(opts, icon_list)
+            ]
             choice = st.radio("", labels, index=index, key=key)
             choice = opts[labels.index(choice)][0]
 
@@ -136,7 +156,6 @@ def _render_sidebar_nav(
 
     st.session_state[session_key] = choice
     return choice
-
 
 
 def render_sidebar_nav(*args, **kwargs):
