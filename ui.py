@@ -24,6 +24,13 @@ from modern_ui_components import (
     render_validation_card,
     render_stats_section,
 )
+from frontend.ui_layout import (
+    main_container,
+    sidebar_container,
+    render_navbar,
+    render_title_bar,
+    render_preview_badge,
+)
 
 # Default port controlled by start.sh via STREAMLIT_PORT; old setting kept
 # for reference but disabled.
@@ -330,167 +337,30 @@ def inject_dark_theme() -> None:
     """Legacy alias for inject_modern_styles()."""
     inject_modern_styles()
 
-def render_modern_validation_page():
-    """Render the main validation interface."""
-    try:
-        from transcendental_resonance_frontend.pages import validation
-        if hasattr(validation, "render"):
-            validation.render()
-            return
-        if hasattr(validation, "main"):
-            validation.main()
-            return
-    except Exception:
-        pass
-
-    st.markdown(
-        """
-        <div style='text-align:center; padding:2rem 0;'>
-            <h1 style='font-size:3rem; color:#4f8bf9; margin-bottom:0.5rem;'>🚀 superNova_2177</h1>
-            <p style='color:#bbb; font-size:1.1rem;'>Advanced Validation Analysis Platform</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        """
-        <div class="status-grid">
-            <div class="status-card">
-                <div style='font-size:2rem;'>✅</div>
-                <div>System Online</div>
-            </div>
-            <div class="status-card">
-                <div style='font-size:2rem;'>🔍</div>
-                <div>Ready to Analyze</div>
-            </div>
-            <div class="status-card">
-                <div style='font-size:2rem;'>⚡</div>
-                <div>High Performance</div>
-            </div>
-            <div class="status-card">
-                <div style='font-size:2rem;'>🎯</div>
-                <div>Precision Mode</div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Main content area
-    st.markdown(
-        """
-        <div style='background:#1e1e1e; border:1px solid #333; padding:2rem; border-radius:8px; margin:2rem 0;'>
-            <h2 style='color:#fff; text-align:center; margin-bottom:1.5rem;'>🔬 Validation Analysis Center</h2>
-            <p style='color:#bbb; text-align:center;'>Upload your validation data or use demo mode to experience the power of superNova_2177</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Interactive demo section
-    col1, col2 = st.columns([2, 1])
-
-    with col1:
-        st.markdown("### 📊 Validation Input")
-
-        # Beautiful text area
-        st.text_area(
-            "Validation JSON Data",
-            value='{\n  "validations": [\n    {\n      "validator": "Alice",\n      "target": "Proposal_001",\n      "score": 0.95,\n      "timestamp": "2025-07-30T00:28:28Z"\n    }\n  ]\n}',
-            height=200,
-            help="Paste your validation data here or use the sample data",
-        )
-
-        # Modern toggle for demo mode
-        st.toggle("🎮 Demo Mode", value=True, help="Use sample data for testing")
-
-    with col2:
-        st.markdown("### ⚙️ Analysis Settings")
-
-        st.selectbox(
-            "Visualization Mode",
-            ["🌟 Force Layout", "🔄 Circular", "📐 Grid"],
-            help="Choose how to visualize the validation network",
-        )
-
-        st.slider(
-            "Confidence Threshold",
-            0.0,
-            1.0,
-            0.75,
-            help="Minimum confidence level for validation acceptance",
-        )
-
-        if st.button("🚀 Run Analysis", type="primary", use_container_width=True):
-            with st.spinner("Loading..."):
-                # Simulate analysis
-                import time
-
-                time.sleep(2)
-
-                st.success("✅ Analysis completed successfully!")
-
-                # Display results
-                st.markdown("### 📈 Analysis Results")
-
-                result_col1, result_col2, result_col3 = st.columns(3)
-
-                with result_col1:
-                    st.metric("Consensus Score", "0.87", delta="0.12")
-                with result_col2:
-                    st.metric("Network Health", "94.2%", delta="2.3%")
-                with result_col3:
-                    st.metric("Validation Count", "1,247", delta="156")
-
-                # Beautiful results display
-                st.markdown(
-                    """
-                    <div style='background: rgba(76, 175, 80, 0.1); padding: 1.5rem; 
-                                border-radius: 15px; border: 1px solid rgba(76, 175, 80, 0.3); margin-top: 1rem;'>
-                        <h4 style='color: #4CAF50; margin: 0 0 1rem 0;'>🎉 Excellent Validation Health!</h4>
-                        <p style='color: white; margin: 0;'>
-                            Your validation network shows strong consensus with high integrity scores. 
-                            The system detected no anomalies and recommends proceeding with confidence.
-                        </p>
-                    </div>
-                """,
-                    unsafe_allow_html=True,
-                )
 
 
-# In your main() function, replace the page loading section with:
+
 def load_page_with_fallback(choice: str) -> None:
-    """Load a page dynamically, with robust fallback logic and diagnostics."""
-    pages = {
-        "Validation": "validation",
-        "Voting": "voting",
-        "Agents": "agents",
-        "Resonance Music": "resonance_music",
-        "Social": "social",
-    }
+    """Attempt to import and render the selected page with graceful fallback."""
+    module_name = PAGES.get(choice, choice.lower())
+    candidates = [
+        f"transcendental_resonance_frontend.pages.{module_name}",
+        module_name,
+        f"pages.{module_name}",
+    ]
 
-def load_page_with_fallback(choice: str, module_paths: list[str]) -> None:
-    """
-    Attempt to import and run a page module by name, with graceful fallback.
-    Tries each candidate path and checks for `render()` or `main()` method.
-    """
-    for module_path in module_paths:
+    for module_path in candidates:
         try:
             page_mod = import_module(module_path)
-            if hasattr(page_mod, "render"):
-                page_mod.render()
+            page_fn = getattr(page_mod, "main", None) or getattr(page_mod, "render", None)
+            if page_fn:
+                page_fn()
                 return
-            elif hasattr(page_mod, "main"):
-                page_mod.main()
-                return
-            else:
-                raise AttributeError("Module found but missing 'main' or 'render'")
         except ImportError:
-            continue  # Try next path
+            continue
         except Exception as exc:
             st.error(f"Error loading page: {exc}")
-            break
+            return
 
     _render_fallback(choice)
 
@@ -512,52 +382,54 @@ def _render_fallback(choice: str) -> None:
 
 
 def render_modern_validation_page():
+    """Fallback validation page with basic timeline and progress."""
+    render_preview_badge("🚧 Preview Mode")
     st.markdown("# ✅ Validation Console")
-    st.info("🚧 Validation logic coming soon!")
+    status = st.empty()
+    progress = st.progress(0)
+    for i in range(1, 6):
+        status.write(f"Step {i} completed")
+        progress.progress(i / 5.0)
+    st.success("Analysis pipeline placeholder finished")
 
 
 def render_modern_voting_page():
+    """Fallback voting dashboard with sample poll results."""
+    render_preview_badge("Preview Mode")
     st.markdown("# 🗳️ Voting Dashboard")
-    try:
-        render_voting_tab()
-    except Exception:
-        st.info("🚧 Advanced voting features coming soon!")
+    options = {"Proposal A": 60, "Proposal B": 30, "Proposal C": 10}
+    for name, pct in options.items():
+        st.write(f"{name} {pct}% :thumbsup:")
+        st.progress(pct / 100)
 
 
 def render_modern_agents_page():
+    """Fallback agent overview with sample activity sparkline."""
+    render_preview_badge("Preview Mode")
     st.markdown("# 🤖 AI Agents")
-    try:
-        render_agent_insights_tab()
-    except Exception:
-        st.info("🚧 Agent management system in development!")
+    cols = st.columns(3)
+    for c, name in zip(cols, ["MetaValidator", "Guardian", "Resonance"]):
+        with c:
+            st.subheader(name)
+            st.line_chart([1, 3, 2, 4])
 
 
 def render_modern_music_page():
+    """Fallback music demo with synthetic waveform."""
+    render_preview_badge("Preview Mode")
     st.markdown("# 🎵 Resonance Music")
-    try:
-        from transcendental_resonance_frontend.pages import resonance_music
-        if hasattr(resonance_music, "render"):
-            resonance_music.render()
-        elif hasattr(resonance_music, "main"):
-            resonance_music.main()
-        else:
-            raise RuntimeError("No render or main method available in resonance_music")
-    except Exception:
-        st.info("🚧 Harmonic resonance features coming soon!")
+    st.line_chart([0, 1, 0, -1, 0])
+    st.caption("Harmonic signature: A-minor")
 
 
 def render_modern_social_page():
+    """Fallback social feed with avatars and trending tags."""
+    render_preview_badge("Preview Mode")
     st.markdown("# 👥 Social Network")
-    try:
-        from transcendental_resonance_frontend.pages import social
-        if hasattr(social, "render"):
-            social.render()
-        elif hasattr(social, "main"):
-            social.main()
-        else:
-            raise RuntimeError("No render or main method available in social")
-    except Exception:
-        st.info("🚧 Social features in development!")
+    users = ["Alice", "Bob", "Carol"]
+    for u in users:
+        st.write(f"🙂 {u}: enjoying the network!")
+    st.write("Trending: #supernova #ai #music")
 
 
 
@@ -1133,20 +1005,15 @@ def main() -> None:
             "Social": "social",
         }
 
-        choice = option_menu(
-            menu_title=None,
-            options=list(PAGES.keys()),
-            icons=["check2-square", "graph-up", "robot", "music-note-beamed", "people"],
-            orientation="horizontal",
-            key="main_nav_menu",
-        )
+        choice = render_navbar(PAGES.keys())
 
         left_col, center_col, right_col = st.columns([1, 3, 1])
 
         with center_col:
-            load_page_with_fallback(choice)
+            with main_container():
+                load_page_with_fallback(choice)
 
-        with left_col:
+        with sidebar_container():
             render_status_icon()
 
             with st.expander("Environment Details"):
