@@ -257,39 +257,33 @@ def render_validation_card() -> None:
 
 
 def render_stats_section() -> None:
-    """Display quick stats in four columns."""
-    col1, col2, col3, col4 = st.columns(4)
+    """Display quick stats in a horizontal row."""
+
     stats = [
-        ("🏃‍♂️", "Runs", "0", "#4a90e2"),
-        ("📝", "Proposals", "12", "#10b981"),
-        ("⚡", "Success Rate", "94%", "#f59e0b"),
-        ("🎯", "Accuracy", "98.2%", "#8b5cf6"),
+        ("🏃‍♂️", "Runs", "0"),
+        ("📝", "Proposals", "12"),
+        ("⚡", "Success Rate", "94%"),
+        ("🎯", "Accuracy", "98.2%"),
     ]
-    for col, (icon, label, value, color) in zip([col1, col2, col3, col4], stats):
-        with col:
-            st.markdown(
-                f"""
-                <div style="
-                    background: rgba(255, 255, 255, 0.03);
-                    backdrop-filter: blur(15px);
-                    border: 1px solid rgba(255, 255, 255, 0.1);
-                    border-radius: 12px;
-                    padding: 1.5rem;
-                    text-align: center;
-                    transition: all 0.3s ease;
-                " onmouseover="this.style.transform='scale(1.02)'"
-                   onmouseout="this.style.transform='scale(1)'">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">{icon}</div>
-                    <div style="color: {color}; font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem;">
-                        {value}
-                    </div>
-                    <div style="color: #888; font-size: 0.85rem; font-weight: 500;">
-                        {label}
-                    </div>
+
+    cards = []
+    for icon, label, value in stats:
+        cards.append(
+            f"""
+            <div class='glass-card' style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.75rem;">
+                <div style='font-size:2.25rem'>{icon}</div>
+                <div style='text-align:left;'>
+                    <div style='color:var(--accent);font-size:1.85rem;font-weight:700;margin:0;'>{value}</div>
+                    <div style='color:var(--text-color);font-size:1rem;font-weight:500;margin:0;'>{label}</div>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            </div>
+            """
+        )
+
+    st.markdown(
+        f"<div style='display:flex;gap:1rem;flex-wrap:wrap'>{''.join(cards)}</div>",
+        unsafe_allow_html=True,
+    )
 
 
 def open_card_container() -> None:
