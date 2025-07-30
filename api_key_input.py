@@ -1,3 +1,6 @@
+# STRICTLY A SOCIAL MEDIA PLATFORM
+# Intellectual Property & Artistic Inspiration
+# Legal & Ethical Safeguards
 """Reusable helpers for API key input in the Streamlit UI."""
 
 from __future__ import annotations
@@ -22,8 +25,10 @@ PROVIDERS = {
 }
 
 
-def render_api_key_ui(default: str = "Dummy") -> dict[str, str | None]:
-    """Render model selection and API key fields.
+def render_api_key_ui(
+    default: str = "Dummy", *, key_prefix: str = "api"
+) -> dict[str, str | None]:
+    """Render model selection and API key fields with unique widget keys.
 
     Returns a dictionary with ``model`` and ``api_key`` keys.
     """
@@ -35,7 +40,12 @@ def render_api_key_ui(default: str = "Dummy") -> dict[str, str | None]:
         index = names.index(default)
     else:
         index = 0
-    choice = st.selectbox("LLM Model", names, index=index)
+    choice = st.selectbox(
+        "LLM Model",
+        names,
+        index=index,
+        key=f"{key_prefix}_model_select",
+    )
     model, key_name = PROVIDERS[choice]
     key_val = ""
     if key_name is not None:
@@ -43,6 +53,7 @@ def render_api_key_ui(default: str = "Dummy") -> dict[str, str | None]:
             f"{choice} API Key",
             type="password",
             value=st.session_state.get(key_name, ""),
+            key=f"{key_prefix}_api_key",
         )
         if key_val:
             st.session_state[key_name] = key_val

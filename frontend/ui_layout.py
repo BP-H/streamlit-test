@@ -1,3 +1,6 @@
+# STRICTLY A SOCIAL MEDIA PLATFORM
+# Intellectual Property & Artistic Inspiration
+# Legal & Ethical Safeguards
 """UI Layout Helpers
 
 Reusable Streamlit layout helpers and navigation components for pages.
@@ -20,6 +23,7 @@ UI Ideas:
 from __future__ import annotations
 
 from typing import Dict, Iterable, Optional
+from uuid import uuid4
 import streamlit as st
 
 try:
@@ -43,7 +47,8 @@ def sidebar_container() -> st.delta_generator.DeltaGenerator:
 def render_navbar(
     page_links: Iterable[str] | Dict[str, str],
     icons: Optional[Iterable[str]] = None,
-    key: str = "main_nav_menu",
+    *,
+    key: Optional[str] = None,
     default: Optional[str] = None,
 ) -> str:
     """Render horizontal navigation links using ``st.page_link`` and return the selected label."""
@@ -70,14 +75,16 @@ def render_navbar(
             sidebar.divider()
 
         # Fallback to horizontal columns if sidebar fails or for main area display
+        if key is None:
+            key = f"nav_{uuid4().hex}"
         if not st.session_state.get(key, None):
-            st.session_state[key] = default or opts[0][0]  # Initialize with default or first option
+            st.session_state[key] = default or opts[0][0]
         cols = st.columns(len(opts))
         for col, ((label, target), icon) in zip(cols, zip(opts, icon_list)):
             with col:
                 if st.button(label, key=f"{key}_{label}", help=target):
                     st.session_state[key] = label
-        return st.session_state.get(key, opts[0][0])  # Return current selection
+        return st.session_state.get(key, opts[0][0])
 
     except Exception as e:
         st.warning(f"Navigation setup failed: {e}. Falling back to radio.")

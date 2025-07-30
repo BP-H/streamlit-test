@@ -13,6 +13,54 @@ except Exception:  # pragma: no cover - optional dependency
     GridOptionsBuilder = None  # type: ignore
 from streamlit_helpers import alert, inject_global_styles
 
+
+def inject_voting_styles() -> None:
+    """Inject CSS styles for the voting interface."""
+    st.markdown(
+        BOX_CSS
+        + """
+        <style>
+        .app-container { padding: 1rem; }
+        .card {
+            background: #0e0e0f;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        }
+        .button-primary > button {
+            background-color: #1DA1F2;
+            color: #fff;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .button-primary > button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(29,161,242,0.5);
+            filter: brightness(1.05);
+        }
+        .ag-theme-streamlit .ag-header,
+        .ag-theme-streamlit .ag-header-viewport {
+            background-color: #1DA1F2 !important;
+        }
+        .ag-theme-streamlit .ag-header-cell-label {
+            color: #fff;
+            font-weight: bold;
+        }
+        .ag-grid-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 try:
     from frontend_bridge import dispatch_route
 except Exception:  # pragma: no cover - optional dependency
@@ -78,57 +126,8 @@ def render_proposals_tab(main_container=None) -> None:
             )
             return
 
-        safe_markdown(
-            BOX_CSS
-            + """
-            <style>
-        .app-container { padding: 1rem; }
-        .card {
-            background: #fff;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .card input,
-        .card textarea,
-        .card select {
-            border-radius: 8px;
-            padding: 0.5rem;
-        }
-        .button-primary > button {
-            background-color: #1DA1F2;
-            color: #fff;
-            border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .button-primary > button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(29,161,242,0.5);
-            filter: brightness(1.05);
-        }
-        .ag-theme-streamlit .ag-header,
-        .ag-theme-streamlit .ag-header-viewport {
-            background-color: #1DA1F2 !important;
-        }
-        .ag-theme-streamlit .ag-header-cell-label {
-            color: #fff;
-            font-weight: bold;
-        }
-        .ag-grid-container {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        </style>
-        <div class='app-container'>
-        """,
-        unsafe_allow_html=True,
-    )
+        inject_voting_styles()
+        safe_markdown("<div class='app-container'>", unsafe_allow_html=True)
 
         col1, col2 = st.columns([1, 1])
 

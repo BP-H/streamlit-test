@@ -12,9 +12,10 @@ def inject_modern_styles() -> None:
         """
         <style>
         body, .stApp {
-            background-color: var(--background, #F0F2F6);
-            color: var(--text-color, #333333);
+            background: radial-gradient(circle at top left,#0f2027,#203a43,#2c5364);
+            color: #d0d0d0;
             font-family: 'Inter', sans-serif;
+            min-height: 100vh;
         }
         .main .block-container {
             padding-top: 2rem;
@@ -24,23 +25,23 @@ def inject_modern_styles() -> None:
         }
         .custom-container {
             padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             margin-bottom: 1rem;
-            background-color: var(--secondary-bg, #FFFFFF);
+            background: rgba(255,255,255,0.05);
         }
         .card {
-            background-color: var(--secondary-bg, #FFFFFF);
+            background: rgba(255,255,255,0.05);
             padding: 1rem;
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             margin-bottom: 1rem;
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
         .card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.45);
             transform: translateY(-2px);
         }
         h1, h2, h3, h4, h5, h6 {
@@ -62,22 +63,20 @@ def inject_modern_styles() -> None:
             margin-bottom: 0.75rem;
         }
         .stButton > button {
-            background: linear-gradient(135deg, #4a90e2 0%, #5ba0f2 100%) !important;
+            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%) !important;
             border: none !important;
-            border-radius: 12px !important;
+            border-radius: 10px !important;
             color: white !important;
             font-weight: 600 !important;
-            padding: 0.75rem 2rem !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4) !important;
+            padding: 0.6rem 1.5rem !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 0 10px rgba(0,114,255,0.4) !important;
             font-size: 0.95rem !important;
             height: auto !important;
         }
         .stButton > button:hover {
-            transform: translateY(-1px) !important;
-            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.5) !important;
-            background: linear-gradient(135deg, #5ba0f2 0%, #6bb0ff 100%) !important;
-            filter: brightness(1.05);
+            transform: translateY(-2px) !important;
+            box-shadow: 0 0 20px rgba(0,198,255,0.6) !important;
         }
 
         input, textarea, select {

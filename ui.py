@@ -92,9 +92,10 @@ def global_exception_handler(exc_type, exc_value, exc_traceback) -> None:
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
 
-    st.error("Critical Application Error")
-    st.code(f"Error: {exc_value}")
-
+    st.error("Critical Application Error", icon="🚨")
+    with st.expander("Show details"):
+        st.exception(exc_value)
+    st.toast("An unexpected error occurred", icon="⚠️")
     if st.button("Emergency Reset"):
         st.session_state.clear()
         st.rerun()
@@ -448,7 +449,7 @@ def _render_fallback(choice: str) -> None:
     fallback_fn = fallback_pages.get(choice)
     if fallback_fn:
         if OFFLINE_MODE:
-            st.info("Backend unavailable - offline mode active.")
+            st.toast("Backend unavailable - offline mode active.", icon="⏯")
         show_preview_badge("🚧 Preview Mode")
         fallback_fn()
     else:
@@ -942,15 +943,8 @@ def render_validation_ui(
         }
         ui_layout.render_navbar(
             page_paths,
-            icons=[
-                "check2-square",
-                "graph-up",
-                "robot",
-                "music-note-beamed",
-                "chat-text",
-                "people",
-                "person-circle",
-            ],
+            icons=["✅", "📈", "🤖", "🎵", "💬", "👥", "👤"],
+            key="nav_validation",
         )
 
         # Page layout
@@ -1240,15 +1234,8 @@ def main() -> None:
         }
         choice = ui_layout.render_navbar(
             page_paths,
-            icons=[
-                "check2-square",
-                "graph-up",
-                "robot",
-                "music-note-beamed",
-                "chat-text",
-                "people",
-                "person-circle",
-            ],
+            icons=["✅", "📈", "🤖", "🎵", "💬", "👥", "👤"],
+            key="nav_main",
         )
         
         left_col, center_col, right_col = st.columns([1, 3, 1])
@@ -1291,7 +1278,7 @@ def main() -> None:
                     st.success("Analysis complete!")
         
             with st.expander("Agent Configuration"):
-                api_info = render_api_key_ui()
+                api_info = render_api_key_ui(key_prefix="dev")
                 backend_choice = api_info.get("model", "dummy")
                 api_key = api_info.get("api_key", "") or ""
                 event_type = st.text_input("Event", value="LLM_INCOMING")
