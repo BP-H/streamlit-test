@@ -354,7 +354,7 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
         attempted_paths.add(module_path)
         page_file = PAGES_DIR / (module_path.rsplit(".", 1)[-1] + ".py")
         if page_file.exists():
-            rel_path = os.path.relpath(page_file, start=Path.cwd())
+            rel_path = f"pages/{page_file.name}"
             try:
                 st.switch_page(rel_path)
                 return
@@ -934,10 +934,7 @@ def render_validation_ui(
         main_container = st
 
     try:
-        page_paths = {
-            label: os.path.relpath(PAGES_DIR / f"{mod}.py", start=Path.cwd())
-            for label, mod in PAGES.items()
-        }
+        page_paths = {label: f"pages/{mod}.py" for label, mod in PAGES.items()}
         NAV_ICONS = ["✅", "📊", "🤖", "🎵", "💬", "👥", "👤"]
 
         # ...
@@ -1263,10 +1260,7 @@ def main() -> None:
         )
         # Map labels to file system paths relative to the working directory so
         # ``st.sidebar.page_link`` can locate the correct page modules.
-        page_paths = {
-            label: os.path.relpath(PAGES_DIR / f"{mod}.py", start=Path.cwd())
-            for label, mod in PAGES.items()
-        }
+        page_paths = {label: f"pages/{mod}.py" for label, mod in PAGES.items()}
 
         # Determine page from query params and sidebar selection
         try:
