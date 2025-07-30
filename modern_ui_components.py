@@ -229,8 +229,8 @@ def render_modern_sidebar(
     orientation_cls = "horizontal" if horizontal else "vertical"
 
     container_ctx = safe_container(container)
+    st.markdown(SIDEBAR_STYLES, unsafe_allow_html=True)
     with container_ctx:
-        st.markdown(SIDEBAR_STYLES, unsafe_allow_html=True)
         st.markdown(
             f"<div class='glass-card sidebar-nav {orientation_cls}'>",
             unsafe_allow_html=True,
