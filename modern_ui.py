@@ -7,18 +7,24 @@ import streamlit as st
 
 try:  # pragma: no cover - optional dependency
     from streamlit_lottie import st_lottie
+
     HAS_LOTTIE = True
 except Exception:  # pragma: no cover - graceful fallback
     st_lottie = None  # type: ignore
     HAS_LOTTIE = False
 
 
-def render_lottie_animation(url: str, *, height: int = 200, fallback: str = "🚀") -> None:
+def render_lottie_animation(
+    url: str, *, height: int = 200, fallback: str = "🚀"
+) -> None:
     """Display a Lottie animation if available, otherwise show a fallback icon."""
     if HAS_LOTTIE and st_lottie is not None:
         st_lottie(url, height=height)
     else:
-        st.markdown(f"<div style='font-size:{height // 4}px'>{fallback}</div>", unsafe_allow_html=True)
+        st.markdown(
+            f"<div style='font-size:{height // 4}px'>{fallback}</div>",
+            unsafe_allow_html=True,
+        )
 
 
 def inject_modern_styles() -> None:
@@ -90,10 +96,10 @@ def inject_modern_styles() -> None:
 
         }
         h1, h2, h3, h4, h5, h6 {
-            font-family: 'Inter', sans-serif !important;
-            font-weight: 600 !important;
-            line-height: 1.3 !important;
-            margin: 0 0 0.5rem 0 !important;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            line-height: 1.3;
+            margin: 0 0 0.5rem 0;
         }
         h1 { font-size: clamp(1.8rem, 5vw, 2.4rem) !important; }
         h2 { font-size: clamp(1.5rem, 4vw, 2rem) !important; }
@@ -101,10 +107,9 @@ def inject_modern_styles() -> None:
         h4 { font-size: clamp(1.1rem, 2.5vw, 1.3rem) !important; }
         h5 { font-size: clamp(1rem, 2vw, 1.1rem) !important; }
         h6 { font-size: clamp(0.875rem, 1.5vw, 1rem) !important; }
-        }
         p, span, div {
-            line-height: 1.6 !important;
-            font-family: 'Inter', sans-serif !important;
+            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
             margin-bottom: 0.75rem;
         }
         .gradient-btn,
@@ -126,6 +131,7 @@ def inject_modern_styles() -> None:
             box-shadow: 0 6px 20px rgba(0, 255, 255, 0.6) !important;
             background: linear-gradient(90deg, #00ffff, var(--neon-accent)) !important;
             filter: brightness(1.05);
+        }
  
         .stButton>button {
             background: rgba(255,255,255,0.05) !important;
@@ -146,10 +152,10 @@ def inject_modern_styles() -> None:
         }
 
         input, textarea, select {
-            background-color: #1a1a1a !important;
-            color: #eee !important;
-            border: 1px solid #444 !important;
-            border-radius: 8px !important;
+            background-color: #1a1a1a;
+            color: #eee;
+            border: 1px solid #444;
+            border-radius: 8px;
         }
 
         .sidebar-nav .nav-item {
@@ -163,7 +169,6 @@ def inject_modern_styles() -> None:
             transition: background 0.2s;
         }
 
-        }
 
         .sidebar-nav .nav-item.active {
             background: rgba(255,255,255,0.1);
@@ -176,13 +181,6 @@ def inject_modern_styles() -> None:
 
         .sidebar-nav .icon {
             font-size: 1.2rem;
-        }
-
-        @media (max-width: 768px) {
-            .main .block-container {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
         }
 
         @media (max-width: 480px) {
@@ -217,7 +215,6 @@ def inject_modern_styles() -> None:
             }
         }
 
-        }
         </style>
         """,
         unsafe_allow_html=True,
