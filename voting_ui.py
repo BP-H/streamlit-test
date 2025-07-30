@@ -11,23 +11,13 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     AgGrid = None  # type: ignore
     GridOptionsBuilder = None  # type: ignore
-from streamlit_helpers import alert, inject_global_styles
+from streamlit_helpers import alert, inject_global_styles, tab_box
 
 try:
     from frontend_bridge import dispatch_route
 except Exception:  # pragma: no cover - optional dependency
     dispatch_route = None  # type: ignore
 
-BOX_CSS = """
-<style>
-.tab-box {
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-</style>
-"""
 
 
 def _sanitize_markdown(text: str) -> str:
@@ -85,9 +75,8 @@ def render_proposals_tab(main_container=None) -> None:
             )
             return
 
-        safe_markdown(
-            BOX_CSS
-            + """
+        st.markdown(
+            """
             <style>
         .app-container { padding: 1rem; }
         .card {
@@ -121,77 +110,79 @@ def render_proposals_tab(main_container=None) -> None:
             overflow-y: auto;
         }
         </style>
-        <div class='app-container'>
         """,
-        unsafe_allow_html=True,
-    )
+            unsafe_allow_html=True,
+        )
 
-        col1, col2 = st.columns([1, 1])
+        with tab_box():
+            st.markdown("<div class='app-container'>", unsafe_allow_html=True)
 
-        with col1:
-            safe_markdown("<div class='card'>", unsafe_allow_html=True)
-            with st.form("create_proposal_form"):
-                st.write("Create Proposal")
-                title = st.text_input("Title")
-                description = st.text_area("Description")
-                author_id = st.number_input("Author ID", value=1, step=1)
-                group_id = st.text_input("Group ID")
-                voting_deadline = st.date_input("Voting Deadline")
-                safe_markdown("<div class='button-primary'>", unsafe_allow_html=True)
-                submitted = st.form_submit_button("Create")
+            col1, col2 = st.columns([1, 1])
+
+            with col1:
+                safe_markdown("<div class='card'>", unsafe_allow_html=True)
+                with st.form("create_proposal_form"):
+                    st.write("Create Proposal")
+                    title = st.text_input("Title")
+                    description = st.text_area("Description")
+                    author_id = st.number_input("Author ID", value=1, step=1)
+                    group_id = st.text_input("Group ID")
+                    voting_deadline = st.date_input("Voting Deadline")
+                    safe_markdown("<div class='button-primary'>", unsafe_allow_html=True)
+                    submitted = st.form_submit_button("Create")
+                    safe_markdown("</div>", unsafe_allow_html=True)
                 safe_markdown("</div>", unsafe_allow_html=True)
-            safe_markdown("</div>", unsafe_allow_html=True)
 
-        with col2:
-            safe_markdown("<div class='card'>", unsafe_allow_html=True)
-            safe_markdown("<div class='button-primary'>", unsafe_allow_html=True)
-            if st.button("Refresh Proposals", key="refresh_proposals"):
-                with st.spinner("Working on it..."):
-                    try:
-                        res = _run_async(dispatch_route("list_proposals", {}))
-                        st.session_state["proposals_cache"] = res.get("proposals", [])
-                        st.toast("Success!")
-                    except Exception as exc:
-                        alert(f"Failed to load proposals: {exc}", "error")
-            safe_markdown("</div>", unsafe_allow_html=True)
+            with col2:
+                safe_markdown("<div class='card'>", unsafe_allow_html=True)
+                safe_markdown("<div class='button-primary'>", unsafe_allow_html=True)
+                if st.button("Refresh Proposals", key="refresh_proposals"):
+                    with st.spinner("Working on it..."):
+                        try:
+                            res = _run_async(dispatch_route("list_proposals", {}))
+                            st.session_state["proposals_cache"] = res.get("proposals", [])
+                            st.toast("Success!")
+                        except Exception as exc:
+                            alert(f"Failed to load proposals: {exc}", "error")
+                safe_markdown("</div>", unsafe_allow_html=True)
 
-        proposals = st.session_state.get("proposals_cache", [])
-        if proposals:
-            simple = [
-                {
-                    "id": p.get("id"),
-                    "title": p.get("title"),
-                    "status": p.get("status"),
-                    "deadline": p.get("voting_deadline"),
-                }
-                for p in proposals
-            ]
-            df = pd.DataFrame(simple)
-            gb = GridOptionsBuilder.from_dataframe(df)
-            gb.configure_default_column(filter=True, sortable=True, resizable=True)
-            safe_markdown("<div class='ag-grid-container'>", unsafe_allow_html=True)
-            AgGrid(
-                df,
-                gridOptions=gb.build(),
-                theme="streamlit",
-                fit_columns_on_grid_load=True,
-            )
-            safe_markdown("</div>", unsafe_allow_html=True)
+            proposals = st.session_state.get("proposals_cache", [])
+            if proposals:
+                simple = [
+                    {
+                        "id": p.get("id"),
+                        "title": p.get("title"),
+                        "status": p.get("status"),
+                        "deadline": p.get("voting_deadline"),
+                    }
+                    for p in proposals
+                ]
+                df = pd.DataFrame(simple)
+                gb = GridOptionsBuilder.from_dataframe(df)
+                gb.configure_default_column(filter=True, sortable=True, resizable=True)
+                safe_markdown("<div class='ag-grid-container'>", unsafe_allow_html=True)
+                AgGrid(
+                    df,
+                    gridOptions=gb.build(),
+                    theme="streamlit",
+                    fit_columns_on_grid_load=True,
+                )
+                safe_markdown("</div>", unsafe_allow_html=True)
 
-        with st.form("vote_proposal_form"):
-            st.write("Vote on Proposal")
-            ids = [p.get("id") for p in proposals]
-            prop_id = (
-                st.selectbox("Proposal", ids)
-                if ids
-                else st.number_input("Proposal ID", value=1, step=1)
-            )
-            harmonizer_id = st.number_input(
-                "Harmonizer ID", value=1, step=1, key="harmonizer_id_vote"
-            )
-            vote_choice = st.selectbox("Vote", ["yes", "no", "abstain"])
-            vote_sub = st.form_submit_button("Submit Vote")
-        safe_markdown("</div>", unsafe_allow_html=True)
+            with st.form("vote_proposal_form"):
+                st.write("Vote on Proposal")
+                ids = [p.get("id") for p in proposals]
+                prop_id = (
+                    st.selectbox("Proposal", ids)
+                    if ids
+                    else st.number_input("Proposal ID", value=1, step=1)
+                )
+                harmonizer_id = st.number_input(
+                    "Harmonizer ID", value=1, step=1, key="harmonizer_id_vote"
+                )
+                vote_choice = st.selectbox("Vote", ["yes", "no", "abstain"])
+                vote_sub = st.form_submit_button("Submit Vote")
+            safe_markdown("</div>", unsafe_allow_html=True)
 
         if submitted:
             payload = {
@@ -252,15 +243,15 @@ def render_governance_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
-            if st.button("Refresh Votes"):
-                with st.spinner("Working on it..."):
-                    try:
-                        res = _run_async(dispatch_route("load_votes", {}))
-                        st.session_state["votes_cache"] = res.get("votes", [])
-                        st.toast("Success!")
-                    except Exception as exc:
-                        alert(f"Failed to load votes: {exc}", "error")
+            with tab_box():
+                if st.button("Refresh Votes"):
+                    with st.spinner("Working on it..."):
+                        try:
+                            res = _run_async(dispatch_route("load_votes", {}))
+                            st.session_state["votes_cache"] = res.get("votes", [])
+                            st.toast("Success!")
+                        except Exception as exc:
+                            alert(f"Failed to load votes: {exc}", "error")
 
         votes = st.session_state.get("votes_cache", [])
         if votes:
@@ -317,15 +308,15 @@ def render_agent_ops_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
-            if st.button("Reload Agent List"):
-                with st.spinner("Working on it..."):
-                    try:
-                        res = _run_async(dispatch_route("list_agents", {}))
-                        st.session_state["agent_list"] = res.get("agents", [])
-                        st.toast("Success!")
-                    except Exception as exc:
-                        alert(f"Load failed: {exc}", "error")
+            with tab_box():
+                if st.button("Reload Agent List"):
+                    with st.spinner("Working on it..."):
+                        try:
+                            res = _run_async(dispatch_route("list_agents", {}))
+                            st.session_state["agent_list"] = res.get("agents", [])
+                            st.toast("Success!")
+                        except Exception as exc:
+                            alert(f"Load failed: {exc}", "error")
 
         agents = st.session_state.get("agent_list", [])
         st.write("Available Agents", agents)
@@ -385,24 +376,23 @@ def render_logs_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
-            trace_text = st.text_area("Audit Trace JSON", value="{}", height=200)
-            if st.button("Explain Trace"):
-                try:
-                    trace = json.loads(trace_text or "{}")
-                except Exception as exc:
-                    alert(f"Invalid JSON: {exc}", "error")
-                else:
-                    with st.spinner("Working on it..."):
-                        try:
-                            res = _run_async(
-                                dispatch_route("explain_audit", {"trace": trace})
-                            )
-                            st.text_area("Explanation", value=res, height=150)
-                            st.toast("Success!")
-                        except Exception as exc:
-                            alert(f"Explain failed: {exc}", "error")
-            safe_markdown("</div>", unsafe_allow_html=True)
+            with tab_box():
+                trace_text = st.text_area("Audit Trace JSON", value="{}", height=200)
+                if st.button("Explain Trace"):
+                    try:
+                        trace = json.loads(trace_text or "{}")
+                    except Exception as exc:
+                        alert(f"Invalid JSON: {exc}", "error")
+                    else:
+                        with st.spinner("Working on it..."):
+                            try:
+                                res = _run_async(
+                                    dispatch_route("explain_audit", {"trace": trace})
+                                )
+                                st.text_area("Explanation", value=res, height=150)
+                                st.toast("Success!")
+                            except Exception as exc:
+                                alert(f"Explain failed: {exc}", "error")
 
 
 def render_voting_tab(main_container=None) -> None:

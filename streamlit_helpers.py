@@ -14,6 +14,31 @@ from typing import Literal
 
 import streamlit as st
 from modern_ui import inject_modern_styles
+from contextlib import contextmanager
+
+TAB_BOX_CSS = """
+<style>
+    .tab-box {
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 1rem;
+        transition: box-shadow 0.2s ease;
+    }
+    .tab-box:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+</style>
+"""
+
+
+@contextmanager
+def tab_box() -> None:
+    """Context manager for a styled container block."""
+    st.markdown(TAB_BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+    try:
+        yield
+    finally:
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def alert(
@@ -167,4 +192,5 @@ __all__ = [
     "theme_selector",
     "centered_container",
     "inject_global_styles",
+    "tab_box",
 ]

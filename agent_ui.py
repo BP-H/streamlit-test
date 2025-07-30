@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Any, cast
 
 import streamlit as st
-from streamlit_helpers import inject_global_styles, theme_selector
+from streamlit_helpers import inject_global_styles, theme_selector, tab_box
 from voting_ui import (
     render_proposals_tab,
     render_governance_tab,
@@ -17,16 +17,6 @@ from voting_ui import (
 from contextlib import nullcontext
 from ui_utils import summarize_text, load_rfc_entries
 
-BOX_CSS = """
-<style>
-.tab-box {
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-</style>
-"""
 
 
 def render_agent_insights_tab(main_container=None) -> None:
@@ -44,8 +34,8 @@ def render_agent_insights_tab(main_container=None) -> None:
         else nullcontext()
     )
     with container_ctx:
-        st.markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
-        st.subheader("Virtual Diary")
+        with tab_box():
+            st.subheader("Virtual Diary")
         with st.expander("📘 Notes", expanded=False):
             diary_note = st.text_input("Add note")
             rfc_input = st.text_input("Referenced RFC IDs (comma separated)")
@@ -88,7 +78,7 @@ def render_agent_insights_tab(main_container=None) -> None:
             with st.expander("Proposed RFCs", expanded=False):
                 rfc_dir = Path("rfcs")
                 filter_text = st.text_input("Filter RFCs")
-                preview_all = st.checkbox("Preview full text")
+                preview_all = st.toggle("Preview full text")
 
             rfc_entries, rfc_index = load_rfc_entries(rfc_dir)
 
@@ -130,7 +120,7 @@ def render_agent_insights_tab(main_container=None) -> None:
                     )
                     st.markdown(f"Referenced in: {links}", unsafe_allow_html=True)
                 st.markdown(f"[Read RFC]({cast(Path, rfc['path']).as_posix()})")
-                if preview_all or st.checkbox("Show details", key=f"show_{rfc['id']}"):
+                if preview_all or st.toggle("Show details", key=f"show_{rfc['id']}"):
                     st.markdown(rfc["text"], unsafe_allow_html=True)
 
         st.subheader("Protocols")
@@ -164,4 +154,3 @@ def render_agent_insights_tab(main_container=None) -> None:
             render_logs_tab(main_container=tabs[3])
         else:
             st.info("Enable Governance View in the sidebar to see governance features.")
-        st.markdown("</div>", unsafe_allow_html=True)
