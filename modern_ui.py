@@ -11,6 +11,17 @@ def inject_premium_styles() -> None:
     st.markdown(
         """
         <style>
+        :root {
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --color-primary: #4a90e2;
+            --color-accent: #5ba0f2;
+            --radius-base: 12px;
+            --shadow-base: 0 4px 15px rgba(74, 144, 226, 0.4);
+        }
+        html, body, p, span, div {
+            font-family: var(--font-sans) !important;
+            line-height: 1.6 !important;
+        }
         .main .block-container {
             padding-top: 2rem;
             padding-left: 3rem;
@@ -18,31 +29,50 @@ def inject_premium_styles() -> None:
             max-width: 1200px;
         }
         h1, h2, h3, h4, h5, h6 {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+            font-family: var(--font-sans) !important;
             font-weight: 600 !important;
             line-height: 1.3 !important;
             margin-bottom: 1rem !important;
         }
-        p, span, div {
-            line-height: 1.6 !important;
-            font-family: 'Inter', sans-serif !important;
-        }
         .stButton > button {
-            background: linear-gradient(135deg, #4a90e2 0%, #5ba0f2 100%) !important;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%) !important;
             border: none !important;
-            border-radius: 12px !important;
+            border-radius: var(--radius-base) !important;
             color: white !important;
             font-weight: 600 !important;
             padding: 0.75rem 2rem !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4) !important;
+            box-shadow: var(--shadow-base) !important;
             font-size: 0.95rem !important;
             height: auto !important;
         }
         .stButton > button:hover {
             transform: translateY(-2px) !important;
             box-shadow: 0 8px 25px rgba(74, 144, 226, 0.6) !important;
-            background: linear-gradient(135deg, #5ba0f2 0%, #6bb0ff 100%) !important;
+            background: linear-gradient(135deg, var(--color-accent) 0%, #6bb0ff 100%) !important;
+        }
+        /* Modern scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-base);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-primary);
+            border-radius: var(--radius-base);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-accent);
+        }
+        /* Active navigation item styling */
+        a.nav-link.active {
+            background: var(--color-primary) !important;
+            color: #fff !important;
+            border-radius: var(--radius-base) !important;
+            box-shadow: var(--shadow-base) !important;
         }
         </style>
         """,
@@ -75,13 +105,17 @@ def render_modern_header() -> None:
                         <span style="font-size: 1.5rem;">🚀</span>
                     </div>
                     <div>
-                        <h1 style="margin: 0; color: #ffffff; font-size: 1.75rem; font-weight: 700;">
+                        <h1 style="margin: 0; color: #ffffff; font-size: 2rem; font-weight: 700; font-family: var(--font-sans);">
                             superNova_2177
                         </h1>
                         <p style="margin: 0; color: #888; font-size: 0.9rem;">Validation Analyzer</p>
                     </div>
                 </div>
-                <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="display: flex; gap: 1.5rem; align-items: center;">
+                    <nav style="display: flex; gap: 1rem;">
+                        <a class="nav-link active" href="#" style="text-decoration:none; padding:0.25rem 0.5rem; color:#fff;">Home</a>
+                        <a class="nav-link" href="#" style="text-decoration:none; padding:0.25rem 0.5rem; color:#bbb;">Stats</a>
+                    </nav>
                     <div style="
                         background: rgba(74, 144, 226, 0.1);
                         border: 1px solid rgba(74, 144, 226, 0.3);
