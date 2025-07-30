@@ -104,10 +104,6 @@ except Exception as import_err:  # pragma: no cover - fallback if absolute impor
             return None
 
         def get_pages_dir() -> Path:
-            return Path(__file__).resolve().parents[2] / "pages"
-
-
-        def get_pages_dir() -> Path:
             return (
                 Path(__file__).resolve().parent
                 / "transcendental_resonance_frontend"
@@ -141,6 +137,8 @@ PAGES = {
     "Social": "social",
     "Profile": "profile",
 }
+
+ensure_pages(PAGES, PAGES_DIR)
 
 # Case-insensitive lookup for labels
 _PAGE_LABELS = {label.lower(): label for label in PAGES}
@@ -1292,7 +1290,6 @@ def render_developer_tools() -> None:
 
 def main() -> None:
     """Entry point with comprehensive error handling and modern UI."""
-    ensure_pages(PAGES, PAGES_DIR)
     # Initialize database BEFORE anything else
     try:
         db_ready = ensure_database_exists()
