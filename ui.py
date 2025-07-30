@@ -89,6 +89,7 @@ from streamlit_helpers import (
 
 from modern_ui import (
     inject_premium_styles,
+    inject_modern_styles,
     render_modern_header,
     render_stats_section,
     open_card_container,
@@ -946,6 +947,7 @@ def main() -> None:
         # Apply modern styling
         try:
             inject_premium_styles()
+            inject_modern_styles()
         except Exception as exc:
             logger.warning("CSS load failed: %s", exc)
 

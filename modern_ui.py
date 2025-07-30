@@ -73,6 +73,35 @@ def inject_premium_styles() -> None:
     )
 
 
+def inject_modern_styles() -> None:
+    """Style option-menu elements with a dark aesthetic."""
+    st.markdown(
+        f"""
+        <style>
+        .option-menu {{
+            background-color: #222;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }}
+        .option-menu .nav-link {{
+            color: #ccc;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }}
+        .option-menu .nav-link:hover,
+        .option-menu .nav-link.active {{
+            background-color: var(--primary-color, #4a90e2);
+            color: #fff !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_modern_header() -> None:
     """Render the premium glassy header."""
     st.markdown(
@@ -191,6 +220,7 @@ def close_card_container() -> None:
 
 __all__ = [
     "inject_premium_styles",
+    "inject_modern_styles",
     "render_modern_header",
     "render_validation_card",
     "render_stats_section",
