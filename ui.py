@@ -92,27 +92,19 @@ try:
         ensure_pages,
         get_pages_dir,
     )
-except Exception as import_err:  # pragma: no cover - fallback if absolute import fails
+except Exception as import_err:  # pragma: no cover - fallback if import fails
     logger.warning("Primary page_registry import failed: %s", import_err)
-    try:
-        from utils.page_registry import ensure_pages, get_pages_dir  # type: ignore
-    except Exception as fallback_err:  # pragma: no cover - final fallback
-        logger.warning("Secondary page_registry import also failed: %s", fallback_err)
 
-        def ensure_pages(*_args, **_kwargs) -> None:
-            logger.debug("ensure_pages noop fallback used")
-            return None
+    def ensure_pages(*_args, **_kwargs) -> None:
+        logger.debug("ensure_pages noop fallback used")
+        return None
 
-        def get_pages_dir() -> Path:
-            return Path(__file__).resolve().parents[2] / "pages"
-
-
-        def get_pages_dir() -> Path:
-            return (
-                Path(__file__).resolve().parent
-                / "transcendental_resonance_frontend"
-                / "pages"
-            )
+    def get_pages_dir() -> Path:
+        return (
+            Path(__file__).resolve().parent
+            / "transcendental_resonance_frontend"
+            / "pages"
+        )
 
 
 
@@ -141,6 +133,26 @@ PAGES = {
     "Social": "social",
     "Profile": "profile",
 }
+
+# Ensure page placeholders exist and warn about duplicates
+ensure_pages(PAGES, PAGES_DIR)
+
+
+def _warn_case_conflicts(pages_dir: Path) -> None:
+    """Warn if both ``foo.py`` and ``Foo.py`` exist."""
+    by_lower: dict[str, list[str]] = {}
+    for f in pages_dir.glob("*.py"):
+        by_lower.setdefault(f.name.lower(), []).append(f.name)
+    for names in by_lower.values():
+        if len(names) > 1:
+            logger.warning(
+                "Case-insensitive file collision for '%s': %s",
+                names[0].lower(),
+                ", ".join(sorted(names)),
+            )
+
+
+_warn_case_conflicts(PAGES_DIR)
 
 # Case-insensitive lookup for labels
 _PAGE_LABELS = {label.lower(): label for label in PAGES}
@@ -643,19 +655,20 @@ def render_sidebar() -> str:
     st.sidebar.markdown(env_tag)
 
     # Navigation
-    icon_map = dict(zip(PAGES.keys(), NAV_ICONS))
+    display_map = {label.replace("_", " ").title(): slug for label, slug in PAGES.items()}
+    icon_map = dict(zip(display_map.keys(), NAV_ICONS))
+
     if "render_modern_sidebar" in globals():
         choice_label = render_modern_sidebar(
-            PAGES,
+            display_map,
             container=st.sidebar,
             icons=icon_map,
             session_key="active_page",
         )
     else:
-        choice_label = render_sidebar_nav(PAGES, icons=NAV_ICONS, session_key="active_page")
+        choice_label = render_sidebar_nav(display_map, icons=NAV_ICONS, session_key="active_page")
 
-    # Normalize and convert label to lowercase slug
-    return normalize_choice(PAGES.get(choice_label, choice_label))
+    return display_map.get(choice_label, choice_label)
 
 
 
@@ -1292,7 +1305,6 @@ def render_developer_tools() -> None:
 
 def main() -> None:
     """Entry point with comprehensive error handling and modern UI."""
-    ensure_pages(PAGES, PAGES_DIR)
     # Initialize database BEFORE anything else
     try:
         db_ready = ensure_database_exists()
