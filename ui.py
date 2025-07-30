@@ -1,10 +1,6 @@
 import os
 import streamlit as st  # ensure Streamlit is imported early
 
-# STRICTLY A SOCIAL MEDIA PLATFORM
-# Intellectual Property & Artistic Inspiration
-# Legal & Ethical Safeguards
-
 from importlib import import_module
 from datetime import datetime, timezone
 import asyncio
@@ -24,13 +20,9 @@ from modern_ui_components import (
     render_stats_section,
 )
 
-# Default port controlled by start.sh via STREAMLIT_PORT; old setting kept
-# for reference but disabled.
-# os.environ["STREAMLIT_SERVER_PORT"] = "8501"
 from datetime import datetime
 from pathlib import Path
 
-# os.environ["STREAMLIT_SERVER_PORT"] = "8501"
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -41,7 +33,6 @@ go = None  # imported lazily in run_analysis
 os.environ["STREAMLIT_WATCHER_TYPE"] = "poll"
 
 # Bind to the default Streamlit port to satisfy platform health checks
-# os.environ["STREAMLIT_SERVER_PORT"] = "8501"
 
 # Name of the query parameter used for the CI health check. Adjust here if the
 # health check endpoint ever changes.
@@ -142,27 +133,6 @@ def render_landing_page():
     
     if st.button("Show Boot Diagnostics"):
         boot_diagnostic_ui()
-
-# Fix for the import error in render_agent_insights_tab
-def render_agent_insights_tab():
-    """Fallback agent insights tab."""
-    st.subheader("🤖 Agent Insights")
-    st.info("Agent insights module not available. Install required dependencies.")
-    
-    # Show basic agent info if registry is available
-    if 'AGENT_REGISTRY' in globals() and AGENT_REGISTRY:
-        st.write("Available Agents:")
-        for name, info in AGENT_REGISTRY.items():
-            with st.expander(f"🔧 {name}"):
-                st.write(f"Description: {info.get('description', 'No description')}")
-                st.write(f"Class: {info.get('class', 'Unknown')}")
-    else:
-        st.warning("No agents registered")
-
-# Fix theme_selector to handle missing key_suffix parameter
-
-# Add this modern UI code to your ui.py - replace the page loading section
-
 def inject_modern_styles():
     """Inject sleek modern styling."""
     st.markdown("""
@@ -479,7 +449,6 @@ def render_modern_social_page():
     st.markdown("# 👥 Social Network")
     st.info("🚧 Social features in development!")
 
-# Add this to your main() function after st.set_page_config():
 inject_modern_styles()
 
 def theme_selector(label: str, key_suffix: str = "") -> str:
@@ -661,60 +630,61 @@ from typing import Any, Optional
 
 
 try:
-    from social_tabs import render_social_tab
-except ImportError:
-    def render_social_tab():
-        st.info("Social features not available")
-
-try:
-    from voting_ui import render_voting_tab
-except ImportError:
-    def render_voting_tab():
-        st.info("Voting module not available")
-
-try:
-    from agent_ui import render_agent_insights_tab
-except ImportError:
-    def render_agent_insights_tab():
-        st.subheader("🤖 Agent Insights")
-        st.info("Agent insights not available")
-
-
-try:
-    from llm_backends import get_backend
-except ImportError:
-    def get_backend(name, api_key=None):
-        return lambda x: {"response": "dummy"}
-
-try:
     from protocols import AGENT_REGISTRY
 except ImportError:
     AGENT_REGISTRY = {}
 
-try:
-    from agent_ui import render_agent_insights_tab
-except ImportError:
-    def render_agent_insights_tab():
-        st.subheader("🤖 Agent Insights")
-        st.info("Agent insights not available")
+
+def render_social_tab() -> None:
+    st.subheader("👥 Social Features")
+    st.info("Social features module not available")
+
+
+def render_agent_insights_tab() -> None:
+    st.subheader("🤖 Agent Insights")
+    st.info("Agent insights module not available. Install required dependencies.")
+
+    if "AGENT_REGISTRY" in globals() and AGENT_REGISTRY:
+        st.write("Available Agents:")
+        for name, info in AGENT_REGISTRY.items():
+            with st.expander(f"🔧 {name}"):
+                st.write(f"Description: {info.get('description', 'No description')}")
+                st.write(f"Class: {info.get('class', 'Unknown')}")
+    else:
+        st.warning("No agents registered")
+
+
+def render_voting_tab() -> None:
+    st.info("Voting module not available")
+
+
+def get_backend(name, api_key=None):
+    return lambda _x: {"response": "dummy backend"}
+
 
 try:
-    from social_tabs import render_social_tab
-except ImportError:
-    def render_social_tab():
-        st.subheader("👥 Social Features")
-        st.info("Social features module not available")
+    from social_tabs import render_social_tab as _render_social_tab
+    render_social_tab = _render_social_tab
+except Exception:
+    pass
 
 try:
-    from llm_backends import get_backend
-except ImportError:
-    def get_backend(name, api_key=None):
-        return lambda x: {"response": "dummy backend"}
+    from voting_ui import render_voting_tab as _render_voting_tab
+    render_voting_tab = _render_voting_tab
+except Exception:
+    pass
 
 try:
-    from protocols import AGENT_REGISTRY
-except ImportError:
-    AGENT_REGISTRY = {}
+    from agent_ui import render_agent_insights_tab as _render_agent_tab
+    render_agent_insights_tab = _render_agent_tab
+except Exception:
+    pass
+
+try:
+    from llm_backends import get_backend as _get_backend
+    get_backend = _get_backend
+except Exception:
+    pass
 
 
 def get_st_secrets() -> dict:
