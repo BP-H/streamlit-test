@@ -81,18 +81,26 @@ ws_status = (
 # Show whether the frontend is running in offline mode
 if OFFLINE_MODE:
     # Label bar across the bottom
-    ui.label("OFFLINE MODE – using mock services.")
-        .classes("fixed bottom-0 w-full text-center bg-red-600 text-white text-sm")
+    (
+        ui.label("OFFLINE MODE – using mock services.")
+        .classes(
+            "fixed bottom-0 w-full text-center bg-red-600 text-white text-sm"
+        )
+    )
 
     # Icon indicator (cloud_off)
-    ui.icon("cloud_off")
+    (
+        ui.icon("cloud_off")
         .classes("fixed bottom-0 right-0 m-2")
         .style("color: red")
+    )
 else:
     # Icon indicator (cloud_done)
-    ui.icon("cloud_done")
+    (
+        ui.icon("cloud_done")
         .classes("fixed bottom-0 right-0 m-2")
         .style("color: green")
+    )
 
 
 def _update_ws_status(status: str) -> None:
