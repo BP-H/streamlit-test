@@ -17,6 +17,7 @@ import asyncio
 import difflib
 import io
 import json
+import time
 import logging
 import math
 import sys
@@ -34,6 +35,10 @@ from modern_ui_components import (
     render_validation_card,
     render_stats_section,
 )
+try:
+    from modern_ui_components import SIDEBAR_STYLES
+except Exception:  # pragma: no cover - fallback if module missing
+    SIDEBAR_STYLES = ""
 
 # Prefer modern sidebar render if available
 try:
@@ -420,7 +425,7 @@ def render_modern_validation_page():
     st.markdown("- Task queued\n- Running analysis\n- Completed")
     progress = st.progress(0)
     for i in range(5):
-        st.sleep(0.1)
+        time.sleep(0.1)
         progress.progress((i + 1) / 5)
     st.success("Status: OK")
 
