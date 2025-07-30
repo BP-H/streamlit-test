@@ -141,8 +141,18 @@ def build_pages(pages_dir: Path) -> dict[str, str]:
 
 
 # Mapping of navigation labels to page module names
+PAGES = {
+    "Agents": "agents",
+    "Chat": "chat",
+    "Profile": "profile",
+    "Resonance Music": "resonance_music",
+    "Social": "social",
+    "Validation": "validation",
+    "Video Chat": "video_chat",
+    "Voting": "voting",
+}
 
-PAGES = build_pages(PAGES_DIR)
+ensure_pages(PAGES, PAGES_DIR)
 
 # Case-insensitive lookup for labels
 _PAGE_LABELS = {label.lower(): label for label in PAGES}
@@ -1294,7 +1304,6 @@ def render_developer_tools() -> None:
 
 def main() -> None:
     """Entry point with comprehensive error handling and modern UI."""
-    ensure_pages(PAGES, PAGES_DIR)
     # Initialize database BEFORE anything else
     try:
         db_ready = ensure_database_exists()
