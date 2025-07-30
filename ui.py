@@ -126,23 +126,25 @@ HEALTH_CHECK_PARAM = "healthz"
 ROOT_DIR = Path(__file__).resolve().parent
 PAGES_DIR = get_pages_dir()
 
-
-def build_pages(pages_dir: Path) -> dict[str, str]:
-    """Return a mapping of sidebar labels to page slugs."""
-    pages: dict[str, str] = {}
-    for page_file in sorted(pages_dir.glob("*.py")):
-        if page_file.stem == "__init__":
-            continue
-        slug = page_file.stem
-        label = slug.replace("_", " ").title()
-        if label not in pages:
-            pages[label] = slug
-    return pages
-
+# Hard-coded set of Streamlit pages in canonical order
+_SLUGS = [
+    "agents",
+    "chat",
+    "profile",
+    "resonance_music",
+    "social",
+    "validation",
+    "video_chat",
+    "voting",
+]
 
 # Mapping of navigation labels to page module names
+PAGES: dict[str, str] = {
+    slug.replace("_", " ").title(): slug for slug in _SLUGS
+}
 
-PAGES = build_pages(PAGES_DIR)
+# Ensure placeholder files exist and warn about case clashes
+ensure_pages(PAGES, PAGES_DIR)
 
 # Case-insensitive lookup for labels
 _PAGE_LABELS = {label.lower(): label for label in PAGES}
@@ -1294,7 +1296,6 @@ def render_developer_tools() -> None:
 
 def main() -> None:
     """Entry point with comprehensive error handling and modern UI."""
-    ensure_pages(PAGES, PAGES_DIR)
     # Initialize database BEFORE anything else
     try:
         db_ready = ensure_database_exists()
