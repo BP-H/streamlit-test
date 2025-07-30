@@ -34,21 +34,7 @@ def inject_modern_styles() -> None:
         logger.debug("Modern styles already injected; skipping")
         return
 
-    st.markdown(
-        """
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-        <style>
-        ... (rest of your CSS)
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.markdown(SIDEBAR_STYLES, unsafe_allow_html=True)
-    st.session_state["modern_styles_injected"] = True
-
-    st.markdown(
-        """
+    css = """
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
         <style>
@@ -124,7 +110,7 @@ def inject_modern_styles() -> None:
             background: linear-gradient(90deg, #00ffff, var(--neon-accent)) !important;
             filter: brightness(1.05);
         }
- 
+
         .stButton>button {
             background: rgba(255,255,255,0.05) !important;
             border: 1px solid rgba(255,255,255,0.15) !important;
@@ -186,11 +172,12 @@ def inject_modern_styles() -> None:
             }
         }
 
-        """,
-        unsafe_allow_html=True,
-    )
+        </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
     st.markdown(SIDEBAR_STYLES, unsafe_allow_html=True)
     st.session_state["modern_styles_injected"] = True
+
 
 
 def inject_premium_styles() -> None:

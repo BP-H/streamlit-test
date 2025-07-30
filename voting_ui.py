@@ -417,10 +417,10 @@ def render_voting_tab(main_container=None) -> None:
     """High level tab combining proposal and vote management."""
     if main_container is None:
         main_container = st
+    inject_global_styles()
 
     container_ctx = safe_container(main_container)
     with container_ctx:
-        inject_global_styles()
         st.markdown(VOTING_CSS, unsafe_allow_html=True)
         sub1, sub2, sub3, sub4 = st.tabs(
             [

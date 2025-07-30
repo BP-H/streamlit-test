@@ -1176,6 +1176,7 @@ def main() -> None:
             initial_sidebar_state="collapsed",
         )
         # Inject keyboard shortcuts for quick navigation
+        inject_modern_styles()
         st.markdown(
             """
             <script>
@@ -1196,7 +1197,6 @@ def main() -> None:
             """,
             unsafe_allow_html=True,
         )
-        inject_modern_styles()
 
         # Initialize session state
         defaults = {
