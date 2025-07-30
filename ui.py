@@ -520,8 +520,18 @@ def render_modern_profile_page() -> None:
 
 
 def load_css() -> None:
-    """Placeholder for loading custom CSS."""
-    pass
+    """Inject minimal custom CSS for accent color styling."""
+    st.markdown(
+        f"""
+        <style>
+        .stButton>button {{
+            background-color: {ACCENT_COLOR};
+            color: white;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # Accent color used for button styling
@@ -1175,6 +1185,7 @@ def main() -> None:
             initial_sidebar_state="collapsed",
         )
         inject_modern_styles()
+        load_css()
 
         # Initialize session state
         defaults = {

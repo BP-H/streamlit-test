@@ -43,7 +43,6 @@ def render_api_key_ui(
         Dictionary containing ``model`` and ``api_key`` values.
     """
 
-    """
     if st is None:
         return {"model": "dummy", "api_key": None}
 
