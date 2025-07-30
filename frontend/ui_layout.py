@@ -126,11 +126,26 @@ def render_title_bar(icon: str, label: str) -> None:
 def show_preview_badge(text: str = "🚧 Preview Mode") -> None:
     """Overlay a badge used when a fallback or WIP page is shown."""
     st.markdown(
-        f"<div style='position:fixed; top:1rem; right:1rem; background:#ffc107; "
-        f"color:#000; padding:0.25rem 0.5rem; border-radius:4px; z-index:1000;'>"
+        f"<div style='position:fixed; top:1rem; right:1rem; background:#ffc107;"
+        f" color:#000; padding:0.25rem 0.5rem; border-radius:4px; z-index:1000;'>"
         f"{text}</div>",
         unsafe_allow_html=True,
     )
+
+
+def show_offline_notice(
+    text: str = "Backend unavailable - offline mode active.",
+) -> None:
+    """Display an offline banner or toast notification."""
+    if hasattr(st, "toast"):
+        st.toast(text)
+    else:
+        st.markdown(
+            f"<div style='position:fixed; top:1rem; left:50%; transform:translateX(-50%);"
+            f" background:#17a2b8; color:white; padding:0.25rem 0.75rem;"
+            f" border-radius:4px; z-index:1000;'>{text}</div>",
+            unsafe_allow_html=True,
+        )
 
 
 """\
@@ -148,4 +163,5 @@ __all__ = [
     "render_navbar",
     "render_title_bar",
     "show_preview_badge",
+    "show_offline_notice",
 ]

@@ -37,8 +37,11 @@ from modern_ui_components import (
 )
 from frontend.ui_layout import (
     main_container,
+    sidebar_container,
+    render_navbar,
     render_title_bar,
     show_preview_badge,
+    show_offline_notice,
 )
 
 
@@ -336,12 +339,16 @@ def _render_fallback(choice: str) -> None:
     fallback_fn = fallback_pages.get(choice)
     if fallback_fn:
         if OFFLINE_MODE:
-            st.toast("Offline mode: using mock services", icon="⚠️")
-
+            # Use toast if available, otherwise fallback to banner
+            try:
+                st.toast("Offline mode: using mock services", icon="⚠️")
+            except AttributeError:
+                show_offline_notice("Offline mode: using mock services")
         show_preview_badge("🚧 Preview Mode")
         fallback_fn()
     else:
         st.warning(f"No fallback available for page: {choice}")
+
 
 
 def render_modern_validation_page():
