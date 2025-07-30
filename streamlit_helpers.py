@@ -48,47 +48,55 @@ def header(title: str, *, layout: str = "centered") -> None:
     st.header(title)
 
 
+def safe_apply_theme(theme: str) -> None:
+    """Apply theme styles with error handling."""
+    try:
+        if theme == "dark":
+            css = """
+                <style>
+                @import url('https://fonts.googleapis.com/css2?family=Iosevka:wght@400;700&display=swap');
+                :root {
+                    --background: #181818;
+                    --secondary-bg: #242424;
+                    --text-color: #e8e6e3;
+                    --primary-color: #4a90e2;
+                    --font-family: 'Iosevka', monospace;
+                }
+                body, .stApp {
+                    background-color: var(--background);
+                    color: var(--text-color);
+                    font-family: var(--font-family);
+                }
+                a { color: var(--primary-color); }
+
+                </style>
+            """
+        else:
+            css = """
+                <style>
+                :root {
+                    --background: #ffffff;
+                    --secondary-bg: #ffffff;
+                    --text-color: #000000;
+                    --primary-color: #0A84FF;
+                    --font-family: 'Inter', sans-serif;
+                }
+                body, .stApp {
+                    background-color: var(--background);
+                    color: var(--text-color);
+                    font-family: var(--font-family);
+                }
+
+                </style>
+            """
+        st.markdown(css, unsafe_allow_html=True)
+    except Exception as exc:  # pragma: no cover - runtime protection
+        st.warning(f"Theme application failed: {exc}")
+
+
 def apply_theme(theme: str) -> None:
-    """Apply light or dark theme styles based on ``theme``."""
-    if theme == "dark":
-        css = """
-            <style>
-            @import url('https://fonts.googleapis.com/css2?family=Iosevka:wght@400;700&display=swap');
-            :root {
-                --background: #181818;
-                --secondary-bg: #242424;
-                --text-color: #e8e6e3;
-                --primary-color: #4a90e2;
-                --font-family: 'Iosevka', monospace;
-            }
-            body, .stApp {
-                background-color: var(--background);
-                color: var(--text-color);
-                font-family: var(--font-family);
-            }
-            a { color: var(--primary-color); }
-
-            </style>
-        """
-    else:
-        css = """
-            <style>
-            :root {
-                --background: #F0F2F6;
-                --secondary-bg: #FFFFFF;
-                --text-color: #333333;
-                --primary-color: #0A84FF;
-                --font-family: 'Inter', sans-serif;
-            }
-            body, .stApp {
-                background-color: var(--background);
-                color: var(--text-color);
-                font-family: var(--font-family);
-            }
-
-            </style>
-        """
-    st.markdown(css, unsafe_allow_html=True)
+    """Apply theme using a safe wrapper."""
+    safe_apply_theme(theme)
 
 
 def inject_global_styles() -> None:
@@ -125,19 +133,21 @@ def inject_global_styles() -> None:
 
 
 def theme_selector(label: str = "Theme") -> str:
-    """Render a radio selector for the app theme and return the choice."""
+    """Modern theme selector with visual toggle."""
     if "theme" not in st.session_state:
-        st.session_state["theme"] = "light"
-    options = ["Light", "Dark", "Codex"]
-    current = st.session_state["theme"].capitalize()
-    idx = options.index(current) if current in options else 0
-    choice = st.radio(
-        label,
-        options,
-        index=idx,
-        horizontal=True,
-    )
-    st.session_state["theme"] = choice.lower()
+        st.session_state["theme"] = "dark"
+
+    col1, col2 = st.columns([4, 1])
+    with col2:
+        current_theme = st.session_state.get("theme", "dark")
+        theme_choice = st.selectbox(
+            "Theme",
+            ["Light", "Dark"],
+            index=1 if current_theme == "dark" else 0,
+            key="theme_select",
+        )
+        st.session_state["theme"] = theme_choice.lower()
+
     apply_theme(st.session_state["theme"])
     return st.session_state["theme"]
 
@@ -154,6 +164,7 @@ def centered_container(max_width: str = "900px") -> "st.delta_generator.DeltaGen
 __all__ = [
     "alert",
     "header",
+    "safe_apply_theme",
     "apply_theme",
     "theme_selector",
     "centered_container",
