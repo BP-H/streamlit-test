@@ -935,7 +935,7 @@ def render_validation_ui(
 
     try:
         page_paths = {
-            label: os.path.relpath(PAGES_DIR / f"{mod}.py", start=Path.cwd())
+            label: f"/{PAGES_DIR.relative_to(ROOT_DIR)}/{mod}.py"
             for label, mod in PAGES.items()
         }
         NAV_ICONS = ["✅", "📊", "🤖", "🎵", "💬", "👥", "👤"]
@@ -1261,10 +1261,11 @@ def main() -> None:
             / "transcendental_resonance_frontend"
             / "pages"
         )
-        # Map labels to file system paths relative to the working directory so
-        # ``st.sidebar.page_link`` can locate the correct page modules.
+        # Map labels to file system paths relative to ``ROOT_DIR`` so
+        # ``st.sidebar.page_link`` can locate the correct page modules. Each
+        # path is prefixed with ``/`` to signal a project-root relative path.
         page_paths = {
-            label: os.path.relpath(PAGES_DIR / f"{mod}.py", start=Path.cwd())
+            label: f"/{PAGES_DIR.relative_to(ROOT_DIR)}/{mod}.py"
             for label, mod in PAGES.items()
         }
 
