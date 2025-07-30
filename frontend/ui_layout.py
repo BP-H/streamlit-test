@@ -136,6 +136,8 @@ def _render_sidebar_nav(
         valid_opts.append((label, path))
         valid_icons.append(icon)
 
+    display_labels = [lbl.replace("_", " ").title() for lbl, _ in valid_opts]
+
     opts = valid_opts
     icon_list = valid_icons
     if not opts:
@@ -152,25 +154,26 @@ def _render_sidebar_nav(
         st.markdown(SIDEBAR_STYLES, unsafe_allow_html=True)
         st.markdown("<div class='glass-card sidebar-nav'>", unsafe_allow_html=True)
         if hasattr(st.sidebar, "page_link"):
-            for (label, path), icon in zip(opts, icon_list):
+            for (label, path), icon, disp in zip(opts, icon_list, display_labels):
                 try:
-                    st.sidebar.page_link(path, label=label, icon=icon, help=label)
+                    st.sidebar.page_link(path, label=disp, icon=icon, help=disp)
                 except Exception:
                     url = f"?page={label}"
-                    st.sidebar.link_button(label, url=url, icon=icon)
+                    st.sidebar.link_button(disp, url=url, icon=icon)
         elif USE_OPTION_MENU and option_menu is not None:
-            choice = option_menu(
+            choice_disp = option_menu(
                 menu_title=None,
-                options=[label for label, _ in opts],
+                options=display_labels,
                 icons=[icon or "dot" for icon in icon_list],
                 orientation="vertical",
                 key=key,
                 default_index=index,
             )
+            choice = opts[display_labels.index(choice_disp)][0]
         else:
-            labels = [f"{icon or ''} {label}".strip() for (label, _), icon in zip(opts, icon_list)]
-            choice = st.radio("", labels, index=index, key=key)
-            choice = opts[labels.index(choice)][0]
+            labels = [f"{icon or ''} {disp}".strip() for disp, icon in zip(display_labels, icon_list)]
+            choice_disp = st.radio("", labels, index=index, key=key)
+            choice = opts[labels.index(choice_disp)][0]
 
         st.markdown("</div>", unsafe_allow_html=True)
 

@@ -82,7 +82,7 @@ render_modern_sidebar = render_sidebar_nav
 # Utility path handling
 from pathlib import Path
 import logging
-from utils.paths import ROOT_DIR, PAGES_DIR
+from utils.paths import ROOT_DIR
 
 logger = logging.getLogger(__name__)
 logger.propagate = False
@@ -104,15 +104,7 @@ except Exception as import_err:  # pragma: no cover - fallback if absolute impor
             return None
 
         def get_pages_dir() -> Path:
-            return Path(__file__).resolve().parents[2] / "pages"
-
-
-        def get_pages_dir() -> Path:
-            return (
-                Path(__file__).resolve().parent
-                / "transcendental_resonance_frontend"
-                / "pages"
-            )
+            return Path(__file__).resolve().parent / "pages"
 
 
 
@@ -145,6 +137,8 @@ PAGES = {
 # Case-insensitive lookup for labels
 _PAGE_LABELS = {label.lower(): label for label in PAGES}
 
+# Ensure stub pages exist and warn about case collisions
+ensure_pages(PAGES, PAGES_DIR)
 
 def normalize_choice(choice: str) -> str:
     """Return the canonical label for ``choice`` ignoring case."""
@@ -1292,7 +1286,6 @@ def render_developer_tools() -> None:
 
 def main() -> None:
     """Entry point with comprehensive error handling and modern UI."""
-    ensure_pages(PAGES, PAGES_DIR)
     # Initialize database BEFORE anything else
     try:
         db_ready = ensure_database_exists()
