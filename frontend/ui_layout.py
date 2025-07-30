@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import streamlit as st
 from typing import Iterable, Optional
+import html
 
 
 def main_container() -> st.delta_generator.DeltaGenerator:
@@ -49,10 +50,11 @@ def render_title_bar(icon: str, label: str) -> None:
 
 def show_preview_badge(text: str = "\ud83d\udea7 Preview Mode") -> None:
     """Overlay a badge used when a fallback page is shown."""
+    safe = html.escape(text)
     st.markdown(
         f"<div style='position:fixed;top:1rem;right:1rem;"
         f"background:#ffc107;color:#000;padding:0.25rem 0.5rem;"
-        f"border-radius:4px;z-index:1000;'>{text}</div>",
+        f"border-radius:4px;z-index:1000;'>{safe}</div>",
         unsafe_allow_html=True,
     )
 

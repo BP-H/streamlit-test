@@ -5,6 +5,7 @@ import asyncio
 import json
 import streamlit as st
 import pandas as pd
+from utils.safe_markdown import safe_markdown
 try:
     from st_aggrid import AgGrid, GridOptionsBuilder
 except Exception:  # pragma: no cover - optional dependency
@@ -27,6 +28,12 @@ BOX_CSS = """
 }
 </style>
 """
+
+
+def _safe_markdown(text: str, **kwargs) -> None:
+    """Render markdown after stripping non UTF-8 characters."""
+    clean = text.encode("utf-8", "ignore").decode("utf-8", "ignore")
+    st.markdown(clean, **kwargs)
 
 
 def _run_async(coro):
@@ -59,7 +66,7 @@ def render_proposals_tab(main_container=None) -> None:
             )
             return
 
-        st.markdown(
+        _safe_markdown(
             BOX_CSS
             + """
         <style>
@@ -219,7 +226,7 @@ def render_governance_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            st.markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+            _safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
             if st.button("Refresh Votes"):
                 with st.spinner("Working on it..."):
                     try:
@@ -277,7 +284,7 @@ def render_agent_ops_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            st.markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+            _safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
             if st.button("Reload Agent List"):
                 with st.spinner("Working on it..."):
                     try:
@@ -338,7 +345,7 @@ def render_logs_tab(main_container=None) -> None:
             )
             return
         with st.container():
-            st.markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+            _safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
             trace_text = st.text_area("Audit Trace JSON", value="{}", height=200)
             if st.button("Explain Trace"):
                 try:

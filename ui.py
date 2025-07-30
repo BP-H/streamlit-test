@@ -468,24 +468,23 @@ def render_modern_validation_page():
 
 
 def load_page_with_fallback(choice: str, module_paths: list[str]) -> None:
-    """
-    Attempt to import and run a page module by name, with graceful fallback.
-    Tries each candidate path and checks for `render()` or `main()` method.
-    """
+    """Import and execute a page module with graceful degradation."""
     for module_path in module_paths:
         try:
-            page_mod = import_module(module_path)
-            if hasattr(page_mod, "render"):
-                page_mod.render()
-                return
-            elif hasattr(page_mod, "main"):
-                page_mod.main()
-                return
+            mod = import_module(module_path)
         except ImportError:
-            continue  # Try next path
-        except Exception as exc:
-            st.error(f"❌ Error loading page `{choice}`: {exc}")
-            break
+            continue
+
+        page_func = getattr(mod, "render", None) or getattr(mod, "main", None)
+        if callable(page_func):
+            try:
+                page_func()
+                return
+            except Exception as exc:  # pragma: no cover - runtime guard
+                st.error(
+                    f"⚠️ {choice} failed to load due to {exc.__class__.__name__}: {exc}"
+                )
+                return
 
     _render_fallback(choice)
 
@@ -1325,7 +1324,7 @@ def main() -> None:
                         "Event JSON", value="{}", height=150, key="inject_event"
                     )
                     if st.button("Process Event"):
-                        if 'agent' in globals():
+                        if 'agent' in globals() and agent is not None:
                             try:
                                 event = json.loads(event_json or "{}")
                                 agent.process_event(event)
@@ -1343,7 +1342,12 @@ def main() -> None:
                             "Sub universes:",
                             list(getattr(cosmic_nexus, "sub_universes", {}).keys()),
                         )
-                    if 'agent' in globals() and 'InMemoryStorage' in globals():
+                    if (
+                        'agent' in globals()
+                        and agent is not None
+                        and 'InMemoryStorage' in globals()
+                        and InMemoryStorage is not None
+                    ):
                         if isinstance(agent.storage, InMemoryStorage):
                             st.write(
                                 f"Users: {len(agent.storage.users)} / Coins: {len(agent.storage.coins)}"
@@ -1426,7 +1430,12 @@ def main() -> None:
         st.markdown(f"**Runs:** {st.session_state['run_count']}")
 
         with main_container():
-            load_page_with_fallback(choice)
+            page_key = PAGES.get(choice, choice)
+            module_paths = [
+                f"transcendental_resonance_frontend.pages.{page_key}",
+                f"pages.{page_key}",
+            ]
+            load_page_with_fallback(choice, module_paths)
 
     except Exception as exc:
         logger.critical("Unhandled error in main: %s", exc, exc_info=True)
