@@ -14,6 +14,7 @@ from typing import Literal
 
 import streamlit as st
 from modern_ui import inject_modern_styles
+from contextlib import contextmanager
 
 
 def alert(
@@ -160,6 +161,37 @@ def centered_container(max_width: str = "900px") -> "st.delta_generator.DeltaGen
     return st.container()
 
 
+def inject_tab_box_styles() -> None:
+    """Inject CSS for the ``tab-box`` container."""
+    st.markdown(
+        """
+        <style>
+        .tab-box {
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 1rem;
+            transition: box-shadow 0.2s;
+        }
+        .tab-box:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+@contextmanager
+def tab_box():
+    """Context manager for a consistently styled box container."""
+    inject_tab_box_styles()
+    st.markdown("<div class='tab-box'>", unsafe_allow_html=True)
+    try:
+        yield
+    finally:
+        st.markdown("</div>", unsafe_allow_html=True)
+
+
 __all__ = [
     "alert",
     "header",
@@ -167,4 +199,6 @@ __all__ = [
     "theme_selector",
     "centered_container",
     "inject_global_styles",
+    "inject_tab_box_styles",
+    "tab_box",
 ]

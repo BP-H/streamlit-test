@@ -11,23 +11,13 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     AgGrid = None  # type: ignore
     GridOptionsBuilder = None  # type: ignore
-from streamlit_helpers import alert, inject_global_styles
+from streamlit_helpers import alert, inject_global_styles, tab_box
 
 try:
     from frontend_bridge import dispatch_route
 except Exception:  # pragma: no cover - optional dependency
     dispatch_route = None  # type: ignore
 
-BOX_CSS = """
-<style>
-.tab-box {
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-</style>
-"""
 
 
 def _sanitize_markdown(text: str) -> str:
@@ -86,8 +76,7 @@ def render_proposals_tab(main_container=None) -> None:
             return
 
         safe_markdown(
-            BOX_CSS
-            + """
+            """
             <style>
         .app-container { padding: 1rem; }
         .card {
@@ -251,8 +240,7 @@ def render_governance_tab(main_container=None) -> None:
                 "warning",
             )
             return
-        with st.container():
-            safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+        with tab_box():
             if st.button("Refresh Votes"):
                 with st.spinner("Working on it..."):
                     try:
@@ -274,7 +262,7 @@ def render_governance_tab(main_container=None) -> None:
                 fit_columns_on_grid_load=True,
             )
 
-        with st.container():
+        with tab_box():
             with st.form("record_vote_form"):
                 st.write("Record Vote")
                 species = st.selectbox("Species", ["human", "ai", "company"])
@@ -294,7 +282,6 @@ def render_governance_tab(main_container=None) -> None:
                             st.toast("Success!")
                         except Exception as exc:
                             alert(f"Record failed: {exc}", "error")
-            safe_markdown("</div>", unsafe_allow_html=True)
 
 
 def render_agent_ops_tab(main_container=None) -> None:
@@ -316,8 +303,7 @@ def render_agent_ops_tab(main_container=None) -> None:
                 "warning",
             )
             return
-        with st.container():
-            safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+        with tab_box():
             if st.button("Reload Agent List"):
                 with st.spinner("Working on it..."):
                     try:
@@ -330,7 +316,7 @@ def render_agent_ops_tab(main_container=None) -> None:
         agents = st.session_state.get("agent_list", [])
         st.write("Available Agents", agents)
 
-        with st.container():
+        with tab_box():
             with st.form("launch_agents_form"):
                 launch_sel = st.multiselect("Agents to launch", agents)
                 llm_backend = st.selectbox(
@@ -362,7 +348,6 @@ def render_agent_ops_tab(main_container=None) -> None:
                     st.toast("Success!")
                 except Exception as exc:
                     alert(f"Step failed: {exc}", "error")
-            safe_markdown("</div>", unsafe_allow_html=True)
 
 
 def render_logs_tab(main_container=None) -> None:
@@ -384,8 +369,7 @@ def render_logs_tab(main_container=None) -> None:
                 "warning",
             )
             return
-        with st.container():
-            safe_markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
+        with tab_box():
             trace_text = st.text_area("Audit Trace JSON", value="{}", height=200)
             if st.button("Explain Trace"):
                 try:
@@ -402,7 +386,6 @@ def render_logs_tab(main_container=None) -> None:
                             st.toast("Success!")
                         except Exception as exc:
                             alert(f"Explain failed: {exc}", "error")
-            safe_markdown("</div>", unsafe_allow_html=True)
 
 
 def render_voting_tab(main_container=None) -> None:
