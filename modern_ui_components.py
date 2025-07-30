@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import streamlit as st
 from typing import Optional, Dict
+from pathlib import Path
 from uuid import uuid4
 from streamlit_helpers import safe_container
 
@@ -158,6 +159,13 @@ def render_modern_sidebar(
     """
     if container is None:
         container = st.sidebar
+
+    for label, path in pages.items():
+        candidate = Path(path.lstrip("/").replace(".", "/"))
+        if not candidate.suffix:
+            candidate = candidate.with_suffix(".py")
+        if not candidate.exists():
+            st.sidebar.markdown(f"⚠️ Missing page: {label}")
 
     opts = list(pages.keys())
     icon_map = icons or {}

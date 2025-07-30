@@ -1261,9 +1261,11 @@ def main() -> None:
             / "transcendental_resonance_frontend"
             / "pages"
         )
-        # Map labels to Streamlit URL paths, not file system paths, for
-        # ``st.sidebar.page_link`` compatibility
-        page_paths = {label: f"/{mod}" for label, mod in PAGES.items()}
+        # Map labels to page file paths for ``st.sidebar.page_link``
+        page_paths = {
+            label: os.path.relpath(PAGES_DIR / f"{mod}.py", start=Path.cwd())
+            for label, mod in PAGES.items()
+        }
 
         # Determine page from query params and sidebar selection
         try:
