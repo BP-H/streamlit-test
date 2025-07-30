@@ -7,26 +7,14 @@ from datetime import datetime
 from typing import Any, cast
 
 import streamlit as st
-from streamlit_helpers import inject_global_styles, theme_selector
+from streamlit_helpers import inject_global_styles, theme_selector, BOX_CSS, container_ctx
 from voting_ui import (
     render_proposals_tab,
     render_governance_tab,
     render_agent_ops_tab,
     render_logs_tab,
 )
-from contextlib import nullcontext
 from ui_utils import summarize_text, load_rfc_entries
-
-BOX_CSS = """
-<style>
-.tab-box {
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-</style>
-"""
 
 
 def render_agent_insights_tab(main_container=None) -> None:
@@ -36,14 +24,7 @@ def render_agent_insights_tab(main_container=None) -> None:
 
     theme_selector("Theme", key_suffix="agent_insights")
     inject_global_styles()
-    container_ctx = (
-        main_container()
-        if callable(main_container)
-        else main_container
-        if hasattr(main_container, "__enter__")
-        else nullcontext()
-    )
-    with container_ctx:
+    with container_ctx(main_container):
         st.markdown(BOX_CSS + "<div class='tab-box'>", unsafe_allow_html=True)
         st.subheader("Virtual Diary")
         with st.expander("📘 Notes", expanded=False):
@@ -88,7 +69,7 @@ def render_agent_insights_tab(main_container=None) -> None:
             with st.expander("Proposed RFCs", expanded=False):
                 rfc_dir = Path("rfcs")
                 filter_text = st.text_input("Filter RFCs")
-                preview_all = st.checkbox("Preview full text")
+                preview_all = st.toggle("Preview full text")
 
             rfc_entries, rfc_index = load_rfc_entries(rfc_dir)
 
@@ -130,7 +111,7 @@ def render_agent_insights_tab(main_container=None) -> None:
                     )
                     st.markdown(f"Referenced in: {links}", unsafe_allow_html=True)
                 st.markdown(f"[Read RFC]({cast(Path, rfc['path']).as_posix()})")
-                if preview_all or st.checkbox("Show details", key=f"show_{rfc['id']}"):
+                if preview_all or st.toggle("Show details", key=f"show_{rfc['id']}"):
                     st.markdown(rfc["text"], unsafe_allow_html=True)
 
         st.subheader("Protocols")

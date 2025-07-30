@@ -3,7 +3,6 @@
 # Legal & Ethical Safeguards
 import asyncio
 import json
-from contextlib import nullcontext
 import streamlit as st
 import pandas as pd
 try:
@@ -11,23 +10,13 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     AgGrid = None  # type: ignore
     GridOptionsBuilder = None  # type: ignore
-from streamlit_helpers import alert, inject_global_styles
+from streamlit_helpers import alert, inject_global_styles, BOX_CSS, container_ctx
 
 try:
     from frontend_bridge import dispatch_route
 except Exception:  # pragma: no cover - optional dependency
     dispatch_route = None  # type: ignore
 
-BOX_CSS = """
-<style>
-.tab-box {
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-</style>
-"""
 
 
 def _sanitize_markdown(text: str) -> str:
@@ -64,14 +53,7 @@ def render_proposals_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    container_ctx = (
-        main_container()
-        if callable(main_container)
-        else main_container
-        if hasattr(main_container, "__enter__")
-        else nullcontext()
-    )
-    with container_ctx:
+    with container_ctx(main_container):
         if AgGrid is None or GridOptionsBuilder is None:
             alert(
                 "st_aggrid is not installed – proposal features unavailable.",
@@ -231,14 +213,7 @@ def render_governance_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    container_ctx = (
-        main_container()
-        if callable(main_container)
-        else main_container
-        if hasattr(main_container, "__enter__")
-        else nullcontext()
-    )
-    with container_ctx:
+    with container_ctx(main_container):
         if AgGrid is None or GridOptionsBuilder is None:
             alert(
                 "st_aggrid is not installed – governance features unavailable.",
@@ -302,14 +277,7 @@ def render_agent_ops_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    container_ctx = (
-        main_container()
-        if callable(main_container)
-        else main_container
-        if hasattr(main_container, "__enter__")
-        else nullcontext()
-    )
-    with container_ctx:
+    with container_ctx(main_container):
         if dispatch_route is None:
             alert(
                 "Governance routes not enabled—enable them in config.",
@@ -370,14 +338,7 @@ def render_logs_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    container_ctx = (
-        main_container()
-        if callable(main_container)
-        else main_container
-        if hasattr(main_container, "__enter__")
-        else nullcontext()
-    )
-    with container_ctx:
+    with container_ctx(main_container):
         if dispatch_route is None:
             alert(
                 "Governance routes not enabled—enable them in config.",
@@ -410,14 +371,7 @@ def render_voting_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    container_ctx = (
-        main_container()
-        if callable(main_container)
-        else main_container
-        if hasattr(main_container, "__enter__")
-        else nullcontext()
-    )
-    with container_ctx:
+    with container_ctx(main_container):
         inject_global_styles()
         sub1, sub2, sub3, sub4 = st.tabs(
             [

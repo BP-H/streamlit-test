@@ -22,6 +22,12 @@ def inject_modern_styles() -> None:
             padding-right: 3rem;
             max-width: 1200px;
         }
+        @media (max-width: 768px) {
+            .main .block-container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
         .custom-container {
             padding: 1rem;
             border-radius: 8px;

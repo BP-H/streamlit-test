@@ -14,6 +14,24 @@ from typing import Literal
 
 import streamlit as st
 from modern_ui import inject_modern_styles
+from contextlib import nullcontext
+from typing import Any, ContextManager
+
+BOX_CSS = """
+<style>
+.tab-box {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 1rem;
+    transition: transform 0.2s ease;
+}
+.tab-box:hover {
+    transform: translateY(-2px);
+}
+</style>
+"""
 
 
 def alert(
@@ -160,11 +178,24 @@ def centered_container(max_width: str = "900px") -> "st.delta_generator.DeltaGen
     return st.container()
 
 
+def container_ctx(container: Any | None) -> ContextManager[Any]:
+    """Return a context manager resolving ``container``."""
+    if container is None:
+        return nullcontext()
+    if callable(container):
+        return container()
+    if hasattr(container, "__enter__"):
+        return container
+    return nullcontext()
+
+
 __all__ = [
     "alert",
     "header",
     "apply_theme",
     "theme_selector",
     "centered_container",
+    "container_ctx",
     "inject_global_styles",
+    "BOX_CSS",
 ]
