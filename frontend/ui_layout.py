@@ -28,6 +28,8 @@ from pathlib import Path
 import os
 import importlib
 import streamlit as st
+
+from profile_card import render_profile_card
 from modern_ui_components import SIDEBAR_STYLES
 
 try:
@@ -55,24 +57,6 @@ def main_container() -> st.delta_generator.DeltaGenerator:
 def sidebar_container() -> st.delta_generator.DeltaGenerator:
     """Return the sidebar container."""
     return st.sidebar
-
-
-def render_profile_card(username: str, avatar_url: str) -> None:
-    """Render a compact profile card with an environment badge."""
-    env = os.getenv("APP_ENV", "development").lower()
-    badge = "🚀 Production" if env.startswith("prod") else "🧪 Development"
-    st.markdown(
-        f"""
-        <div class='glass-card' style='display:flex;align-items:center;gap:0.5rem;'>
-            <img src="{avatar_url}" alt="avatar" width="48" style="border-radius:50%;" />
-            <div>
-                <strong>{username}</strong><br/>
-                <span style='font-size:0.85rem'>{badge}</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
 
 
 def render_top_bar() -> None:
