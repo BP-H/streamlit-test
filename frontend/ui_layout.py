@@ -31,6 +31,7 @@ import streamlit as st
 
 from profile_card import render_profile_card
 from modern_ui_components import SIDEBAR_STYLES
+from profile_card import render_profile_card as _render_profile_card
 
 try:
     _paths = importlib.import_module("utils.paths")
@@ -57,6 +58,7 @@ def main_container() -> st.delta_generator.DeltaGenerator:
 def sidebar_container() -> st.delta_generator.DeltaGenerator:
     """Return the sidebar container."""
     return st.sidebar
+
 
 
 def render_top_bar() -> None:

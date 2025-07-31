@@ -27,5 +27,5 @@ def render_profile_card(username: str, avatar_url: str) -> None:
     )
 
 
-__all__ = ["render_profile_card"]
+__all__: list[str] = ["render_profile_card"]
 
