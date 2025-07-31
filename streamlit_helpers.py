@@ -130,24 +130,12 @@ def header(title: str, *, layout: str = "centered") -> None:
     ui.element("h1", title)
 
 
-def render_post_card(post_data: dict[str, Any]) -> None:
-    """Instagram-style post card that degrades gracefully."""
-    img = post_data.get("image", "")
-    text = post_data.get("text", "")
-    likes = post_data.get("likes", 0)
-
-    if ui is None:
-        if img:
-            st.image(img, use_column_width=True)
-        st.write(text)
-        st.caption(f"❤️ {likes}")
-        return
-
-    with ui.card().classes("w-full p-4 mb-4"):
-        if img:
-            ui.image(img).classes("rounded-md mb-2 w-full")
-        ui.element("p", text).classes("mb-1")
-        ui.badge(f"❤️ {likes}").classes("bg-pink-500")
+def render_post_card(post: dict[str, Any]) -> None:
+    """Display a simple post card using *streamlit-shadcn-ui* widgets."""
+    with ui.card():
+        ui.element("img", src=post["image"], style="width:100%;border-radius:8px")
+        ui.element("p", post["text"])
+        ui.badge(f"{post['likes']} likes")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
