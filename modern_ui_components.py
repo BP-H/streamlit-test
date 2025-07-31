@@ -10,11 +10,11 @@ import streamlit as st
 from typing import Optional, Dict
 from pathlib import Path
 try:
-    # Prefer the shared path constants if available
-    from utils.paths import ROOT_DIR, PAGES_DIR  # type: ignore
-except Exception:  # pragma: no cover – fallback for isolated execution
-    ROOT_DIR = Path(__file__).resolve().parents[1]          # repo root
-    PAGES_DIR = ROOT_DIR / "transcendental_resonance_frontend" / "pages"
+    from utils.paths import ROOT_DIR, PAGES_DIR
+except Exception:  # pragma: no cover - fallback for missing package
+    # Minimal fallback when utils.paths is unavailable
+    ROOT_DIR = Path(__file__).resolve().parent
+    PAGES_DIR = ROOT_DIR / "pages"
 
 from uuid import uuid4
 from streamlit_helpers import safe_container
