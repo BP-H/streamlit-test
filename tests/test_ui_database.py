@@ -41,7 +41,10 @@ def load_ui(monkeypatch):
             count = cur.fetchone()[0]
             if count == 0:
                 conn.execute(
-                    "INSERT INTO harmonizers (username, email, is_admin) VALUES ('admin','admin@supernova.dev',1)"
+                    "INSERT INTO harmonizers (username, email, is_admin) VALUES"
+                    " ('admin','admin@supernova.dev',1),"
+                    " ('guest','guest@supernova.dev',0),"
+                    " ('demo_user','demo@supernova.dev',0)"
                 )
             conn.commit()
             conn.close()
@@ -80,8 +83,16 @@ def test_ensure_database_exists_creates_table_and_default_admin(tmp_path, monkey
     conn = sqlite3.connect(db_path)
     cur = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='harmonizers'")
     assert cur.fetchone() is not None
-    row = conn.execute("SELECT username, email, is_admin FROM harmonizers").fetchone()
-    assert row == ("admin", "admin@supernova.dev", 1)
+    rows = conn.execute(
+        "SELECT username, email, is_admin FROM harmonizers ORDER BY id"
+    ).fetchall()
+    assert (
+        ("admin", "admin@supernova.dev", 1)
+        in rows
+        and ("guest", "guest@supernova.dev", 0) in rows
+        and ("demo_user", "demo@supernova.dev", 0) in rows
+    )
+    assert len(rows) == 3
     conn.close()
 
 

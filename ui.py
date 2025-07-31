@@ -1846,7 +1846,13 @@ def ensure_database_exists() -> bool:
                         VALUES
                             ('admin', 'admin@supernova.dev', 'hashed_password_here',
                              'Default admin user for superNova_2177',
-                             1, 1, 1, 1);
+                             1, 1, 1, 1),
+                            ('guest', 'guest@supernova.dev', 'hashed_password_here',
+                             'Guest user account',
+                             1, 0, 0, 1),
+                            ('demo_user', 'demo@supernova.dev', 'hashed_password_here',
+                             'Demo user account',
+                             1, 0, 0, 1);
                         """
                     )
                 )
