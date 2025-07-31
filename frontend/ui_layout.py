@@ -28,6 +28,8 @@ from pathlib import Path
 import os
 import importlib
 import streamlit as st
+
+from profile_card import render_profile_card
 from modern_ui_components import SIDEBAR_STYLES
 from profile_card import render_profile_card as _render_profile_card
 
@@ -57,17 +59,6 @@ def sidebar_container() -> st.delta_generator.DeltaGenerator:
     """Return the sidebar container."""
     return st.sidebar
 
-
-def render_profile_card(username: str, avatar_url: str) -> None:
-    """Proxy to :func:`profile_card.render_profile_card` using this module's ``st``."""
-    import profile_card
-
-    original = profile_card.st
-    profile_card.st = st
-    try:
-        _render_profile_card(username, avatar_url)
-    finally:
-        profile_card.st = original
 
 
 def render_top_bar() -> None:

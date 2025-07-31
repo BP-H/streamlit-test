@@ -5,66 +5,86 @@
 
 from __future__ import annotations
 
-from typing import Iterable, Dict, Any
+import random
+from dataclasses import dataclass
+from typing import Iterable, Dict, Any, List
 
 import streamlit as st
 
 from streamlit_helpers import render_post_card
-from modern_ui_components import shadcn_card
 
-# --- default demo posts -------------------------------------------------------
-DEMO_POSTS: list[dict[str, Any]] = [
-    {
-        "user": "alice",
-        "image": "https://placekitten.com/400/300",
-        "text": "Cute kitten!",
-        "likes": 5,
-    },
-    {
-        "user": "bob",
-        "image": "https://placebear.com/400/300",
-        "text": "Bear with me.",
-        "likes": 3,
-    },
-    {
-        "user": "carol",
-        "image": "https://placekitten.com/401/301",
-        "text": "Another kitty.",
-        "likes": 8,
-    },
-]
+# ──────────────────────────────────────────────────────────────────────────────
+# Data structures & demo-data helpers
+# ──────────────────────────────────────────────────────────────────────────────
+@dataclass
+class Post:
+    """Lightweight post object used by demo helpers (optional for callers)."""
+
+    username: str
+    image: str
+    caption: str
+    reactions: Dict[str, int] | None = None
 
 
-# -----------------------------------------------------------------------------
+def generate_demo_posts() -> List[Dict[str, Any]]:
+    """Return a handful of placeholder posts with random “likes” counts."""
+    users = ["Alice", "Bob", "Carol"]
+    demo: list[dict[str, Any]] = []
+    for idx, user in enumerate(users, start=1):
+        demo.append(
+            {
+                "user": user,
+                "image": f"https://placehold.co/600x400?text=Post+{idx}",
+                "text": f"Demo caption {idx}",
+                "likes": random.randint(1, 15),
+            }
+        )
+    return demo
 
 
+# A static snapshot so older imports like “from feed_renderer import DEMO_POSTS”
+# keep working.  Regenerated on every module import to avoid stale randomness.
+DEMO_POSTS: List[Dict[str, Any]] = generate_demo_posts()
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Rendering helpers
+# ──────────────────────────────────────────────────────────────────────────────
 def render_feed(posts: Iterable[Dict[str, Any]] | None = None) -> None:
     """
-    Render a list of post dictionaries using :func:`render_post_card`.
+    Render a sequence of post-dicts with :func:`render_post_card`.
 
     Parameters
     ----------
     posts
-        An iterable of post dictionaries.  If *None* (default) the built-in
-        ``DEMO_POSTS`` will be shown.  Each post dict should at minimum contain
-        ``image`` and ``text`` keys; ``user`` and ``likes`` are optional.
+        Iterable of post dictionaries. If *None* (default) the in-module
+        ``DEMO_POSTS`` list is rendered instead.  Each post should contain
+        at least ``image`` and ``text``; ``user`` / ``likes`` are optional.
     """
-    if posts is None:
-        posts = DEMO_POSTS
-
-    posts = list(posts)
-    if not posts:
+    data = list(posts) if posts is not None else DEMO_POSTS
+    if not data:
         st.info("No posts to display")
         return
 
-    for post in posts:
+    for post in data:
         render_post_card(post)
 
 
 def render_mock_feed() -> None:
-    """Convenience wrapper that simply calls :func:`render_feed` with demo data."""
+    """
+    Convenience wrapper that simply shows the built-in ``DEMO_POSTS``.
+
+    This keeps older code that imported/used *render_mock_feed()* working.
+    """
     render_feed(DEMO_POSTS)
 
 
-__all__ = ["render_feed", "render_mock_feed", "DEMO_POSTS"]
+# What this module publicly exposes
+__all__ = [
+    "Post",
+    "generate_demo_posts",
+    "DEMO_POSTS",
+    "render_feed",
+    "render_mock_feed",
+]
+
 

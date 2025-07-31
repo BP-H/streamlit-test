@@ -1,4 +1,9 @@
-"""Minimal profile card component used across pages."""
+# STRICTLY A SOCIAL MEDIA PLATFORM
+# Intellectual Property & Artistic Inspiration
+# Legal & Ethical Safeguards
+"""Reusable profile card component."""
+
+from __future__ import annotations
 
 import os
 import streamlit as st
@@ -22,4 +27,5 @@ def render_profile_card(username: str, avatar_url: str) -> None:
     )
 
 
-__all__ = ["render_profile_card"]
+__all__: list[str] = ["render_profile_card"]
+
