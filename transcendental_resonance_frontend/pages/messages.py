@@ -6,51 +6,51 @@
 import streamlit as st
 from modern_ui import inject_modern_styles
 from streamlit_helpers import safe_container
+from video_chat_router import router as video_chat_router
 
 inject_modern_styles()
 
-DUMMY_CONVOS = [
-    {"user": "Alice", "preview": "Hey there!"},
-    {"user": "Bob", "preview": "Let's catch up."},
-]
+SAMPLE_MESSAGES: dict[str, list[dict[str, str]]] = {
+    "Alice": [{"sender": "Alice", "text": "Hi there!"}],
+    "Bob": [{"sender": "Bob", "text": "Hello!"}],
+}
 
 
 def _init_state() -> None:
-    st.session_state.setdefault("conversations", DUMMY_CONVOS)
-    st.session_state.setdefault(
-        "messages", {c["user"]: [] for c in st.session_state["conversations"]}
-    )
+    if "messages" not in st.session_state:
+        st.session_state["messages"] = {
+            user: msgs.copy() for user, msgs in SAMPLE_MESSAGES.items()
+        }
     if "active_chat" not in st.session_state:
-        st.session_state["active_chat"] = DUMMY_CONVOS[0]["user"] if DUMMY_CONVOS else ""
+        st.session_state["active_chat"] = next(iter(SAMPLE_MESSAGES))
 
-
-def _render_conversation_list() -> None:
-    users = [c["user"] for c in st.session_state["conversations"]]
-    active = st.session_state.get("active_chat")
-    if active not in users and users:
-        active = users[0]
-    col1, col2 = st.columns([1, 3])
-    with col1:
-        selected = st.radio("", users, index=users.index(active)) if users else ""
-        st.session_state["active_chat"] = selected
-    with col2:
-        st.write("Recent")
-        if users:
-            st.write(st.session_state["conversations"][users.index(selected)]["preview"])
+def _render_conversation_list(users: list[str]) -> None:
+    """Display list of conversations and update active selection."""
+    active = st.session_state.get("active_chat", users[0] if users else "")
+    selected = st.radio("Conversations", users, index=users.index(active)) if users else ""
+    st.session_state["active_chat"] = selected
 
 
 def _render_chat_panel(user: str) -> None:
-    st.subheader(f"Chat with {user}")
+    """Render chat history and input controls for ``user``."""
     msgs = st.session_state["messages"].setdefault(user, [])
     for msg in msgs:
         st.write(f"{msg['sender']}: {msg['text']}")
+
     txt = st.text_input("Message", key="msg_input")
-    if st.button("Send", key="send_btn") and txt:
+    send_col, video_col, upload_col = st.columns(3)
+
+    if send_col.button("Send") and txt:
         msgs.append({"sender": "You", "text": txt})
         st.session_state.msg_input = ""
         st.experimental_rerun()
-    if st.button("Start Video Call", key="video_call"):
+
+    if video_col.button("Start Video Call"):
         st.toast("Video call integration pending")
+        _ = video_chat_router
+
+    if upload_col.button("Upload Media"):
+        st.toast("Upload feature pending")
 
 
 def main(main_container=None) -> None:
@@ -60,14 +60,15 @@ def main(main_container=None) -> None:
     container_ctx = safe_container(main_container)
     with container_ctx:
         st.subheader("✉️ Messages")
-        if not st.session_state["conversations"]:
+        users = list(st.session_state["messages"].keys())
+        if not users:
             st.info("No conversations yet")
             return
-        user = st.session_state.get("active_chat")
-        _render_conversation_list()
-        st.divider()
-        if user:
-            _render_chat_panel(user)
+        left_col, right_col = st.columns([1, 3])
+        with left_col:
+            _render_conversation_list(users)
+        with right_col:
+            _render_chat_panel(st.session_state["active_chat"])
 
 
 def render() -> None:
