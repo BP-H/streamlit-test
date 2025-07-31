@@ -14,10 +14,7 @@ from typing import Literal, Any, ContextManager
 from contextlib import nullcontext
 
 import streamlit as st
-try:
-    import streamlit_shadcn_ui as ui
-except Exception:  # pragma: no cover - optional dependency
-    ui = None
+import streamlit_shadcn_ui as ui
 try:
     from modern_ui import inject_modern_styles
 except Exception:  # pragma: no cover - gracefully handle missing/invalid module
@@ -63,30 +60,22 @@ def alert(
 
 
 def header(title: str, *, layout: str = "centered") -> None:
-    """Render a standard page header and apply base styling."""
+    """Render a standard page header with Instagram-like styling."""
     st.markdown(
-        "<style>.app-container{padding:1rem 2rem;}" "</style>",
+        "<style>.app-container{padding:1rem 2rem;}</style>",
         unsafe_allow_html=True,
     )
-    if ui is not None:
-        ui.element("h1", title)
-    else:
-        st.header(title)
+    inject_instagram_styles()
+    ui.element("h1", title)
 
 
-def render_post_card(post_data: dict) -> None:
-    """Render a simple Instagram-style post card using shadcn components."""
-    if ui is None:
-        st.image(post_data.get("image", ""))
-        st.write(post_data.get("text", ""))
-        st.caption(f"❤️ {post_data.get('likes', 0)}")
-        return
-
-    with ui.card(key=f"post_{hash(post_data.get('text', ''))}"):
-        if post_data.get("image"):
-            ui.image(post_data["image"], className="rounded-md")
-        ui.element("p", post_data.get("text", ""))
-        ui.badge(f"❤ {post_data.get('likes', 0)}", className="bg-pink-500")
+def render_post_card(post: dict) -> None:
+    """Display an image post with caption and like badge."""
+    with ui.card(key=f"post_{hash(post.get('text', ''))}"):
+        if post.get("image"):
+            ui.image(post["image"], className="rounded-md")
+        ui.element("p", post.get("text", ""))
+        ui.badges(f"❤ {post.get('likes', 0)}", className="bg-pink-500")
 
 
 def safe_apply_theme(theme: str) -> None:
@@ -224,6 +213,11 @@ def inject_instagram_styles() -> None:
     )
 
 
+def tabs_nav(options: list[str], key: str = "nav") -> str:
+    """Render a tabs navigation bar and return the selected option."""
+    return ui.tabs(options, key=key)
+
+
 __all__ = [
     "alert",
     "header",
@@ -235,4 +229,5 @@ __all__ = [
     "BOX_CSS",
     "render_post_card",
     "inject_instagram_styles",
+    "tabs_nav",
 ]
