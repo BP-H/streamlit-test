@@ -8,12 +8,14 @@ from __future__ import annotations
 import streamlit as st
 from frontend.light_theme import inject_light_theme
 from transcendental_resonance_frontend.ui.chat_ui import render_chat_ui
+from frontend.ui_layout import render_top_bar
 
 inject_light_theme()
 
 
 def main(main_container=None) -> None:
     """Render the chat interface inside the given container (or the page itself)."""
+    render_top_bar(key_prefix=st.session_state.get("active_page", ""))
     render_chat_ui(main_container)
 
 

@@ -1525,7 +1525,7 @@ def main() -> None:
     try:
         inject_light_theme()
 
-        render_top_bar()
+        render_top_bar(key_prefix=st.session_state.get("active_page", ""))
 
         # Inject keyboard shortcuts for quick navigation
         st.markdown(
@@ -1599,7 +1599,7 @@ def main() -> None:
             unsafe_allow_html=True,
         )
 
-        render_top_bar()  # sticky top bar
+        render_top_bar(key_prefix=st.session_state.get("active_page", ""))  # sticky top bar
 
         page_paths: dict[str, str] = {}
         missing_pages: list[str] = []

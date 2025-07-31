@@ -25,6 +25,7 @@ from streamlit_helpers import (
 from streamlit_autorefresh import st_autorefresh
 from status_indicator import render_status_icon, check_backend # Ensure check_backend is imported
 from utils.api import get_resonance_summary, dispatch_route # Import get_resonance_summary and dispatch_route from utils.api
+from frontend.ui_layout import render_top_bar
 
 inject_light_theme()
 inject_modern_styles()
@@ -77,6 +78,7 @@ def main(main_container=None, status_container=None) -> None:
         main_container = st
     if status_container is None:
         status_container = st
+    render_top_bar(key_prefix=st.session_state.get("active_page", ""))
     theme_selector("Theme", key_suffix="music")
 
     # Auto-refresh for backend health check (global, outside main_container)

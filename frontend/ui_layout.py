@@ -70,8 +70,15 @@ def render_profile_card(username: str, avatar_url: str) -> None:
         profile_card.st = original
 
 
-def render_top_bar() -> None:
-    """Render a translucent top bar with a logo, search input and controls."""
+def render_top_bar(key_prefix: str = "") -> None:
+    """Render a translucent top bar with a logo, search input and controls.
+
+    Parameters
+    ----------
+    key_prefix:
+        Prefix applied to widget keys so multiple pages can reuse the same
+        component without collisions.
+    """
     st.markdown(
         """
         <style>
@@ -111,7 +118,11 @@ def render_top_bar() -> None:
             unsafe_allow_html=True,
         )
         search_target = search_col if hasattr(search_col, "text_input") else st
-        search_target.text_input("", placeholder="Search...", key="topbar_search")
+        search_target.text_input(
+            "",
+            placeholder="Search...",
+            key=f"{key_prefix}topbar_search",
+        )
         toggle_target = beta_col if hasattr(beta_col, "toggle") else st
         beta_enabled = toggle_target.toggle(
             "Beta Mode",

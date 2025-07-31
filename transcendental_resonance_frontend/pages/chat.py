@@ -13,6 +13,7 @@ from chat_ui import (
     render_video_call_controls,
     render_voice_chat_controls,
 )
+from frontend.ui_layout import render_top_bar
 
 inject_light_theme()
 inject_modern_styles()
@@ -22,6 +23,7 @@ def main(main_container=None) -> None:
     """Render the chat page."""
     if main_container is None:
         main_container = st
+    render_top_bar(key_prefix=st.session_state.get("active_page", ""))
     theme_selector("Theme", key_suffix="chat")
 
     container_ctx = safe_container(main_container)

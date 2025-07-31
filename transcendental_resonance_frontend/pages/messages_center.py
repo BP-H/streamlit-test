@@ -12,6 +12,7 @@ from modern_ui import inject_modern_styles
 from streamlit_helpers import safe_container, header, theme_selector
 from transcendental_resonance_frontend.src.utils import api
 from status_indicator import render_status_icon
+from frontend.ui_layout import render_top_bar
 
 from frontend.light_theme import inject_light_theme
 inject_light_theme()
@@ -120,6 +121,7 @@ def main(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
+    render_top_bar(key_prefix=st.session_state.get("active_page", ""))
     theme_selector("Theme", key_suffix="msg_center")
 
     with safe_container(main_container):

@@ -21,6 +21,7 @@ from transcendental_resonance_frontend.ui.profile_card import (
 )
 from status_indicator import render_status_icon
 from feed_renderer import render_mock_feed, DEMO_POSTS
+from frontend.ui_layout import render_top_bar
 
 
 try:
@@ -116,6 +117,7 @@ def _render_profile(username: str) -> None:
 def main(main_container=None) -> None:
     if main_container is None:
         main_container = st
+    render_top_bar(key_prefix=st.session_state.get("active_page", ""))
     init_db()
     seed_default_users()
     theme_selector("Theme", key_suffix="profile")

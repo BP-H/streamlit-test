@@ -15,6 +15,7 @@ import streamlit as st
 from frontend.light_theme import inject_light_theme
 from modern_ui import inject_modern_styles
 from streamlit_helpers import theme_selector, safe_container
+from frontend.ui_layout import render_top_bar
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Sample data models
@@ -195,6 +196,7 @@ def _page_body() -> None:
 def main(main_container=None) -> None:
     """Render the feed inside ``main_container`` (or root Streamlit)."""
     container = main_container or st
+    render_top_bar(key_prefix=st.session_state.get("active_page", ""))
     with safe_container(container):
         _page_body()
 
