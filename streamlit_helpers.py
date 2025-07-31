@@ -15,6 +15,10 @@ from contextlib import nullcontext
 
 import streamlit as st
 try:
+    from streamlit_shadcn_ui import ui
+except Exception:  # pragma: no cover - optional dependency
+    ui = None  # type: ignore
+try:
     from modern_ui import inject_modern_styles
 except Exception:  # pragma: no cover - gracefully handle missing/invalid module
     def inject_modern_styles(*_a, **_k):
@@ -189,6 +193,20 @@ def safe_container(container: Any) -> ContextManager:
     return nullcontext()
 
 
+def render_post_card(post: dict) -> None:
+    """Display a post using ``streamlit_shadcn_ui`` components when available."""
+    if ui is None:
+        st.image(post["image"], use_column_width=True)
+        st.write(post["text"])
+        st.write(f"{post['likes']} likes")
+        return
+
+    with ui.card():
+        ui.element("img", src=post["image"], style="width:100%;border-radius:8px")
+        ui.element("p", post["text"])
+        ui.badge(f"{post['likes']} likes")
+
+
 __all__ = [
     "alert",
     "header",
@@ -196,6 +214,7 @@ __all__ = [
     "theme_selector",
     "centered_container",
     "safe_container",
+    "render_post_card",
     "inject_global_styles",
     "BOX_CSS",
 ]
