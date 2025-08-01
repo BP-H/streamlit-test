@@ -10,31 +10,8 @@ import time
 
 from nicegui import background_tasks, ui
 
-from .pages import (
-    login_page,
-    register_page,
-    profile_page,
-    vibenodes_page,
-    explore_page,
-    groups_page,
-    events_page,
-    recommendations_page,
-    proposals_page,
-    notifications_page,
-    messages_page,
-    feed_page,
-    ai_assist_page,
-    upload_page,
-    music_page,
-    status_page,
-    network_page,
-    system_insights_page,
-    forks_page,
-    validator_graph_page,
-    debug_panel_page,
-    video_chat_page,
-    moderation_page,
-)  # register all pages
+# Page modules used to be imported here to register NiceGUI routes. They were
+# removed when the legacy `src/pages` directory was deleted.
 from .utils.api import (
     api_call,
     clear_token,

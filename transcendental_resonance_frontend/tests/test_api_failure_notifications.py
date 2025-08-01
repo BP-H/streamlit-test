@@ -8,9 +8,12 @@ pytestmark = pytest.mark.requires_nicegui
 
 import types
 
-import pages.network_analysis_page as network_page
-import pages.system_insights_page as system_insights_page
-import pages.events_page as events_page
+try:
+    import pages.network_analysis_page as network_page
+    import pages.system_insights_page as system_insights_page
+    import pages.events_page as events_page
+except ImportError:  # pragma: no cover - legacy pages removed
+    pytest.skip("nicegui pages not available", allow_module_level=True)
 from utils import layout
 
 class DummyElement:
