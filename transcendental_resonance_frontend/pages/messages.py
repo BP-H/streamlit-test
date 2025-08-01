@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import streamlit as st
 from frontend.theme import apply_theme
-from modern_ui import inject_modern_styles
+from frontend.theme import inject_modern_styles
 from streamlit_helpers import theme_toggle
 from transcendental_resonance_frontend.ui.chat_ui import render_chat_ui
 

@@ -7,7 +7,7 @@ import json
 
 import streamlit as st
 from frontend.theme import apply_theme
-from modern_ui import inject_modern_styles
+from frontend.theme import inject_modern_styles
 
 
 from ai_video_chat import create_session
