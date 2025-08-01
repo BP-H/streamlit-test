@@ -4,14 +4,11 @@
 """Chat page with text, video, and voice features."""
 
 import streamlit as st
-from frontend.light_theme import inject_light_theme
-from modern_ui import inject_modern_styles
+from frontend.theme import set_theme
 from streamlit_helpers import safe_container, header, theme_toggle
 from status_indicator import render_status_icon
 from chat_ui import render_chat_interface
 
-inject_light_theme()
-inject_modern_styles()
 
 
 def main(main_container=None) -> None:
@@ -20,6 +17,7 @@ def main(main_container=None) -> None:
         main_container = st
     page = "chat"
     st.session_state["active_page"] = page
+    set_theme("light")
     theme_toggle("Dark Mode", key_suffix=page)
 
     container_ctx = safe_container(main_container)

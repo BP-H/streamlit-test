@@ -11,8 +11,7 @@ from typing import List, Dict, Any
 import random
 import streamlit as st
 
-from frontend.light_theme import inject_light_theme
-from modern_ui import inject_modern_styles
+from frontend.theme import set_theme
 from streamlit_helpers import theme_selector, safe_container, sanitize_text
 from modern_ui_components import st_javascript
 
@@ -266,9 +265,6 @@ def _load_more_posts() -> None:
 # Page entrypoints
 # ──────────────────────────────────────────────────────────────────────────────
 
-inject_light_theme()
-inject_modern_styles()
-
 
 def _page_body() -> None:
     """Render the main feed inside the current container."""
@@ -321,6 +317,7 @@ def _page_body() -> None:
 def main(main_container=None) -> None:
     """Render the feed inside ``main_container`` (or root Streamlit)."""
     container = main_container or st
+    set_theme("light")
     with safe_container(container):
         _page_body()
 

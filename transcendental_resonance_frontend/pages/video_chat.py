@@ -6,15 +6,12 @@ import asyncio
 import json
 
 import streamlit as st
-from frontend.light_theme import inject_light_theme
-from modern_ui import inject_modern_styles
+from frontend.theme import set_theme
 
 from ai_video_chat import create_session
 from video_chat_router import ConnectionManager
 from streamlit_helpers import safe_container, header, theme_toggle
 
-inject_light_theme()
-inject_modern_styles()
 
 
 def _run_async(coro):
@@ -35,6 +32,7 @@ manager = ConnectionManager()
 def main(main_container=None) -> None:
     """Render the simple video chat demo."""
     container = main_container if main_container is not None else st
+    set_theme("light")
     theme_toggle("Dark Mode", key_suffix="video_chat")
 
     container_ctx = safe_container(container)

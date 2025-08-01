@@ -9,15 +9,12 @@ from __future__ import annotations
 
 import asyncio
 import streamlit as st
-from frontend.light_theme import inject_light_theme
-from modern_ui import inject_modern_styles
+from frontend.theme import set_theme
 from streamlit_helpers import safe_container, theme_toggle
 from status_indicator import render_status_icon
 from transcendental_resonance_frontend.src.utils import api
 
 # ─── Apply global styles ────────────────────────────────────────────────────────
-inject_light_theme()
-inject_modern_styles()
 
 # ─── Dummy data ────────────────────────────────────────────────────────────────
 DUMMY_CONVERSATIONS: dict[str, list[dict[str, str]]] = {
@@ -61,6 +58,7 @@ def main(container: st.DeltaGenerator | None = None) -> None:
         container = st
 
     st.session_state.setdefault("conversations", DUMMY_CONVERSATIONS.copy())
+    set_theme("light")
     theme_toggle("Dark Mode", key_suffix="msg_center")
     st.session_state["active_page"] = "messages_center"
 

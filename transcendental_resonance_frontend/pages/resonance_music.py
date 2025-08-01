@@ -13,8 +13,7 @@ from pathlib import Path
 
 import requests
 import streamlit as st
-from frontend.light_theme import inject_light_theme
-from modern_ui import inject_modern_styles
+from frontend.theme import set_theme
 from streamlit_helpers import (
     alert,
     centered_container,
@@ -25,9 +24,6 @@ from streamlit_helpers import (
 from streamlit_autorefresh import st_autorefresh
 from status_indicator import render_status_icon, check_backend # Ensure check_backend is imported
 from utils.api import get_resonance_summary, dispatch_route # Import get_resonance_summary and dispatch_route from utils.api
-
-inject_light_theme()
-inject_modern_styles()
 
 # BACKEND_URL is defined in utils.api, but we keep it here for direct requests calls if needed
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
@@ -77,6 +73,7 @@ def main(main_container=None, status_container=None) -> None:
         main_container = st
     if status_container is None:
         status_container = st
+    set_theme("light")
     theme_toggle("Dark Mode", key_suffix="music")
 
     # Auto-refresh for backend health check (global, outside main_container)

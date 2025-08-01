@@ -1,1 +1,3 @@
-from .light_theme import inject_light_theme
+from .theme import set_theme
+
+__all__ = ["set_theme"]

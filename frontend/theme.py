@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 from dataclasses import dataclass
+from typing import Literal
 import streamlit as st
 
 
@@ -91,6 +92,16 @@ def apply_theme(name: bool | str = True) -> None:
     """
     st.markdown(get_global_css(name), unsafe_allow_html=True)
     st.session_state["_theme"] = name
+
+
+def set_theme(theme: Literal["light", "dark"]) -> None:
+    """Apply the global theme CSS once and remember the choice."""
+    current = st.session_state.get("_theme")
+    if st.session_state.get("_theme_css_injected") and current == theme:
+        return
+
+    apply_theme(theme)
+    st.session_state["_theme_css_injected"] = True
 
 
 def inject_modern_styles(theme: bool | str = True) -> None:
