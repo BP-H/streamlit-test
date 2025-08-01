@@ -101,6 +101,7 @@ from frontend.ui_layout import (
     render_top_bar,
     render_sidebar_nav as _base_render_sidebar_nav,
 )
+from frontend.theme import apply_theme
 
 
 def render_sidebar_nav(*args, **kwargs):
@@ -324,7 +325,7 @@ from streamlit_helpers import (
     render_instagram_grid,
 )
 
-from frontend.theme import set_theme, apply_theme
+from frontend.theme import set_theme
 
 try:
     from modern_ui import inject_modern_styles
