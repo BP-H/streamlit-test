@@ -142,8 +142,6 @@ if(sentinel){
 </script>
 """
 
-
-
 def _render_stories(users: List[User]) -> None:
     """Render the horizontal story-strip."""
     st.markdown(_STORY_CSS, unsafe_allow_html=True)
