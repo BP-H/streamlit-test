@@ -258,6 +258,7 @@ def render_post_card(post_data: dict[str, Any]) -> None:
     img      = sanitize_text(post_data.get("image", "")) if post_data.get("image") else ""
     text     = sanitize_text(post_data.get("text",  ""))
     username = sanitize_text(post_data.get("user") or post_data.get("username", ""))
+    alt_text = text or username or "post image"
     likes    = post_data.get("likes", 0)
     try:
         likes = int(likes)
@@ -267,7 +268,10 @@ def render_post_card(post_data: dict[str, Any]) -> None:
     if ui is None:
         if hasattr(st, "image") and hasattr(st, "write"):
             if img:
-                st.image(img, use_container_width=True)
+                st.markdown(
+                    f"<img src='{html.escape(img)}' alt='{html.escape(alt_text)}' style='width:100%;border-radius:8px;'>",
+                    unsafe_allow_html=True,
+                )
             caption_text = f"**{html.escape(username)}**: {text}" if username else text
             st.write(caption_text)
             getattr(st, "caption", st.write)(f"❤️ {likes}")
@@ -278,7 +282,7 @@ def render_post_card(post_data: dict[str, Any]) -> None:
         else:
             html_snippet = "<div class='shadcn-card' style='border-radius:12px;padding:8px;'>"
             if img:
-                html_snippet += f"<img src='{html.escape(img)}' style='width:100%;border-radius:8px;'/>"
+                html_snippet += f"<img src='{html.escape(img)}' alt='{html.escape(alt_text)}' style='width:100%;border-radius:8px;'/>"
             if username:
                 html_snippet += f"<div><strong>{html.escape(username)}</strong></div>"
             html_snippet += f"<p>{html.escape(text)}</p>"
@@ -290,7 +294,7 @@ def render_post_card(post_data: dict[str, Any]) -> None:
     try:
         with ui.card().classes("w-full p-4 mb-4"):
             if img:
-                ui.image(img).classes("rounded-md mb-2 w-full")
+                ui.image(img).props(f"alt={alt_text}").classes("rounded-md mb-2 w-full")
             if hasattr(ui, "element"):
                 safe_element("p", text).classes("mb-1")
             else:
@@ -315,10 +319,13 @@ def render_post_card(post_data: dict[str, Any]) -> None:
             st.warning(f"Post card failed: {exc}")
         if img:
             if hasattr(st, "image"):
-                st.image(img, use_container_width=True)
+                st.markdown(
+                    f"<img src='{html.escape(img)}' alt='{html.escape(alt_text)}' style='width:100%'>",
+                    unsafe_allow_html=True,
+                )
             else:
                 getattr(st, "markdown", lambda *a, **k: None)(
-                    f"<img src='{html.escape(img)}' style='width:100%'>",
+                    f"<img src='{html.escape(img)}' alt='{html.escape(alt_text)}' style='width:100%'>",
                     unsafe_allow_html=True,
                 )
         write_fn = getattr(st, "write", getattr(st, "markdown", lambda x: None))

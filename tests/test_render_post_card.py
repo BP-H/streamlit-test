@@ -34,11 +34,19 @@ def test_render_post_card_uses_ui_components(monkeypatch):
             card_called["cls"] = cls
             return self
 
+    def dummy_image(img, **k):
+        def props(attr):
+            captured.append(("props", attr))
+            return obj
+        def classes(cls):
+            captured.append(("img", img))
+            return obj
+        obj = types.SimpleNamespace(props=props, classes=classes)
+        return obj
+
     dummy_ui = types.SimpleNamespace(
         card=lambda: DummyCard(),
-        image=lambda img, **k: types.SimpleNamespace(
-            classes=lambda cls: captured.append(("img", img))
-        ),
+        image=dummy_image,
         element=lambda tag, content: types.SimpleNamespace(
             classes=lambda cls: captured.append((tag, content))
         ),
@@ -56,6 +64,7 @@ def test_render_post_card_uses_ui_components(monkeypatch):
 
     assert card_called.get("entered")
     assert ("img", "pic.png") in captured
+    assert any("alt=Hello" in p for t, p in captured if t == "props")
     # the final element should be the reactions line
     assert ("div", "❤️ 🔁 💬") in captured
 
@@ -88,4 +97,5 @@ def test_render_post_card_plain_streamlit(monkeypatch):
     assert "img.png" in events[0]
     assert "Hi" in " ".join(events)
     assert "❤️ 7" in " ".join(events)
+    assert "alt='Hi'" in " ".join(events)
 

@@ -97,6 +97,9 @@ SIDEBAR_STYLES = """
     flex-direction: row;
     align-items: center;
 }
+@media (max-width: 768px) {
+    .sidebar-nav.horizontal { flex-direction: column; }
+}
 .sidebar-nav .nav-item {
     padding: 0.5rem 1rem;
     border-radius: 999px;
@@ -438,6 +441,11 @@ def render_stats_section(stats: dict) -> None:
         @media (max-width: 480px) {{
             .stats-card {{
                 flex: 1 1 100%;
+            }}
+        }}
+        @media (max-width: 400px) {{
+            .stats-container {{
+                flex-direction: column;
             }}
         }}
         </style>

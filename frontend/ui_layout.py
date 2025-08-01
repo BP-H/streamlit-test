@@ -146,29 +146,34 @@ def render_top_bar() -> None:
         st.markdown('<div class="sn-topbar">', unsafe_allow_html=True)
 
         # Columns: logo | search | bell | beta | avatar
-        cols       = st.columns([1, 4, 1, 2, 1])
-        logo_col   = cols[0]
+        cols = list(st.columns([1, 4, 1, 2, 1]))
+        while len(cols) < 5:
+            cols.append(cols[-1])
+        logo_col = cols[0]
         search_col = cols[1]
-        bell_col   = cols[2]
-        beta_col   = cols[3]
+        bell_col = cols[2]
+        beta_col = cols[3]
         avatar_col = cols[4]
 
         # ── Logo ────────────────────────────────────────────────────────
-        logo_col.markdown(
-            '<img src="https://placehold.co/32x32?text=SN" width="32" />',
-            unsafe_allow_html=True,
-        )
+        if hasattr(logo_col, "markdown"):
+            logo_col.markdown(
+                '<img src="https://placehold.co/32x32?text=SN" width="32" />',
+                unsafe_allow_html=True,
+            )
 
         # ── Search box with recent-query suggestions ────────────────────
         page_id   = st.session_state.get("active_page", "global")
         search_key = f"{page_id}_topbar_search"
 
-        query = search_col.text_input(
-            "Search",
-            placeholder="Search…",
-            key=search_key,
-            label_visibility="collapsed",
-        )
+        query = ""
+        if hasattr(search_col, "text_input"):
+            query = search_col.text_input(
+                "Search",
+                placeholder="Search…",
+                key=search_key,
+                label_visibility="collapsed",
+            )
 
         if query:
             recent = st.session_state.setdefault("recent_searches", [])
@@ -177,7 +182,7 @@ def render_top_bar() -> None:
                 st.session_state["recent_searches"] = recent[-5:]        # keep last 5
 
         suggestions = st.session_state.get("recent_searches", [])
-        if suggestions:
+        if suggestions and hasattr(search_col, "markdown"):
             opts = "".join(f"<option value='{s}'></option>" for s in suggestions)
             search_col.markdown(
                 f"""
@@ -192,24 +197,28 @@ def render_top_bar() -> None:
 
         # ── Notifications bell (popover lists messages) ─────────────────
         note_count = len(st.session_state.get("notifications", []))
-        bell_col.markdown(
-            f'<button class="sn-bell" data-count="{note_count if note_count else ""}" '
-            f'aria-label="Notifications"></button>',
-            unsafe_allow_html=True,
-        )
-        with bell_col.popover("Notifications"):
-            notes = st.session_state.get("notifications", [])
-            if notes:
-                for n in notes:
-                    st.write(n)
-            else:
-                st.write("No notifications")
+        if hasattr(bell_col, "markdown"):
+            bell_col.markdown(
+                f'<button class="sn-bell" data-count="{note_count if note_count else ""}" '
+                f'aria-label="Notifications"></button>',
+                unsafe_allow_html=True,
+            )
+        if hasattr(bell_col, "popover"):
+            with bell_col.popover("Notifications"):
+                notes = st.session_state.get("notifications", [])
+                if notes:
+                    for n in notes:
+                        st.write(n)
+                else:
+                    st.write("No notifications")
 
         # ── Beta mode toggle ────────────────────────────────────────────
-        beta_enabled = beta_col.toggle(
-            "Beta Mode",
-            value=st.session_state.get("beta_mode", False),
-        )
+        beta_enabled = False
+        if hasattr(beta_col, "toggle"):
+            beta_enabled = beta_col.toggle(
+                "Beta Mode",
+                value=st.session_state.get("beta_mode", False),
+            )
         st.session_state["beta_mode"] = beta_enabled
         try:
             st.query_params["beta"] = "1" if beta_enabled else "0"
@@ -217,10 +226,11 @@ def render_top_bar() -> None:
             st.experimental_set_query_params(beta="1" if beta_enabled else "0")
 
         # ── Avatar ──────────────────────────────────────────────────────
-        avatar_col.markdown(
-            '<img src="https://placehold.co/32x32" width="32" style="border-radius:50%" />',
-            unsafe_allow_html=True,
-        )
+        if hasattr(avatar_col, "markdown"):
+            avatar_col.markdown(
+                '<img src="https://placehold.co/32x32" width="32" style="border-radius:50%" />',
+                unsafe_allow_html=True,
+            )
 
         st.markdown("</div>", unsafe_allow_html=True)
 
