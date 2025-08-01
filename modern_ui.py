@@ -81,6 +81,13 @@ def inject_modern_styles() -> None:
     """
     st.markdown(css, unsafe_allow_html=True)
     st.markdown(SIDEBAR_STYLES, unsafe_allow_html=True)
+    try:
+        from transcendental_resonance_frontend.theme.styles import (
+            inject_feed_styles,
+        )
+        inject_feed_styles()
+    except Exception:  # pragma: no cover - optional dependency
+        pass
     st.session_state["modern_styles_injected"] = True
 
 

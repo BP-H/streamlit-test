@@ -13,6 +13,10 @@ import streamlit as st
 
 from frontend.theme import set_theme
 from modern_ui import inject_modern_styles
+from transcendental_resonance_frontend.theme.styles import (
+    STORY_CSS,
+    inject_feed_styles,
+)
 from streamlit_helpers import theme_selector, safe_container, sanitize_text
 from modern_ui_components import st_javascript
 
@@ -79,18 +83,6 @@ def _generate_posts(count: int, start: int = 0) -> List[Post]:
 # Rendering helpers
 # ──────────────────────────────────────────────────────────────────────────────
 
-_STORY_CSS = """
-<style>
-.story-strip{display:flex;overflow-x:auto;gap:0.5rem;padding:0.5rem;margin-bottom:1rem;}
-.story-item{flex:0 0 auto;text-align:center;font-size:0.8rem;color:var(--text-muted);}
-.story-item img{border-radius:50%;border:2px solid var(--accent);}
-.post-card{background:var(--card);padding:0.5rem 0;border-radius:12px;
-           margin-bottom:1rem;box-shadow:0 1px 2px rgba(0,0,0,0.05);}
-.post-header{display:flex;align-items:center;gap:0.5rem;padding:0 0.5rem;margin-bottom:0.5rem;}
-.post-header img{border-radius:50%;width:40px;height:40px;}
-.post-caption{padding:0.25rem 0.5rem;}
-</style>
-"""
 
 _STORY_JS = """
 (() => {
@@ -122,13 +114,6 @@ _STORY_JS = """
 })();
 """
 
-_REACTION_CSS = """
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-.reaction-btn{background:transparent;border:none;font-size:1.1rem;cursor:pointer;margin-right:0.25rem;transition:transform 0.1s ease;}
-.reaction-btn:active{transform:scale(1.2);}
-</style>
-"""
 
 _SCROLL_JS = """
 <script>
@@ -146,7 +131,7 @@ if(sentinel){
 
 def _render_stories(users: List[User]) -> None:
     """Render the horizontal story-strip."""
-    st.markdown(_STORY_CSS, unsafe_allow_html=True)
+    st.markdown(STORY_CSS, unsafe_allow_html=True)
     html = "<div class='story-strip' id='story-strip'>"
     for u in users:
         avatar = sanitize_text(u.avatar)
@@ -272,6 +257,7 @@ def _load_more_posts() -> None:
 
 set_theme("light")
 inject_modern_styles()
+inject_feed_styles()
 
 
 def _page_body() -> None:
@@ -285,7 +271,6 @@ def _page_body() -> None:
     users = _sample_users()
 
     _render_stories(users)
-    st.markdown(_REACTION_CSS, unsafe_allow_html=True)
 
     offset = st.session_state["post_offset"]
     for p in posts[:offset]:
