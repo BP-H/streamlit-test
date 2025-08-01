@@ -6,12 +6,12 @@
 from __future__ import annotations
 
 import streamlit as st
-from frontend.light_theme import inject_light_theme
+from frontend.theme import inject_modern_styles as set_theme
 from modern_ui import inject_modern_styles
 from streamlit_helpers import theme_toggle
 from transcendental_resonance_frontend.ui.chat_ui import render_chat_ui
 
-inject_light_theme()
+set_theme()
 inject_modern_styles()
 
 

@@ -322,18 +322,12 @@ from streamlit_helpers import (
     render_post_card,
     render_instagram_grid,
 )
-from frontend.theme import apply_theme
+from frontend.theme import apply_theme, inject_modern_styles as set_theme
 
 try:
-    from modern_ui import (
-        inject_modern_styles,
-        inject_light_theme,
-    )
+    from modern_ui import inject_modern_styles
 except Exception:  # pragma: no cover - gracefully handle missing/invalid module
     def inject_modern_styles(*_a, **_k):
-        return None
-
-    def inject_light_theme(*_a, **_k):
         return None
 
 
@@ -1490,9 +1484,9 @@ def main() -> None:
         # Older Streamlit builds (or re-runs) may raise – that’s OK.
         pass
 
-    # Simple light theme fallback
+    # Apply default theme
     try:
-        inject_light_theme()
+        set_theme()
     except Exception:  # pragma: no cover
         pass
 
@@ -1543,7 +1537,7 @@ def main() -> None:
         return
 
     try:
-        inject_light_theme()
+        set_theme()
 
 
         # Inject keyboard shortcuts for quick navigation

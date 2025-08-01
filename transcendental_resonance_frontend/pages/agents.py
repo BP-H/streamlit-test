@@ -3,14 +3,14 @@
 # Legal & Ethical Safeguards
 
 import streamlit as st
-from frontend.light_theme import inject_light_theme
+from frontend.theme import inject_modern_styles as set_theme
 from modern_ui import inject_modern_styles
 from agent_ui import render_agent_insights_tab
 from streamlit_helpers import theme_toggle
 
 __all__ = ["main", "render"]
 
-inject_light_theme()
+set_theme()
 inject_modern_styles()
 
 
