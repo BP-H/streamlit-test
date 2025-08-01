@@ -1740,7 +1740,7 @@ def main() -> None:
         with center_col:
             # Main navigation tabs for common sections
             tab_labels = ["Validation", "Voting", "Agents"]
-            for label, tab in zip(tab_labels, st.tabs(tab_labels)):
+            for label, tab in zip(tab_labels, ui.tabs(tab_labels)):
                 with tab:
                     canonical = normalize_choice(label)
                     page_key = PAGES.get(canonical, canonical.lower())
