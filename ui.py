@@ -593,6 +593,7 @@ def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) 
         st.error("Validation page failed to load")
     if "_render_fallback" in globals():
         _render_fallback(choice)
+        return
     if last_exc:
         with st.expander("Show error details"):
             st.exception(last_exc)

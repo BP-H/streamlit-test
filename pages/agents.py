@@ -1,8 +1,18 @@
-# STRICTLY A SOCIAL MEDIA PLATFORM
-# Intellectual Property & Artistic Inspiration
-# Legal & Ethical Safeguards
+"""Fallback Agents page used when the full module is missing."""
 
-from transcendental_resonance_frontend.pages.agents import main
+import streamlit as st
 
-if __name__ == "__main__":
+
+def render() -> None:
+    """Display a minimal placeholder for the agents page."""
+    st.header("Agents")
+    st.info("Agents module could not be loaded.")
+
+
+def main() -> None:
+    """Entry point for Streamlit."""
+    render()
+
+
+if __name__ == "__main__":  # pragma: no cover - manual invocation
     main()

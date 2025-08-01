@@ -1,8 +1,18 @@
-# STRICTLY A SOCIAL MEDIA PLATFORM
-# Intellectual Property & Artistic Inspiration
-# Legal & Ethical Safeguards
+"""Fallback Voting page for when the actual module cannot be loaded."""
 
-from transcendental_resonance_frontend.pages.voting import main
+import streamlit as st
 
-if __name__ == "__main__":
+
+def render() -> None:
+    """Render a minimal placeholder voting page."""
+    st.header("Voting")
+    st.info("Voting module is not available.")
+
+
+def main() -> None:
+    """Entry point for Streamlit."""
+    render()
+
+
+if __name__ == "__main__":  # pragma: no cover - manual invocation
     main()
