@@ -80,9 +80,6 @@ def _fetch_social(username: str) -> tuple[dict, dict]:
         )
     return followers or {}, following or {}
 
-apply_theme("light")
-inject_modern_styles()
-ensure_active_user()
 
 
 def _render_profile(username: str) -> None:
@@ -114,6 +111,10 @@ def _render_profile(username: str) -> None:
 
 
 def main(main_container=None) -> None:
+    apply_theme("light")
+    inject_modern_styles()
+    ensure_active_user()
+
     if main_container is None:
         main_container = st
     init_db()

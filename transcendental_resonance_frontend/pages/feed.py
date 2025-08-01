@@ -270,8 +270,6 @@ def _load_more_posts() -> None:
 # Page entrypoints
 # ──────────────────────────────────────────────────────────────────────────────
 
-apply_theme("light")
-inject_modern_styles()
 
 
 def _page_body() -> None:
@@ -324,6 +322,9 @@ def _page_body() -> None:
 
 def main(main_container=None) -> None:
     """Render the feed inside ``main_container`` (or root Streamlit)."""
+    apply_theme("light")
+    inject_modern_styles()
+
     container = main_container or st
     with safe_container(container):
         _page_body()

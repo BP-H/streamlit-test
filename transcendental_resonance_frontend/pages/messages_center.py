@@ -15,10 +15,6 @@ from streamlit_helpers import safe_container, theme_toggle
 from status_indicator import render_status_icon
 from transcendental_resonance_frontend.src.utils import api
 
-# ─── Apply global styles ────────────────────────────────────────────────────────
-apply_theme("light")
-inject_modern_styles()
-
 # ─── Dummy data ────────────────────────────────────────────────────────────────
 DUMMY_CONVERSATIONS: dict[str, list[dict[str, str]]] = {
     "alice": [
@@ -57,6 +53,9 @@ def send_message(target: str, text: str) -> None:
 
 # ─── Page Entrypoint ───────────────────────────────────────────────────────────
 def main(container: st.DeltaGenerator | None = None) -> None:
+    apply_theme("light")
+    inject_modern_styles()
+
     if container is None:
         container = st
 
