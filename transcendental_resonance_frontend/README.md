@@ -29,6 +29,11 @@ Replace the backend URL with the `BACKEND_URL` environment variable if your API 
 - `src/main.py` – entry point registering pages and launching the app
 - `tests/` – pytest-based unit tests (package marked by `__init__.py`)
 
+Earlier versions placed NiceGUI page modules under `src/pages/`. That directory
+was removed after consolidating all pages into the `pages/` package. The root
+`pages/` folder at the repository top level simply forwards to these modules so
+Streamlit can locate them when running `ui.py`.
+
 ## Notes
 
 This UI is mobile-first with a futuristic aesthetic. A theme selector cycles between

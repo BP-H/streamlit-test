@@ -405,7 +405,10 @@ for governance, AI insights, and community interaction.
 
 Full implementations for these pages live in
 `transcendental_resonance_frontend/pages/`. The lightweight files under the
-top-level `pages/` directory simply import and call those modules.
+top-level `pages/` directory simply import and call those modules. Earlier
+revisions included a `src/pages/` directory for NiceGUI prototypes, but the
+contents were consolidated under `pages/`. This folder is now the single source
+of truth for both the Streamlit wrappers and the NiceGUI frontend.
 
 
 ### Starting the Backend
