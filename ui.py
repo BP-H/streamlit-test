@@ -328,7 +328,6 @@ try:
     from modern_ui import (
         inject_modern_styles,
         inject_light_theme,
-        render_stats_section,
     )
 except Exception:  # pragma: no cover - gracefully handle missing/invalid module
     def inject_modern_styles(*_a, **_k):
@@ -336,9 +335,6 @@ except Exception:  # pragma: no cover - gracefully handle missing/invalid module
 
     def inject_light_theme(*_a, **_k):
         return None
-
-    def render_stats_section(*_a, **_k):
-        st.info("stats section unavailable")
 
 
 try:

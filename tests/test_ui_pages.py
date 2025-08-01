@@ -220,3 +220,12 @@ def test_render_stats_section_uses_flexbox(monkeypatch):
     assert "stats-container" in combined
     assert "stats-card" in combined
 
+
+def test_ui_render_stats_section_callable(monkeypatch):
+    """Calling ui.render_stats_section should not raise TypeError."""
+    dummy_st = types.SimpleNamespace(markdown=lambda *a, **k: None)
+    monkeypatch.setattr(ui, "st", dummy_st)
+
+    stats = {"runs": 1}
+    ui.render_stats_section(stats)
+

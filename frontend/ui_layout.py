@@ -145,19 +145,20 @@ def render_top_bar() -> None:
     with st.container():
         st.markdown('<div class="sn-topbar">', unsafe_allow_html=True)
         # Columns: logo | search | bell | beta | avatar
-        cols       = st.columns([1, 4, 1, 2, 1])
-        logo_col   = cols[0]
+        cols = st.columns([1, 4, 1, 2, 1])
+        if len(cols) < 5:
+            cols += [cols[-1]] * (5 - len(cols))
+        if not hasattr(cols[0], "markdown"):
+            return
+        logo_col = cols[0]
         search_col = cols[1]
-        bell_col   = cols[2]
-        beta_col   = cols[3]
+        bell_col = cols[2]
+        beta_col = cols[3]
         avatar_col = cols[4]
 
         # ── Logo ────────────────────────────────────────────────────────
         logo_col.markdown(
             '<i class="fa-solid fa-rocket fa-lg"></i>',
-            unsafe_allow_html=True,
-        )
-
             unsafe_allow_html=True,
         )
 
