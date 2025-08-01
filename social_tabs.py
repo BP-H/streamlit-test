@@ -13,11 +13,11 @@ from streamlit_helpers import (
 )
 
 
-
 def safe_markdown(text: str, **kwargs) -> None:
     """Render text as Markdown, stripping invalid characters."""
     clean = text.encode("utf-8", errors="ignore").decode("utf-8")
     st.markdown(clean, **kwargs)
+
 
 try:
     from frontend_bridge import dispatch_route
@@ -40,6 +40,7 @@ except Exception:  # pragma: no cover - optional
 
     def seed_default_users() -> None:  # type: ignore
         pass
+
 
 ensure_active_user()
 
@@ -73,7 +74,6 @@ def _load_profile(username: str) -> tuple[dict, dict, dict]:
 inject_light_theme()
 
 
-
 def render_social_tab(main_container=None) -> None:
     """Render basic social interactions."""
     if main_container is None:
@@ -84,59 +84,64 @@ def render_social_tab(main_container=None) -> None:
     with container_ctx:
         header("Friends & Followers")
 
+    if dispatch_route is None or SessionLocal is None or Harmonizer is None:
+        st.info("Social routes not available")
+        return
 
-        if dispatch_route is None or SessionLocal is None or Harmonizer is None:
-            st.info("Social routes not available")
-            return
+    cols = st.columns(2)
+    with cols[0]:
+        current_user = st.text_input(
+            "Current User",
+            value=current_user,
+            key="active_user",
+            placeholder="Username",
+        )
+    with cols[1]:
+        target = st.text_input(
+            "Target Username",
+            key="target_username",
+            placeholder="Friend to follow",
+        )
+    st.session_state["active_user"] = current_user
 
-        cols = st.columns(2)
-        with cols[0]:
-            current_user = st.text_input(
-                "Current User",
-                value=current_user,
-                key="active_user",
-                placeholder="Username",
+    if (
+        st.button("Follow/Unfollow", use_container_width=True)
+        and target
+        and current_user
+    ):
+        with SessionLocal() as db:
+            user_obj = (
+                db.query(Harmonizer).filter(Harmonizer.username == current_user).first()
             )
-        with cols[1]:
-            target = st.text_input(
-                "Target Username",
-                key="target_username",
-                placeholder="Friend to follow",
-            )
-        st.session_state["active_user"] = current_user
-
-        if st.button("Follow/Unfollow", use_container_width=True) and target and current_user:
-            with SessionLocal() as db:
-                user_obj = db.query(Harmonizer).filter(Harmonizer.username == current_user).first()
-                if not user_obj:
-                    st.error("Active user not found in DB")
-                else:
-                    with st.spinner("Working on it..."):
-                        try:
-                            result = _run_async(
-                                dispatch_route(
-                                    "follow_user",
-                                    {"username": target},
-                                    db=db,
-                                    current_user=user_obj,
-                                )
+            if not user_obj:
+                st.error("Active user not found in DB")
+            else:
+                with st.spinner("Working on it..."):
+                    try:
+                        result = _run_async(
+                            dispatch_route(
+                                "follow_user",
+                                {"username": target},
+                                db=db,
+                                current_user=user_obj,
                             )
-                            if st.session_state.get("beta_mode"):
-                                st.json(result)
-                            st.toast("Success!")
-                        except Exception as exc:  # pragma: no cover - UI feedback only
-                            alert(f"Operation failed: {exc}", "error")
+                        )
+                        if st.session_state.get("beta_mode"):
+                            st.json(result)
+                        st.toast("Success!")
+                    except Exception as exc:  # pragma: no cover - UI feedback only
+                        alert(f"Operation failed: {exc}", "error")
 
-        st.divider()
-        if current_user:
-            try:
-                user, followers, following = _load_profile(current_user)
-            except Exception as exc:
-                alert(f"Profile fetch failed: {exc}", "error")
-                return
-            safe_markdown(f"### Profile: {user.get('username', current_user)}")
-            st.write(user.get("bio", ""))
-            st.markdown("**Followers**")
-            st.write(followers.get("followers", []))
-            st.markdown("**Following**")
-            st.write(following.get("following", []))
+    st.divider()
+    if current_user:
+        try:
+            user, followers, following = _load_profile(current_user)
+        except Exception as exc:
+            alert(f"Profile fetch failed: {exc}", "error")
+            return
+        safe_markdown(f"### Profile: {user.get('username', current_user)}")
+        st.write(user.get("bio", ""))
+        st.markdown("**Followers**")
+        st.write(followers.get("followers", []))
+        st.markdown("**Following**")
+        st.write(following.get("following", []))
