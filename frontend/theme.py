@@ -57,13 +57,32 @@ def get_global_css(dark: bool = True) -> str:
 """
 
 
+def get_animation_css() -> str:
+    """Return basic fade-in animations."""
+    return """
+    <style>
+    .fade-in { opacity: 0; animation: fade-in 0.6s forwards; }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+    """
+
+
 def inject_modern_styles(dark: bool = True) -> None:
     """Inject the base CSS variables for the modern theme."""
 
     if st.session_state.get("_theme_injected"):
         return
     st.markdown(get_global_css(dark), unsafe_allow_html=True)
+    st.markdown(get_animation_css(), unsafe_allow_html=True)
     st.session_state["_theme_injected"] = True
+
+
+def inject_animation_styles() -> None:
+    """Inject fade-in animation CSS once."""
+    if st.session_state.get("_anim_injected"):
+        return
+    st.markdown(get_animation_css(), unsafe_allow_html=True)
+    st.session_state["_anim_injected"] = True
 
 
 def get_accent_color() -> str:

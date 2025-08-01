@@ -148,6 +148,19 @@ def sanitize_text(text: Any) -> str:
     return html.escape(text, quote=False)
 
 
+def sanitize_emoji(text: Any) -> str:
+    """Return ``text`` with common emoji aliases converted."""
+    if text is None:
+        return ""
+    if not isinstance(text, str):
+        text = str(text)
+    try:
+        import emoji
+        return emoji.emojize(text, language="alias")
+    except Exception:
+        return text
+
+
 def _safe_element(tag: str, content: str):
     """Render ``ui.element`` safely across backends."""
     try:
@@ -257,7 +270,7 @@ def render_post_card(post_data: dict[str, Any]) -> None:
                 unsafe_allow_html=True,
             )
         else:
-            html_snippet = "<div class='shadcn-card' style='border-radius:12px;padding:8px;'>"
+            html_snippet = "<div class='shadcn-card fade-in' style='border-radius:12px;padding:8px;'>"
             if img:
                 html_snippet += f"<img src='{html.escape(img)}' style='width:100%;border-radius:8px;'/>"
             if username:
@@ -269,7 +282,7 @@ def render_post_card(post_data: dict[str, Any]) -> None:
         return
 
     try:
-        with ui.card().classes("w-full p-4 mb-4"):
+        with ui.card().classes("fade-in w-full p-4 mb-4"):
             if img:
                 ui.image(img).classes("rounded-md mb-2 w-full")
             if hasattr(ui, "element"):
