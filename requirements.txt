@@ -8,6 +8,7 @@ pytest-asyncio>=0.23
 sqlalchemy>=2.0
 networkx
 python-dateutil
+emoji
 fastapi
 python-multipart
 uvicorn

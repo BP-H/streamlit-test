@@ -6,11 +6,12 @@
 from __future__ import annotations
 import streamlit as st
 from modern_ui import inject_modern_styles
+from streamlit_helpers import sanitize_emoji
 
 inject_modern_styles()
 
 CHAT_CSS = """
-<style>
+    <style>
 .chat-container {
     display: flex;
     flex-direction: column;
@@ -33,6 +34,13 @@ CHAT_CSS = """
     background: var(--accent);
     color: #fff;
 }
+.chat-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 0.5rem;
+}
 .chat-input-row .stTextInput input {
     border-radius: 1.5rem;
     padding: 0.5rem 1rem;
@@ -44,6 +52,11 @@ CHAT_CSS = """
 }
 </style>
 """
+
+AVATARS = {
+    "You": "https://placehold.co/32x32?text=U",
+    "Bot": "https://placehold.co/32x32?text=B",
+}
 
 
 def translate_text(text: str, target_lang: str = "en") -> str:
@@ -76,11 +89,14 @@ def render_chat_interface() -> None:
         st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
         for entry in st.session_state["chat_history"]:
             sender = entry.get("sender", "")
-            text = entry.get("text", "")
+            text = sanitize_emoji(entry.get("text", ""))
             cls = "right" if sender == "You" else "left"
+            avatar = AVATARS.get(sender, AVATARS.get("Bot"))
             translated = translate_text(text, language)
             st.markdown(
-                f"<div class='chat-bubble {cls}'><strong>{sender}:</strong> {translated}</div>",
+                f"<div class='chat-bubble {cls}'>"
+                f"<img src='{avatar}' class='chat-avatar' />"
+                f"<strong>{sender}:</strong> {translated}</div>",
                 unsafe_allow_html=True,
             )
         st.markdown("</div>", unsafe_allow_html=True)
@@ -96,7 +112,7 @@ def render_chat_interface() -> None:
             )
         with col2:
             if st.button("Send", key=f"{page_prefix}send_chat") and msg:
-                st.session_state["chat_history"].append({"sender": "You", "text": msg})
+                st.session_state["chat_history"].append({"sender": "You", "text": sanitize_emoji(msg)})
                 st.session_state.chat_input = ""
                 st.experimental_rerun()
         st.markdown("</div>", unsafe_allow_html=True)

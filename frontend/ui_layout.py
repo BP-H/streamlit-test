@@ -97,6 +97,7 @@ def render_top_bar() -> None:
     """Render a translucent top bar with a logo, search input and controls."""
     st.markdown(
         """
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <style>
         .sn-topbar {
             position: sticky;
@@ -116,6 +117,9 @@ def render_top_bar() -> None:
             border: 1px solid rgba(255,255,255,0.3);
             background: rgba(255,255,255,0.85);
         }
+        .suggestions {position:absolute; background:white; width:100%; border-radius:4px; box-shadow:0 2px 4px rgba(0,0,0,0.1);}
+        .suggestions div {padding:0.25rem 0.5rem; cursor:pointer;}
+        .suggestions div:hover {background:#eee;}
         </style>
         """,
         unsafe_allow_html=True,
@@ -134,12 +138,15 @@ def render_top_bar() -> None:
             unsafe_allow_html=True,
         )
         search_target = search_col if hasattr(search_col, "text_input") else st
-        search_target.text_input(
+        query = search_target.text_input(
             "Search",
             placeholder="Search...",
             key=f"{st.session_state.get('active_page','global')}_topbar_search",
             label_visibility="collapsed",
         )
+        suggestions = [u for u in ["alice", "bob", "carol"] if query and query.lower() in u]
+        if suggestions:
+            search_target.markdown("<div class='suggestions'>" + "".join(f"<div>{s}</div>" for s in suggestions) + "</div>", unsafe_allow_html=True)
         toggle_target = beta_col if hasattr(beta_col, "toggle") else st
         beta_enabled = toggle_target.toggle(
             "Beta Mode",
@@ -151,6 +158,7 @@ def render_top_bar() -> None:
         except Exception:
             st.experimental_set_query_params(beta="1" if beta_enabled else "0")
         avatar_target = avatar_col if hasattr(avatar_col, "markdown") else st
+        avatar_target.markdown('<i class="fa fa-bell"></i>', unsafe_allow_html=True)
         avatar_target.markdown(
             '<img src="https://placehold.co/32x32" width="32" style="border-radius:50%" />',
             unsafe_allow_html=True,
