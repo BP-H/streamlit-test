@@ -56,10 +56,13 @@ def get_theme(name: bool | str = True) -> ColorTheme:
     return DARK_THEME if name else LIGHT_THEME
 
 
-def get_global_css(theme: bool | str = True) -> str:
+def get_global_css(name: bool | str | ColorTheme = True) -> str:
     """Return ``:root`` CSS variables for the selected theme."""
 
-    theme_obj = get_theme(dark)
+    if isinstance(name, ColorTheme):
+        theme_obj = name
+    else:
+        theme_obj = get_theme(name)
     return f"""
 <style>
 :root {{
