@@ -178,8 +178,14 @@ def render_validation_card() -> None:
         unsafe_allow_html=True,
     )
 
-def render_stats_section() -> None:
-    """Display quick stats using a responsive flexbox layout."""
+def render_stats_section(stats: dict | None = None) -> None:
+    """Display quick stats using a responsive flexbox layout.
+
+    Parameters
+    ----------
+    stats : dict | None, optional
+        Runtime statistics. If ``None``, default demo values are used.
+    """
 
     accent = theme.get_accent_color()
 
@@ -232,15 +238,22 @@ def render_stats_section() -> None:
         unsafe_allow_html=True,
     )
 
-    stats = [
-        ("🏃‍♂️", "Runs", "0"),
-        ("📝", "Proposals", "12"),
-        ("⚡", "Success Rate", "94%"),
-        ("🎯", "Accuracy", "98.2%"),
+    default_stats = {
+        "runs": "0",
+        "proposals": "12",
+        "success_rate": "94%",
+        "accuracy": "98.2%",
+    }
+    data = stats or default_stats
+    entries = [
+        ("🏃‍♂️", "Runs", data.get("runs")),
+        ("📝", "Proposals", data.get("proposals")),
+        ("⚡", "Success Rate", data.get("success_rate")),
+        ("🎯", "Accuracy", data.get("accuracy")),
     ]
 
     st.markdown("<div class='stats-container'>", unsafe_allow_html=True)
-    for icon, label, value in stats:
+    for icon, label, value in entries:
         st.markdown(
             f"""
             <div class='stats-card'>
