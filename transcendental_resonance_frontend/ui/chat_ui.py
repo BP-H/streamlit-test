@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import streamlit as st
-from modern_ui import inject_modern_styles
+from frontend.theme import inject_modern_styles
 from streamlit_helpers import safe_container, header
 
 inject_modern_styles()

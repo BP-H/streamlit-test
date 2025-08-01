@@ -112,7 +112,7 @@ def safe_element(tag: str, content: str) -> Any:
 # ──────────────────────────────────────────────────────────────────────────────
 
 try:
-    from modern_ui import inject_modern_styles  # type: ignore
+    from frontend.theme import inject_modern_styles  # type: ignore
 except Exception:  # noqa: BLE001
 
     def inject_modern_styles(*_a: Any, **_kw: Any) -> None:  # type: ignore
