@@ -84,7 +84,6 @@ def render_social_tab(main_container=None) -> None:
     with container_ctx:
         header("Friends & Followers")
 
-
         if dispatch_route is None or SessionLocal is None or Harmonizer is None:
             st.info("Social routes not available")
             return
