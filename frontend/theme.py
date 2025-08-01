@@ -47,6 +47,15 @@ DARK_THEME = ColorTheme(
 THEMES = {"light": LIGHT_THEME, "dark": DARK_THEME}
 
 
+def set_theme(name: str) -> None:
+    """Set the active theme and apply its styles."""
+    name = name.lower()
+    if name not in THEMES:
+        name = "light"
+    st.session_state["theme"] = name
+    apply_theme(name)
+
+
 def get_theme(name: bool | str = True) -> ColorTheme:
     """
     Return the selected ColorTheme by name or boolean flag.

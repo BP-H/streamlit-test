@@ -5,8 +5,7 @@
 
 import importlib
 import streamlit as st
-from frontend.light_theme import inject_light_theme
-from modern_ui import inject_modern_styles
+from frontend.theme import set_theme, inject_modern_styles
 from streamlit_helpers import safe_container, theme_toggle
 
 # --------------------------------------------------------------------
@@ -26,8 +25,8 @@ def _load_render_ui():
 render_validation_ui = _load_render_ui()
 
 # Inject modern global styles (safe when running in classic Streamlit)
-inject_light_theme()
-inject_modern_styles()
+set_theme("light")
+inject_modern_styles("light")
 
 # --------------------------------------------------------------------
 # Page decorator (works even if Streamlit’s multipage API absent)
