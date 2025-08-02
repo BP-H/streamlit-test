@@ -11,7 +11,7 @@ from typing import List, Dict, Any
 import random
 import streamlit as st
 
-from frontend.theme import set_theme
+from frontend.theme import apply_theme
 from modern_ui import inject_modern_styles
 from streamlit_helpers import theme_toggle, safe_container, sanitize_text
 
@@ -208,7 +208,7 @@ def _load_more_posts() -> None:
 # Page entrypoints
 # ──────────────────────────────────────────────────────────────────────────────
 
-set_theme("light")
+apply_theme("light")
 inject_modern_styles()
 
 

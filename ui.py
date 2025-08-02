@@ -324,7 +324,6 @@ from streamlit_helpers import (
     render_instagram_grid,
 )
 
-from frontend.theme import set_theme
 from frontend.theme import apply_theme
 
 
@@ -1497,7 +1496,7 @@ def main() -> None:
 
     # Simple light theme fallback
     try:
-        set_theme("light")
+        apply_theme("light")
     except Exception:  # pragma: no cover
         pass
 
@@ -1548,7 +1547,7 @@ def main() -> None:
         return
 
     try:
-        set_theme("light")
+        apply_theme("light")
 
 
         # Inject keyboard shortcuts for quick navigation
@@ -1605,7 +1604,7 @@ def main() -> None:
             return
 
         try:
-            set_theme(st.session_state.get("theme", "light"))
+            apply_theme(st.session_state.get("theme", "light"))
         except Exception as exc:
             st.warning(f"Theme load failed: {exc}")
 

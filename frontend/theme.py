@@ -15,6 +15,7 @@ class ColorTheme:
     bg: str
     card: str
     accent: str
+    text: str
     text_muted: str
     radius: str = "1rem"
     transition: str = "0.4s ease"
@@ -25,6 +26,7 @@ class ColorTheme:
             f"--bg: {self.bg};",
             f"--card: {self.card};",
             f"--accent: {self.accent};",
+            f"--text: {self.text};",
             f"--text-muted: {self.text_muted};",
             f"--radius: {self.radius};",
             f"--transition: {self.transition};",
@@ -36,12 +38,14 @@ LIGHT_THEME = ColorTheme(
     bg="#F0F2F6",
     card="#FFFFFF",
     accent="#0077B5",        # LinkedIn-blue accent
+    text="#000000",
     text_muted="#666666",
 )
 DARK_THEME = ColorTheme(
     bg="#0A0F14",
     card="rgba(255,255,255,0.05)",
     accent="#00E5FF",        # Neon cyan
+    text="#FFFFFF",
     text_muted="#AAAAAA",
 )
 
@@ -75,6 +79,7 @@ def get_global_css(theme: bool | str = True) -> str:
 
 body {{
     background: var(--bg) !important;
+    color: var(--text);
     font-family: 'Inter', sans-serif;
     transition: background var(--transition);
 }}
@@ -165,19 +170,6 @@ def inject_modern_styles(theme: bool | str = True) -> None:
     st.session_state["_styles_injected"] = True
 
 
-def set_theme(name: str) -> None:
-    """Store ``name`` in session state and apply CSS once."""
-    mode = _resolve_mode(name)
-    if st.session_state.get("_theme") == mode and st.session_state.get("_styles_injected"):
-        return
-
-    st.session_state["_theme"] = mode
-
-    if st.session_state.get("_styles_injected"):
-        apply_theme(mode)
-    else:
-        inject_modern_styles(mode)
-
 
 def get_accent_color() -> str:
     """Return the accent color for the current theme."""
@@ -186,7 +178,6 @@ def get_accent_color() -> str:
 
 __all__ = [
     "apply_theme",
-    "set_theme",
     "inject_modern_styles",
     "get_accent_color",
 ]

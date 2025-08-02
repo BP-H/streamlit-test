@@ -13,7 +13,7 @@ from __future__ import annotations
 import html
 from contextlib import nullcontext
 from typing import Any, ContextManager, Literal
-from frontend.theme import set_theme
+from frontend.theme import apply_theme
 
 _FAKE_SESSION: dict[str, Any] = {}
 import inspect
@@ -481,7 +481,7 @@ def theme_selector(label: str = "Theme", *, key_suffix: str | None = None) -> st
     _safe_session_set(theme_key, chosen)
     _safe_session_set("theme",    chosen)          # keep global alias
 
-    set_theme(chosen)
+    apply_theme(chosen)
 
     try:                                           # Streamlit ≥1.29
         st.query_params["theme"] = chosen
@@ -511,7 +511,7 @@ def theme_toggle(label: str = "Dark Mode", *, key_suffix: str | None = None) -> 
     st.session_state[theme_key] = chosen
     st.session_state["theme"] = chosen
 
-    set_theme(chosen)
+    apply_theme(chosen)
 
     try:
         st.query_params["theme"] = chosen
@@ -607,7 +607,7 @@ __all__ = [
     "render_instagram_grid",
     "render_mock_feed",
     "sanitize_text",
-    "set_theme",
+    "apply_theme",
     "theme_selector",
     "theme_toggle",
     "get_active_user",
