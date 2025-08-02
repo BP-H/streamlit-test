@@ -14,7 +14,7 @@ import random
 from typing import Any, Dict, List
 
 from external_services.llm_client import LLMClient, get_speculative_futures
-from external_services.vision_client import VisionClient
+from external_services.vision_client import VisionClient, analyze_timeline
 
 # Satirical disclaimer appended to all speculative output
 DISCLAIMER = "This is a satirical simulation, not advice or prediction."
@@ -69,6 +69,7 @@ async def generate_speculative_payload(description: str) -> List[Dict[str, str]]
             }
         )
     return results
+
 
 def quantum_video_stub(*_args, **_kwargs) -> None:
     """Placeholder for future WebGL/AI-video integration."""
