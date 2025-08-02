@@ -4,23 +4,18 @@
 """Friends & Followers page."""
 
 import streamlit as st
-from frontend.theme import set_theme
-from modern_ui import apply_modern_styles
+from frontend.theme import initialize_theme
 
 
 from social_tabs import render_social_tab
 from streamlit_helpers import safe_container, render_mock_feed, theme_toggle
 from feed_renderer import render_feed
 
-set_theme("light")
-apply_modern_styles()
-
+initialize_theme("light")
 
 
 def main(main_container=None) -> None:
     """Render the social page content within ``main_container``."""
-    apply_theme("light")
-    inject_modern_styles()
 
     if main_container is None:
         main_container = st

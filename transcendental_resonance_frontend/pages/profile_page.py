@@ -20,8 +20,8 @@ from utils.api import (
     get_user_recommendations,
 )
 from utils.layout import page_container
-from utils.styles import (THEMES, get_theme, get_theme_name, set_accent,
-                          set_theme)
+from utils.styles import THEMES, get_theme, get_theme_name, set_accent
+from frontend.theme import initialize_theme
 
 from .events_page import events_page
 from .groups_page import groups_page
@@ -31,6 +31,9 @@ from .notifications_page import notifications_page
 from .proposals_page import proposals_page
 from .vibenodes_page import vibenodes_page
 from .recommendations_page import recommendations_page
+
+
+initialize_theme("light")
 
 
 @ui.page("/profile")
@@ -68,8 +71,7 @@ async def profile_page(username: str | None = None):
     THEME = get_theme()
     with page_container(THEME):
         avatar_img = (
-            ui.image(avatar_url)
-            .classes("w-32 h-32 rounded-full mb-2")
+            ui.image(avatar_url).classes("w-32 h-32 rounded-full mb-2")
             if avatar_url
             else ui.icon("person").classes("text-8xl mb-2")
         )
@@ -108,11 +110,15 @@ async def profile_page(username: str | None = None):
                 if resp and resp.get("avatar_url"):
                     avatar_img.source = resp["avatar_url"]
                     avatar_url = resp["avatar_url"]
-                    await api_call("PUT", "/users/me", {"avatar_url": resp["avatar_url"]})
+                    await api_call(
+                        "PUT", "/users/me", {"avatar_url": resp["avatar_url"]}
+                    )
                     ui.notify("Avatar updated", color="positive")
 
             ui.upload(
-                on_upload=lambda e: ui.run_async(handle_avatar_upload(e.content, e.name))
+                on_upload=lambda e: ui.run_async(
+                    handle_avatar_upload(e.content, e.name)
+                )
             ).classes("w-full mb-4")
         else:
             ui.label(user_data.get("bio", "")).classes("mb-4")
@@ -181,7 +187,7 @@ async def profile_page(username: str | None = None):
             ui.select(
                 list(THEMES.keys()),
                 value=get_theme_name(),
-                on_change=lambda e: set_theme(e.value),
+                on_change=lambda e: initialize_theme(e.value),
             ).classes("mr-2")
             ui.color_input(
                 "Accent",
@@ -198,18 +204,21 @@ async def profile_page(username: str | None = None):
             recs = await get_user_recommendations()
             for u in recs:
                 with suggestions:
-                    with ui.card().classes('w-full mb-2').style(
-                        'border: 1px solid #333; background: #1e1e1e;'
+                    with ui.card().classes("w-full mb-2").style(
+                        "border: 1px solid #333; background: #1e1e1e;"
                     ):
-                        ui.label(u.get('username', 'Unknown')).classes('text-lg')
-                        bio = u.get('bio')
+                        ui.label(u.get("username", "Unknown")).classes("text-lg")
+                        bio = u.get("bio")
                         if bio:
-                            ui.label(bio).classes('text-sm')
+                            ui.label(bio).classes("text-sm")
 
         await load_suggestions()
 
-if ui is None:
-    def profile_page(*_a, **_kw):
-        """Fallback profile page when NiceGUI is unavailable."""
-        st.info('Profile page requires NiceGUI.')
 
+if ui is None:
+
+    def _profile_page_fallback(*_a, **_kw):
+        """Fallback profile page when NiceGUI is unavailable."""
+        st.info("Profile page requires NiceGUI.")
+
+    profile_page = _profile_page_fallback  # noqa: F811

@@ -3,8 +3,7 @@
 # Legal & Ethical Safeguards
 
 import streamlit as st
-from frontend.theme import set_theme
-from modern_ui import apply_modern_styles
+from frontend.theme import initialize_theme
 
 
 from agent_ui import render_agent_insights_tab
@@ -12,9 +11,7 @@ from streamlit_helpers import theme_toggle
 
 __all__ = ["main", "render"]
 
-set_theme("light")
-apply_modern_styles()
-
+initialize_theme("light")
 
 
 def main(main_container=None) -> None:
@@ -23,8 +20,6 @@ def main(main_container=None) -> None:
 
     If no main_container is provided, uses Streamlit root context.
     """
-    apply_theme("light")
-    inject_modern_styles()
 
     container = main_container if main_container is not None else st
     theme_toggle("Dark Mode", key_suffix="agents")
@@ -37,14 +32,15 @@ def main(main_container=None) -> None:
 
         if container.button("Test Agent", key="test_agent"):
             container.success(f"✅ {selected_agent} agent test complete")
-            container.json({
-                "agent": selected_agent,
-                "status": "ok",
-                "test": True,
-            })
+            container.json(
+                {
+                    "agent": selected_agent,
+                    "status": "ok",
+                    "test": True,
+                }
+            )
     except Exception as e:
         container.error(f"❌ Failed to render Agents UI: {e}")
-
 
     try:
         render_agent_insights_tab(main_container=main_container)
