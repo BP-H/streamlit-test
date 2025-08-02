@@ -91,18 +91,14 @@ def apply_global_styles() -> None:
     theme = THEMES[ACTIVE_THEME_NAME].copy()
     theme["accent"] = ACTIVE_ACCENT
 
-    font_family = "'Inter', sans-serif"
-    font_link = "<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap\" rel=\"stylesheet\">"
+    font_family = "var(--font-family)"
+    font_link = ""
     if ACTIVE_THEME_NAME == "cyberpunk":
-        font_family = "'Orbitron', sans-serif"
-        font_link = (
-            "<link href=\"https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap\" rel=\"stylesheet\">"
-        )
+        font_family = "var(--font-family)"
+        font_link = ""
     elif ACTIVE_THEME_NAME == "codex":
-        font_family = "'Iosevka', monospace"
-        font_link = (
-            "<link href=\"https://fonts.googleapis.com/css2?family=Iosevka:wght@400;700&display=swap\" rel=\"stylesheet\">"
-        )
+        font_family = "var(--font-family)"
+        font_link = ""
 
     ui.add_head_html(
         f"""

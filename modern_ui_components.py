@@ -95,10 +95,10 @@ SIDEBAR_STYLES = """
 .sidebar-nav .nav-item:hover {
     background: rgba(255, 255, 255, 0.05);
 }
-.sidebar-nav .nav-item.active {
-    background: var(--accent);
-    color: #fff;
-}
+    .sidebar-nav .nav-item.active {
+        background: var(--accent);
+        color: var(--text);
+    }
 </style>
 """
 
@@ -156,7 +156,6 @@ def render_modern_layout() -> None:
     inject_modern_styles()
     st.markdown(
         """
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
         <style>
         .glass-card {
             background: rgba(255,255,255,0.3);
@@ -414,7 +413,7 @@ def render_stats_section(stats: dict) -> None:
             margin-bottom: 0.25rem;
         }}
         .stats-label {{
-            color: #888;
+            color: var(--text-muted);
             font-size: calc(0.8rem + 0.2vw);
             font-weight: 500;
         }}

@@ -40,15 +40,13 @@ def inject_modern_styles() -> None:
         return
 
     css = """
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="module" src="/static/lucide-react.min.js"></script>
     <style>
     body, .stApp {
         background: var(--bg);
-        color: var(--text-muted);
-        font-family: 'Inter', sans-serif;
+        color: var(--text);
+        font-family: var(--font-family);
     }
     .card, .custom-container {
         background: var(--card);
@@ -97,13 +95,13 @@ def render_modern_header() -> None:
             backdrop-filter: blur(20px);
             padding: 1.5rem 2rem;
             margin: -2rem -3rem 3rem -3rem;
-            border-bottom: 1px solid rgba(74, 144, 226, 0.2);
+            border-bottom: 1px solid var(--accent);
             border-radius: 0 0 16px 16px;
         ">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <div style="
-                        background: linear-gradient(135deg, #4a90e2, #5ba0f2);
+                        background: var(--accent);
                         border-radius: 12px;
                         padding: 0.75rem;
                         display: flex;
@@ -113,19 +111,19 @@ def render_modern_header() -> None:
                         <span style="font-size: 1.5rem;">🚀</span>
                     </div>
                     <div>
-                        <h1 style="margin: 0; color: #ffffff; font-size: 1.75rem; font-weight: 700;">
+                        <h1 style="margin: 0; color: var(--text); font-size: 1.75rem; font-weight: 700;">
                             superNova_2177
                         </h1>
-                        <p style="margin: 0; color: #888; font-size: 0.9rem;">Validation Analyzer</p>
+                        <p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">Validation Analyzer</p>
                     </div>
                 </div>
                 <div style="display: flex; gap: 1rem; align-items: center;">
                     <div style="
-                        background: rgba(74, 144, 226, 0.1);
-                        border: 1px solid rgba(74, 144, 226, 0.3);
+                        background: var(--accent);
+                        border: 1px solid var(--accent);
                         border-radius: 8px;
                         padding: 0.5rem 1rem;
-                        color: #4a90e2;
+                        color: var(--accent);
                         font-size: 0.85rem;
                         font-weight: 500;
                     ">
@@ -192,7 +190,7 @@ def render_stats_section(stats: dict | None = None) -> None:
             margin-bottom: 0.25rem;
         }}
         .stats-label {{
-            color: #888;
+            color: var(--text-muted);
             font-size: calc(0.8rem + 0.2vw);
             font-weight: 500;
         }}

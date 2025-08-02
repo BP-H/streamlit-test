@@ -38,7 +38,7 @@ _CSS = """
 .pc-actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
 .pc-btn{flex:1 1 120px;padding:.45rem .8rem;border:none;
   border-radius:.65rem;background:rgba(255,255,255,.09);
-  color:#fff;font-size:.85rem;cursor:pointer;
+  color:var(--text);font-size:.85rem;cursor:pointer;
   transition:background .2s ease}
 .pc-btn:hover{background:rgba(255,255,255,.18)}
 @media(max-width:400px){.pc-wrapper{max-width:100%}}
