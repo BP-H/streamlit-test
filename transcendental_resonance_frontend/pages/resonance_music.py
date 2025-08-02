@@ -14,7 +14,6 @@ from pathlib import Path
 import requests
 import streamlit as st
 from frontend.theme import set_theme
-from modern_ui import inject_modern_styles
 from streamlit_helpers import (
     alert,
     centered_container,
@@ -28,7 +27,6 @@ from transcendental_resonance_frontend.src.utils.api import get_resonance_summar
 
 
 set_theme("light")
-inject_modern_styles()
 
 # BACKEND_URL is defined in utils.api, but we keep it here for direct requests calls if needed
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")

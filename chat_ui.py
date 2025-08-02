@@ -9,7 +9,6 @@ import threading
 from typing import Optional
 import streamlit as st
 from streamlit.runtime.scriptrunner import add_script_run_ctx
-from modern_ui import inject_modern_styles
 from realtime_comm import ChatWebSocketManager
 
 try:
@@ -17,7 +16,6 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     websockets = None
 
-inject_modern_styles()
 
 
 def _run_async(coro):

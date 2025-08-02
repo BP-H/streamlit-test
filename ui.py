@@ -324,15 +324,7 @@ from streamlit_helpers import (
     render_instagram_grid,
 )
 
-from frontend.theme import set_theme
-from frontend.theme import apply_theme
-
-
-try:
-    from modern_ui import inject_modern_styles
-except Exception:  # pragma: no cover - gracefully handle missing/invalid module
-    def inject_modern_styles(*_a, **_k):
-        return None
+from frontend.theme import set_theme, apply_theme, inject_modern_styles
 
 
 
@@ -499,17 +491,7 @@ def render_landing_page():
         st.markdown("</div></div>", unsafe_allow_html=True)
 
 
-def inject_modern_styles() -> None:
-    """Backward compatible alias for modern theme injection."""
-    from frontend.theme import inject_modern_styles as _impl
 
-    _impl()
-
-
-# Backward compatibility alias
-def inject_dark_theme() -> None:
-    """Legacy alias for inject_modern_styles()."""
-    inject_modern_styles()
 
 
 def load_page_with_fallback(choice: str, module_paths: list[str] | None = None) -> None:

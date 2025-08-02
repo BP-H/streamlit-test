@@ -29,65 +29,6 @@ def render_lottie_animation(url: str, *, height: int = 200, fallback: str = "ðŸš
 logger = logging.getLogger("modern_ui")
 
 
-def inject_modern_styles() -> None:
-    """Inject global CSS using theme variables and local assets."""
-    from modern_ui_components import SIDEBAR_STYLES
-
-    theme.inject_modern_styles()
-
-    if st.session_state.get("_modern_ui_css_injected"):
-        logger.debug("Modern UI CSS already injected; skipping extra assets")
-        return
-
-    css = """
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script type="module" src="/static/lucide-react.min.js"></script>
-    <style>
-    body, .stApp {
-        background: var(--bg);
-        color: var(--text-muted);
-        font-family: 'Inter', sans-serif;
-    }
-    .card, .custom-container {
-        background: var(--card);
-        border-radius: 1rem;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        transition: transform .2s ease, box-shadow .2s ease;
-    }
-    .card:hover, .custom-container:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-    }
-    .insta-card {
-        display: flex;
-        flex-direction: column;
-        background: var(--card);
-        border-radius: 1rem;
-        overflow: hidden;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        transition: transform .2s ease, box-shadow .2s ease;
-    }
-    .insta-card img {
-        width: 100%;
-        height: auto;
-    }
-    .insta-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    }
-    </style>
-    """
-    st.markdown(css, unsafe_allow_html=True)
-    st.markdown(SIDEBAR_STYLES, unsafe_allow_html=True)
-    st.session_state["_modern_ui_css_injected"] = True
-
-def inject_premium_styles() -> None:
-    """Backward compatible alias for :func:`inject_modern_styles`."""
-    inject_modern_styles()
-
-
 def render_modern_header() -> None:
     """Render the premium glassy header."""
     st.markdown(
@@ -262,8 +203,6 @@ def close_card_container() -> None:
 
 __all__ = [
     "render_lottie_animation",
-    "inject_modern_styles",
-    "inject_premium_styles",
     "render_modern_header",
     "render_validation_card",
     "render_stats_section",

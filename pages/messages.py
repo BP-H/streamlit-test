@@ -5,14 +5,17 @@
 
 from __future__ import annotations
 
+from frontend.theme import inject_modern_styles
 from transcendental_resonance_frontend.pages import messages as real_page
 
 
 def main() -> None:
+    inject_modern_styles()
     real_page.main()
 
 
 def render() -> None:
+    inject_modern_styles()
     real_page.main()
 
 

@@ -110,16 +110,9 @@ def safe_element(tag: str, content: str) -> Any:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Optional modern-ui styles injector
+# Modern UI styles injector
 # ──────────────────────────────────────────────────────────────────────────────
-
-try:
-    from modern_ui import inject_modern_styles  # type: ignore
-except Exception:  # noqa: BLE001
-
-    def inject_modern_styles(*_a: Any, **_kw: Any) -> None:  # type: ignore
-        """No-op when *modern_ui* is absent."""
-        return None
+from frontend.theme import inject_modern_styles
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -578,10 +571,6 @@ def inject_instagram_styles() -> None:
     )
 
 
-# Backwards-compat alias
-def inject_global_styles() -> None:
-    """Deprecated – prefer *modern_ui.inject_modern_styles*."""
-    inject_modern_styles()
 
 
 def ensure_active_user() -> str:
@@ -614,7 +603,6 @@ __all__ = [
     "centered_container",
     "safe_container",
     "tabs_nav",
-    "inject_global_styles",
     "inject_instagram_styles",
     "ensure_active_user",
     "BOX_CSS",
