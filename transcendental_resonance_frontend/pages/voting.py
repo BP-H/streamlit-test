@@ -4,20 +4,19 @@
 """Governance and voting page."""
 
 import streamlit as st
-from frontend.theme import set_theme
+from frontend.theme import apply_theme
 from modern_ui import inject_modern_styles
 
 from voting_ui import render_voting_tab
 from streamlit_helpers import safe_container, theme_toggle
-
-set_theme("light")
-inject_modern_styles()
 
 
 def main(main_container=None) -> None:
     """Render the Governance and Voting page inside ``main_container``."""
     if main_container is None:
         main_container = st
+    apply_theme("light")
+    inject_modern_styles()
     theme_toggle("Dark Mode", key_suffix="voting")
 
     container_ctx = safe_container(main_container)

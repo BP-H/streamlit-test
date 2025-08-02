@@ -6,17 +6,17 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from typing import List, Dict
 
 import random
 import streamlit as st
 
-from frontend.theme import set_theme
+from frontend.theme import apply_theme
 from modern_ui import inject_modern_styles
 from streamlit_helpers import theme_toggle, safe_container, sanitize_text
 
 from modern_ui_components import st_javascript
-from frontend.assets import story_css, story_js, reaction_css, scroll_js
+from frontend.assets import story_css, story_js, reaction_css
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Sample data models
@@ -40,7 +40,7 @@ class Post:
     timestamp: datetime
     reactions: Dict[str, int] = field(
         default_factory=lambda: {"❤️": 0, "🔥": 0, "👍": 0}
-    )
+    )  # noqa: E501
     comments: List[Dict[str, str]] = field(default_factory=list)
 
 
@@ -90,7 +90,8 @@ def _render_stories(users: List[User]) -> None:
         avatar = sanitize_text(u.avatar)
         username = sanitize_text(u.username)
         html += (
-            f"<div class='story-item'><img src='{avatar}' width='60' alt='avatar'/><br>{username}</div>"
+            f"<div class='story-item'><img src='{avatar}' width='60' alt='avatar'/>"
+            f"<br>{username}</div>"
         )
     html += "</div>"
     st.markdown(html, unsafe_allow_html=True)
@@ -112,11 +113,14 @@ def _render_post(post: Post) -> None:
         avatar = sanitize_text(post.user.avatar)
         username = sanitize_text(post.user.username)
         st.markdown(
-            f"<div class='post-header'><img src='{avatar}' alt='avatar'/>"
-            f"<strong>{username}</strong> "
-            f"<span>{' '.join(post.user.badges)}</span>"
-            f"<span style='margin-left:auto;font-size:0.75rem;'>{post.timestamp:%H:%M}</span>"
-            "</div>",
+            (
+                f"<div class='post-header'><img src='{avatar}' alt='avatar'/>"
+                f"<strong>{username}</strong> "
+                f"<span>{' '.join(post.user.badges)}</span>"
+                f"<span style='margin-left:auto;font-size:0.75rem;'>"
+                f"{post.timestamp:%H:%M}</span>"
+                "</div>"
+            ),
             unsafe_allow_html=True,
         )
         # Media with alt text
@@ -128,7 +132,9 @@ def _render_post(post: Post) -> None:
             alt=caption,
         )
         # Caption
-        st.markdown(f"<div class='post-caption'>{caption}</div>", unsafe_allow_html=True)
+        st.markdown(
+            f"<div class='post-caption'>{caption}</div>", unsafe_allow_html=True
+        )
 
         # Reactions & comments
         cols = st.columns(len(reactions) + 1)
@@ -142,10 +148,27 @@ def _render_post(post: Post) -> None:
             cols[idx].markdown(
                 f"""
                 <script>
-                const btns = document.querySelectorAll('button[data-testid="widget-button"]');
-                const btn = btns[btns.length-1];
-                if(btn){{btn.id='{btn_key}';btn.classList.add('reaction-btn','fa-solid','{icon_map.get(emoji, 'fa-heart')}');
-                if(!btn.querySelector('i'))btn.insertAdjacentHTML('afterbegin','<i class="fa-solid {icon_map.get(emoji, 'fa-heart')}"></i> ');}}
+                const btns = document.querySelectorAll(
+                    'button[data-testid="widget-button"]'
+                );
+                const btn = btns[btns.length - 1];
+                if (btn) {{
+                    btn.id = '{btn_key}';
+                    btn.classList.add(
+                        'reaction-btn',
+                        'fa-solid',
+                        '{icon_map.get(emoji, 'fa-heart')}'
+                    );
+                    if (!btn.querySelector('i')) {{
+                        btn.insertAdjacentHTML(
+                            'afterbegin',
+                            (
+                                '<i class="fa-solid '
+                                f"{icon_map.get(emoji, 'fa-heart')}"></i> "
+                            )
+                        );
+                    }}
+                }}
                 </script>
                 """,
                 unsafe_allow_html=True,
@@ -156,8 +179,8 @@ def _render_post(post: Post) -> None:
             with st.popover("💬"):
                 st.markdown("### comments")
                 for c in comments:
-                    user = sanitize_text(c['user'])
-                    text = sanitize_text(c['text'])
+                    user = sanitize_text(c["user"])
+                    text = sanitize_text(c["text"])
                     st.write(f"**{user}**: {text}")
                 new = st.text_input("Add a comment", key=f"c_{post.id}")
                 if st.button("post", key=f"cbtn_{post.id}") and new:
@@ -208,9 +231,6 @@ def _load_more_posts() -> None:
 # Page entrypoints
 # ──────────────────────────────────────────────────────────────────────────────
 
-set_theme("light")
-inject_modern_styles()
-
 
 def _page_body() -> None:
     """Render the main feed inside the current container."""
@@ -259,10 +279,11 @@ def _page_body() -> None:
         st.rerun()
 
 
-
 def main(main_container=None) -> None:
     """Render the feed inside ``main_container`` (or root Streamlit)."""
     container = main_container or st
+    apply_theme("light")
+    inject_modern_styles()
     with safe_container(container):
         _page_body()
 
@@ -274,4 +295,3 @@ def render() -> None:
 
 if __name__ == "__main__":
     render()
-
