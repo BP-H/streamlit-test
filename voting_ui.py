@@ -4,6 +4,7 @@
 import asyncio
 import json
 import streamlit as st
+import frontend.theme
 from streamlit_helpers import safe_container
 import pandas as pd
 try:
@@ -11,7 +12,7 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     AgGrid = None  # type: ignore
     GridOptionsBuilder = None  # type: ignore
-from streamlit_helpers import alert, inject_global_styles
+from streamlit_helpers import alert
 
 try:
     from frontend_bridge import dispatch_route
@@ -422,7 +423,7 @@ def render_voting_tab(main_container=None) -> None:
 
     container_ctx = safe_container(main_container)
     with container_ctx:
-        inject_global_styles()
+        frontend.theme.inject_global_styles()
         st.markdown(VOTING_CSS, unsafe_allow_html=True)
         sub1, sub2, sub3, sub4 = st.tabs(
             [

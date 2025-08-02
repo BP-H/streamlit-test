@@ -5,7 +5,7 @@
 
 from pathlib import Path
 import streamlit as st
-from streamlit_helpers import inject_global_styles
+import frontend.theme
 from modern_ui_components import render_modern_header, render_modern_sidebar
 
 
@@ -52,14 +52,14 @@ def load_rfc_entries(rfc_dir: Path):
 
 def render_main_ui() -> None:
     """Render a minimal placeholder for the Streamlit dashboard."""
-    inject_global_styles()
+    frontend.theme.inject_global_styles()
     st.title("superNova_2177")
     st.write("UI initialization complete.")
 
 
 def render_modern_layout() -> None:
     """Demo layout showcasing the modern styles."""
-    inject_global_styles()
+    frontend.theme.inject_global_styles()
 
     pages = {"Home": "home", "Feed": "feed", "Profile": "profile"}
     choice = render_modern_sidebar(

@@ -5,7 +5,7 @@
 
 import importlib
 import streamlit as st
-from frontend.theme import set_theme
+import frontend.theme
 from modern_ui import apply_modern_styles
 
 
@@ -28,7 +28,7 @@ def _load_render_ui():
 render_validation_ui = _load_render_ui()
 
 # Inject modern global styles (safe when running in classic Streamlit)
-set_theme("light")
+frontend.theme.set_theme("light")
 apply_modern_styles()
 
 
@@ -46,8 +46,8 @@ def _page_decorator(func):
 @_page_decorator
 def main(main_container=None) -> None:
     """Render the validation UI inside a safe container."""
-    apply_theme("light")
-    inject_modern_styles()
+    frontend.theme.apply_theme("light")
+    frontend.theme.inject_global_styles()
 
     if main_container is None:
         main_container = st

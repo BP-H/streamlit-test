@@ -7,8 +7,8 @@ from datetime import datetime
 from typing import Any, cast
 
 import streamlit as st
+import frontend.theme
 from streamlit_helpers import (
-    inject_global_styles,
     theme_selector,
     safe_container,
     BOX_CSS,
@@ -43,7 +43,7 @@ def render_agent_insights_tab(main_container=None) -> None:
     if main_container is None:
         main_container = st
 
-    inject_global_styles()
+    frontend.theme.inject_global_styles()
     theme_selector("Theme", key_suffix="agent_insights")
     container_ctx = safe_container(main_container)
     with container_ctx:

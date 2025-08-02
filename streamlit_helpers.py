@@ -573,12 +573,6 @@ def inject_instagram_styles() -> None:
     )
 
 
-# Backwards-compat alias
-def inject_global_styles() -> None:
-    """Deprecated – prefer *modern_ui.inject_modern_styles*."""
-    inject_modern_styles()
-
-
 def ensure_active_user() -> str:
     """Ensure ``st.session_state['active_user']`` is initialized."""
     return st.session_state.setdefault("active_user", "guest")
@@ -609,7 +603,6 @@ __all__ = [
     "centered_container",
     "safe_container",
     "tabs_nav",
-    "inject_global_styles",
     "inject_instagram_styles",
     "ensure_active_user",
     "BOX_CSS",

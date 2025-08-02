@@ -128,7 +128,7 @@ def apply_theme(name: bool | str = True) -> None:
     st.session_state["_theme"] = mode
 
 
-def inject_modern_styles(theme: bool | str = True) -> None:
+def inject_global_styles(theme: bool | str = True) -> None:
     """Inject base CSS variables and modern extras once per session."""
     mode = _resolve_mode(theme)
     if st.session_state.get("_styles_injected"):
@@ -179,6 +179,10 @@ def inject_modern_styles(theme: bool | str = True) -> None:
     st.session_state["_styles_injected"] = True
 
 
+# Backwards compatibility
+inject_modern_styles = inject_global_styles
+
+
 def set_theme(name: str) -> None:
     """Store ``name`` in session state and inject styles."""
     mode = _resolve_mode(name)
@@ -195,6 +199,7 @@ def get_accent_color() -> str:
 __all__ = [
     "apply_theme",
     "set_theme",
+    "inject_global_styles",
     "inject_modern_styles",
     "get_accent_color",
 ]
