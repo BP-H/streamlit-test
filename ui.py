@@ -5,6 +5,7 @@
 """Main Streamlit UI entry point for supernNova_2177."""
 import sys
 from pathlib import Path
+import asyncio
 import streamlit as st
 import importlib.util
 import numpy as np  # For random low stats
@@ -20,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent / "mount/src")) if Path(__file__).p
 try:
     from streamlit_helpers import alert, header, theme_selector, safe_container
     from frontend.theme import initialize_theme
+    from transcendental_resonance_frontend.src.utils.api import combined_search
 except ImportError as e:
     # Use fallback functions instead of stopping
     def alert(text): st.info(text)
@@ -28,6 +30,10 @@ except ImportError as e:
     def safe_container(): return st.container()
     def initialize_theme(theme): pass
     st.warning(f"Helpers import failed: {e}, using fallbacks.")
+    try:
+        from transcendental_resonance_frontend.src.utils.api import combined_search
+    except Exception:
+        combined_search = None  # type: ignore
 
 def load_page(page_name: str):
     # CORRECTED base_paths to include transcendental_resonance_frontend/pages
@@ -292,16 +298,26 @@ def main() -> None:
         # Prioritize search results over page navigation
         if st.session_state.search_bar:
             st.header(f"Searching for: \"{st.session_state.search_bar}\"")
-            st.info("This is where your database search results would appear. Connect this to your backend.")
-            # Placeholder for search results display
-            st.write("---")
-            st.subheader("Example Post Result")
-            st.write("**User:** taha_gungor")
-            st.write("This is a sample post that matches the search query. #streamlit #search")
-            st.write("---")
-            st.subheader("Example Profile Result")
-            st.write("**Profile:** artist_dev")
-            st.write("Software developer and digital artist.")
+            if combined_search is None:
+                st.error("Search functionality is unavailable.")
+            else:
+                try:
+                    results = asyncio.run(
+                        combined_search(st.session_state.search_bar)
+                    )
+                except Exception as err:  # pragma: no cover - network errors
+                    st.error(f"Search failed: {err}")
+                else:
+                    if not results:
+                        st.info("No results found.")
+                    else:
+                        for item in results:
+                            st.write("---")
+                            st.write(
+                                f"**{item.get('type', 'result').title()}:** {item.get('label')}"
+                            )
+                            if item.get("id"):
+                                st.caption(f"ID: {item['id']}")
 
         else:
             # Load the selected page if there is no active search
