@@ -9,12 +9,17 @@ import streamlit as st
 import importlib.util
 import numpy as np  # For random low stats
 import warnings
+from ui_adapters import system_status_adapter
 
 # Suppress potential deprecation warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
 # Path for Cloud/local
-sys.path.insert(0, str(Path(__file__).parent / "mount/src")) if Path(__file__).parent.joinpath("mount/src").exists() else sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent / "mount/src")) if Path(
+    __file__
+).parent.joinpath("mount/src").exists() else sys.path.insert(
+    0, str(Path(__file__).parent)
+)
 
 # Imports
 try:
@@ -22,18 +27,29 @@ try:
     from frontend.theme import initialize_theme
 except ImportError as e:
     # Use fallback functions instead of stopping
-    def alert(text): st.info(text)
-    def header(text): st.header(text)
-    def theme_selector(): st.selectbox("Theme", ["dark"], key="theme")
-    def safe_container(): return st.container()
-    def initialize_theme(theme): pass
+    def alert(text):
+        st.info(text)
+
+    def header(text):
+        st.header(text)
+
+    def theme_selector():
+        st.selectbox("Theme", ["dark"], key="theme")
+
+    def safe_container():
+        return st.container()
+
+    def initialize_theme(theme):
+        pass
+
     st.warning(f"Helpers import failed: {e}, using fallbacks.")
+
 
 def load_page(page_name: str):
     base_paths = [
         Path("mount/src/pages"),
         Path(__file__).parent / "pages",
-        Path(__file__).parent / "transcendental_resonance_frontend/pages"
+        Path(__file__).parent / "transcendental_resonance_frontend/pages",
     ]
     module_path = None
     for base in base_paths:
@@ -50,23 +66,25 @@ def load_page(page_name: str):
         spec = importlib.util.spec_from_file_location(page_name, module_path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        if hasattr(module, 'main'):
+        if hasattr(module, "main"):
             module.main()
-        elif hasattr(module, 'render'):
+        elif hasattr(module, "render"):
             module.render()
         else:
             st.warning(f"No main/render in {page_name}.py - showing placeholder.")
-            st.write(f"Placeholder for {page_name.capitalize()} (add main() to {page_name}.py)")
+            st.write(
+                f"Placeholder for {page_name.capitalize()} "
+                f"(add main() to {page_name}.py)"
+            )
     except Exception as e:
         st.error(f"Error loading {page_name}: {e}")
         st.exception(e)
 
+
 # Main - Dark theme with subtle pink polish, FIXED STICKY LAYOUT
 def main() -> None:
     st.set_page_config(
-        page_title="supernNova_2177",
-        layout="wide",
-        initial_sidebar_state="expanded"
+        page_title="supernNova_2177", layout="wide", initial_sidebar_state="expanded"
     )
     st.session_state.setdefault("theme", "dark")
     st.session_state.setdefault("conversations", {})  # Fix NoneType
@@ -74,7 +92,8 @@ def main() -> None:
     initialize_theme(st.session_state["theme"])
 
     # Fixed CSS
-    st.markdown("""
+    st.markdown(
+        """
     <style>
         header[data-testid="stHeader"] {
             position: sticky !important;
@@ -124,7 +143,8 @@ def main() -> None:
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.3) !important;
             outline: none !important;
         }
-        [data-testid="stSidebar"] button[kind="secondary"]:has(span:contains("supernNova")) {
+        [data-testid="stSidebar"]
+        button[kind="secondary"]:has(span:contains("supernNova")) {
             font-size: 28px !important;
             font-weight: bold !important;
             justify-content: center !important;
@@ -132,7 +152,8 @@ def main() -> None:
             margin-bottom: 15px !important;
             height: auto !important;
         }
-        [data-testid="stSidebar"] button[kind="secondary"]:has(span:contains("supernNova")):hover {
+        [data-testid="stSidebar"]
+        button[kind="secondary"]:has(span:contains("supernNova")):hover {
             box-shadow: none !important;
         }
         .stApp {
@@ -178,7 +199,9 @@ def main() -> None:
             }
         }
     </style>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
     # Sidebar
     with st.sidebar:
@@ -191,7 +214,7 @@ def main() -> None:
             "Search",
             key="search_bar",
             placeholder="🔍 Search posts, people...",
-            label_visibility="collapsed"
+            label_visibility="collapsed",
         )
 
         st.image("assets/profile_pic.png", width=100)
@@ -245,7 +268,10 @@ def main() -> None:
         if st.button("🌌 Enter Metaverse", key="nav_metaverse"):
             st.session_state.current_page = "enter_metaverse"
             st.rerun()
-        st.caption("Mathematically sucked into a supernNova_2177 void - stay tuned for 3D immersion")
+        st.caption(
+            "Mathematically sucked into a supernNova_2177 void - "
+            "stay tuned for 3D immersion"
+        )
         st.divider()
 
         if st.button("⚙️ Settings", key="nav_settings"):
@@ -253,21 +279,37 @@ def main() -> None:
             st.rerun()
         theme_selector()
 
+        st.divider()
+        show_status = st.checkbox("Show status")
+        status = system_status_adapter(show_status)
+        if show_status:
+            st.subheader("Status")
+            st.write(f"Uptime: {status.get('timestamp', 'N/A')}")
+            db_ok = status.get("status") == "online"
+            st.write(f"DB: {'online' if db_ok else 'offline'}")
+
     # Main content area
     with st.container():
         if st.session_state.search_bar:
-            st.header(f"Searching for: \"{st.session_state.search_bar}\"")
-            st.info("This is where your database search results would appear. Connect this to your backend.")
+            st.header(f'Searching for: "{st.session_state.search_bar}"')
+            st.info(
+                "This is where your database search results would appear. "
+                "Connect this to your backend."
+            )
             st.write("---")
             st.subheader("Example Post Result")
             st.write("**User:** taha_gungor")
-            st.write("This is a sample post that matches the search query. #streamlit #search")
+            st.write(
+                "This is a sample post that matches the search query. "
+                "#streamlit #search"
+            )
             st.write("---")
             st.subheader("Example Profile Result")
             st.write("**Profile:** artist_dev")
             st.write("Software developer and digital artist.")
         else:
             load_page(st.session_state.current_page)
+
 
 if __name__ == "__main__":
     main()
