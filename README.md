@@ -80,6 +80,28 @@ supernova-federate vote <fork_id> --voter Bob --vote yes
 The UI listens on [http://localhost:8888](http://localhost:8888) by default.
 Append `?healthz=1` to the URL and you should see `ok` when the server is running.
 
+### Dual `pages/` directories
+
+This repository contains two Streamlit frontends, each with its own `pages/` folder:
+
+- `pages/` in the repository root for `app.py`
+- `transcendental_resonance_frontend/pages/` for `transcendental_resonance_frontend/ui.py`
+
+Launch the main dashboard from the project root:
+
+```bash
+streamlit run app.py
+```
+
+Launch the Transcendental Resonance frontend from its folder:
+
+```bash
+cd transcendental_resonance_frontend
+streamlit run ui.py
+```
+
+Running a frontend from the wrong working directory will cause Streamlit to load the other folder's `pages/` set.
+
 ## 🔧 Local Development
 
 To launch the Streamlit UI:

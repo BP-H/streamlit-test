@@ -29,6 +29,29 @@ Replace the backend URL with the `BACKEND_URL` environment variable if your API 
 - `src/main.py` – entry point registering pages and launching the app
 - `tests/` – pytest-based unit tests (package marked by `__init__.py`)
 
+## Streamlit launch
+
+The project contains two separate `pages/` directories:
+
+- `pages/` at the repository root for `app.py`
+- `transcendental_resonance_frontend/pages/` for `ui.py`
+
+Launch the main dashboard from the root:
+
+```bash
+streamlit run app.py
+```
+
+Launch this frontend from its own directory:
+
+```bash
+cd transcendental_resonance_frontend
+streamlit run ui.py
+```
+
+Running a frontend from the wrong working directory will load the other directory's `pages/` set.
+
+
 ## Notes
 
 This UI is mobile-first with a futuristic aesthetic. A theme selector cycles between
