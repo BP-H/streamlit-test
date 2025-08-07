@@ -88,3 +88,273 @@ AttributeError: module 'bcrypt' has no attribute '__about__'
 2025-08-02 01:16:39,847 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
 2025-08-02 01:16:39,847 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
 2025-08-02 01:16:39,847 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:22,839 | WARNING | MainThread | (trapped) error reading bcrypt version (bcrypt.py:622) | 감사합니다!
+Traceback (most recent call last):
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-08-07 03:30:22,839 | WARNING | MainThread | (trapped) error reading bcrypt version (bcrypt.py:622) | 감사합니다!
+Traceback (most recent call last):
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-08-07 03:30:22,839 | WARNING | MainThread | (trapped) error reading bcrypt version (bcrypt.py:622) | 감사합니다!
+Traceback (most recent call last):
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-08-07 03:30:26,330 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,330 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,330 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,330 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,330 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,331 | INFO | MainThread | Removed duplicate page module Foo.py (page_registry.py:56) | 감사합니다!
+2025-08-07 03:30:26,331 | INFO | MainThread | Removed duplicate page module Foo.py (page_registry.py:56) | 감사합니다!
+2025-08-07 03:30:26,331 | INFO | MainThread | Removed duplicate page module Foo.py (page_registry.py:56) | 감사합니다!
+2025-08-07 03:30:26,331 | INFO | MainThread | Removed duplicate page module Foo.py (page_registry.py:56) | 감사합니다!
+2025-08-07 03:30:26,331 | INFO | MainThread | Removed duplicate page module Foo.py (page_registry.py:56) | 감사합니다!
+2025-08-07 03:30:26,333 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,333 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,333 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,333 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,333 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,335 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,335 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,335 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,335 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,335 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,335 | INFO | MainThread | Removed duplicate page module Foo.py (page_registry.py:56) | 감사합니다!
+2025-08-07 03:30:26,335 | INFO | MainThread | Removed duplicate page module Foo.py (page_registry.py:56) | 감사합니다!
+2025-08-07 03:30:26,335 | INFO | MainThread | Removed duplicate page module Foo.py (page_registry.py:56) | 감사합니다!
+2025-08-07 03:30:26,335 | INFO | MainThread | Removed duplicate page module Foo.py (page_registry.py:56) | 감사합니다!
+2025-08-07 03:30:26,335 | INFO | MainThread | Removed duplicate page module Foo.py (page_registry.py:56) | 감사합니다!
+2025-08-07 03:30:26,337 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,337 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,337 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,337 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,337 | WARNING | MainThread | Case-insensitive file collision for 'foo': Foo.py, foo.py (page_registry.py:83) | 감사합니다!
+2025-08-07 03:30:26,431 | WARNING | MainThread | {"version": "1.0", "positional_args": [8001], "event": "Prometheus metrics server could not start on port %s, selecting free port", "level": "warning", "logger": "TranscendentalResonance", "timestamp": "2025-08-07T03:30:26.431649Z"} (superNova_2177.py:639) | 감사합니다!
+2025-08-07 03:30:26,431 | WARNING | MainThread | {"version": "1.0", "positional_args": [8001], "event": "Prometheus metrics server could not start on port %s, selecting free port", "level": "warning", "logger": "TranscendentalResonance", "timestamp": "2025-08-07T03:30:26.431649Z"} (superNova_2177.py:639) | 감사합니다!
+2025-08-07 03:30:26,431 | WARNING | MainThread | {"version": "1.0", "positional_args": [8001], "event": "Prometheus metrics server could not start on port %s, selecting free port", "level": "warning", "logger": "TranscendentalResonance", "timestamp": "2025-08-07T03:30:26.431649Z"} (superNova_2177.py:639) | 감사합니다!
+2025-08-07 03:30:26,431 | WARNING | MainThread | {"version": "1.0", "positional_args": [8001], "event": "Prometheus metrics server could not start on port %s, selecting free port", "level": "warning", "logger": "TranscendentalResonance", "timestamp": "2025-08-07T03:30:26.431649Z"} (superNova_2177.py:639) | 감사합니다!
+2025-08-07 03:30:26,431 | WARNING | MainThread | {"version": "1.0", "positional_args": [8001], "event": "Prometheus metrics server could not start on port %s, selecting free port", "level": "warning", "logger": "TranscendentalResonance", "timestamp": "2025-08-07T03:30:26.431649Z"} (superNova_2177.py:639) | 감사합니다!
+2025-08-07 03:30:26,431 | WARNING | MainThread | {"version": "1.0", "positional_args": [8001], "event": "Prometheus metrics server could not start on port %s, selecting free port", "level": "warning", "logger": "TranscendentalResonance", "timestamp": "2025-08-07T03:30:26.431649Z"} (superNova_2177.py:639) | 감사합니다!
+2025-08-07 03:30:27,315 | ERROR | MainThread | Follow toggle failed for bob (ui_adapters.py:123) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 85, in _run_async
+    loop = asyncio.get_running_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 118, in follow_adapter
+    resp: Dict[str, Any] | None = _run_async(toggle_follow(target_username))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/ui_adapters.py", line 87, in _run_async
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_follow.py", line 37, in bad_toggle
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,315 | ERROR | MainThread | Follow toggle failed for bob (ui_adapters.py:123) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 85, in _run_async
+    loop = asyncio.get_running_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 118, in follow_adapter
+    resp: Dict[str, Any] | None = _run_async(toggle_follow(target_username))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/ui_adapters.py", line 87, in _run_async
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_follow.py", line 37, in bad_toggle
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,315 | ERROR | MainThread | Follow toggle failed for bob (ui_adapters.py:123) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 85, in _run_async
+    loop = asyncio.get_running_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 118, in follow_adapter
+    resp: Dict[str, Any] | None = _run_async(toggle_follow(target_username))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/ui_adapters.py", line 87, in _run_async
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_follow.py", line 37, in bad_toggle
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,315 | ERROR | MainThread | Follow toggle failed for bob (ui_adapters.py:123) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 85, in _run_async
+    loop = asyncio.get_running_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 118, in follow_adapter
+    resp: Dict[str, Any] | None = _run_async(toggle_follow(target_username))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/ui_adapters.py", line 87, in _run_async
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_follow.py", line 37, in bad_toggle
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,315 | ERROR | MainThread | Follow toggle failed for bob (ui_adapters.py:123) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 85, in _run_async
+    loop = asyncio.get_running_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 118, in follow_adapter
+    resp: Dict[str, Any] | None = _run_async(toggle_follow(target_username))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/ui_adapters.py", line 87, in _run_async
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_follow.py", line 37, in bad_toggle
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,315 | ERROR | MainThread | Follow toggle failed for bob (ui_adapters.py:123) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 85, in _run_async
+    loop = asyncio.get_running_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 118, in follow_adapter
+    resp: Dict[str, Any] | None = _run_async(toggle_follow(target_username))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/ui_adapters.py", line 87, in _run_async
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.10/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_follow.py", line 37, in bad_toggle
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,347 | ERROR | MainThread | search_users_adapter failed: boom (ui_adapters.py:75) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 72, in search_users_adapter
+    results = sn_mod.search_users(query, db)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_search.py", line 48, in bad_search
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,347 | ERROR | MainThread | search_users_adapter failed: boom (ui_adapters.py:75) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 72, in search_users_adapter
+    results = sn_mod.search_users(query, db)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_search.py", line 48, in bad_search
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,347 | ERROR | MainThread | search_users_adapter failed: boom (ui_adapters.py:75) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 72, in search_users_adapter
+    results = sn_mod.search_users(query, db)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_search.py", line 48, in bad_search
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,347 | ERROR | MainThread | search_users_adapter failed: boom (ui_adapters.py:75) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 72, in search_users_adapter
+    results = sn_mod.search_users(query, db)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_search.py", line 48, in bad_search
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,347 | ERROR | MainThread | search_users_adapter failed: boom (ui_adapters.py:75) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 72, in search_users_adapter
+    results = sn_mod.search_users(query, db)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_search.py", line 48, in bad_search
+    raise RuntimeError("boom")
+RuntimeError: boom
+2025-08-07 03:30:27,347 | ERROR | MainThread | search_users_adapter failed: boom (ui_adapters.py:75) | 감사합니다!
+Traceback (most recent call last):
+  File "/workspace/streamlit-test/ui_adapters.py", line 72, in search_users_adapter
+    results = sn_mod.search_users(query, db)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/streamlit-test/tests/test_ui_search.py", line 48, in bad_search
+    raise RuntimeError("boom")
+RuntimeError: boom

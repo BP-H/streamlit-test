@@ -115,7 +115,7 @@ def load_page(page_name: str):
     base_paths = [
         Path("mount/src/pages"),
         Path(__file__).parent / "pages",
-        Path(__file__).parent / "transcendental_resonance_frontend/tr_pages"
+        Path(__file__).parent / "transcendental_resonance_frontend/pages"
     ]
     module_path = None
     for base in base_paths:
